@@ -2367,7 +2367,7 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
     const truth=s.opts?(s.first?"":`<p>${M(s.why||"")}</p>`):`<p>True value: <b class="num">${G.hwU.f3(s.v)}</b> ${M(s.u?"$"+s.u+"$":"")}${yourTxt!=null?` <span class="mut">(you: ${esc(yourTxt)})</span>`:""}</p>`;
     const firstTxt=s.first?`<p>${M(R.d.first.ok)}</p>${R.d.pic?`<p class="mut">${M(R.d.pic)}</p>`:""}`:"";
     const stepTxt=step?`<div class="hwstep"><b>${M(step[0])}</b>${A.block(step[1])}${step[2]?`<p class="small mut">${M(step[2])}</p>`:""}</div>`:"";
-    const trap=!ok&&R.d.trap?`<p class="small"><b style="color:#F2668A">Trap:</b> ${M(R.d.trap)}</p>`:"";
+    const trap=!ok&&R.d.trap?`<p class="small"><b style="color:#F2668A">Trap${R.remix&&/\d/.test(R.d.trap)?" (numbers from the assigned version)":""}:</b> ${M(R.d.trap)}</p>`:"";
     fb.innerHTML=`<div class="fbcard ${ok?"ok":"no"}"><b class="fbh">${head}</b><div class="fbw">${firstTxt}${truth}${stepTxt}${trap}</div>
       <button class="bigcta" data-next>${R.hearts<=0?"See results":last?"Finish":"Next step"} ▸</button></div>`;
     if(window.renderMathFix)window.renderMathFix(fb);
@@ -2392,7 +2392,7 @@ function endView(v){const secs=(Date.now()-R.t0)/1000;if(!R.tEnd)R.tEnd=secs;con
    <p class="small">${stars===3?(R.remix?"You solved it with new numbers, no misses, inside quiz time. That's mastery.":"Now prove it with new numbers. Remix it."):"Replay it. Read every gold step card. The second pass is where it sticks."}</p></div>
   <section class="bub"><h3 style="margin-top:0">The full solution, his way</h3>${R.d.pic?`<p class="small">${M(R.d.pic)}</p>`:""}${R.d.notes?R.d.notes.map(n=>`<p class="small">${M(n)}</p>`).join(""):""}<p class="small"><b>First move:</b> ${M(R.d.first.ok)}</p>${R.d.tips?`<div class="hwnotes"><b>Step-by-step, his way</b><ol>${R.d.tips.map(t=>`<li>${M(t)}</li>`).join("")}</ol></div>`:""}
    ${R.sol.steps.map(s=>`<div class="hwstep"><b>${M(s[0])}</b>${A.block(s[1])}${s[2]?`<p class="small mut">${M(s[2])}</p>`:""}</div>`).join("")}
-   ${R.d.trap?`<p class="small"><b style="color:#F2668A">Trap:</b> ${M(R.d.trap)}</p>`:""}</section>
+   ${R.d.trap?`<p class="small"><b style="color:#F2668A">Trap${R.remix&&/\d/.test(R.d.trap)?" (numbers from the assigned version)":""}:</b> ${M(R.d.trap)}</p>`:""}</section>
   <div class="row" style="gap:8px;margin:12px 0 30px"><button class="btn" style="flex:1" data-again>${R.remix?"Remix again":"Remix (new numbers)"}</button>${nxt?`<button class="btn cta" style="flex:1" data-next>Next: HW ${esc(nxt.id)} ▸</button>`:`<button class="btn cta" style="flex:1" data-list>All problems</button>`}</div>`;
   const chId=R.chId;
   v.querySelector("[data-again]").onclick=()=>{const id=R.id;A.back();start(chId,id,true);};

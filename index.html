@@ -15,14 +15,14 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <style>:root{
- --bg:#0B0C10;--surface:#13151B;--surface-2:#1B1E27;--line:#262A36;--line-2:#323748;
- --fg:#ECEEF4;--muted:#9AA0B2;--faint:#6A7083;
- --cta:#C7B6FF;--cta-ink:#17121F;--good:#78D58C;--bad:#F2668A;--warn:#F2BF4C;
+ --bg:#0D1022;--surface:#191E3F;--surface-2:#21274E;--line:rgba(178,186,255,.13);--line-2:rgba(178,186,255,.24);
+ --fg:#F4F2FF;--muted:#A3A6CC;--faint:#6A6E9A;
+ --cta:#C7B6FF;--cta-ink:#17121F;--good:#6EE7A8;--bad:#FF8B8B;--warn:#FFC857;
  --e:#4FC8D8;--h:#C7B6FF;--acc:#FF9F5A;
- --fd:"Avenir Next","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
- --fb:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ --fd:ui-rounded,"SF Pro Rounded","Nunito","Avenir Next",system-ui,sans-serif;
+ --fb:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
  --fn:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
- --r:18px;--r-s:12px;--t-fast:150ms;--t-base:220ms;--ease-out:cubic-bezier(.2,.8,.2,1);
+ --r:22px;--r-s:14px;--t-fast:150ms;--t-base:220ms;--ease-out:cubic-bezier(.2,.8,.2,1);
  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
  color-scheme:dark}
 *{box-sizing:border-box}
@@ -35,7 +35,7 @@ a{color:var(--cta)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* ---------- top bar ---------- */
-.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(10px + var(--sat)) 16px 10px;background:rgba(11,12,16,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid transparent;transition:border-color var(--t-base)}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(10px + var(--sat)) 16px 10px;background:rgba(13,16,34,.8);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid transparent;transition:border-color var(--t-base)}
 .top.scrolled{border-bottom-color:var(--line)}
 .brand{display:flex;align-items:center;gap:10px;font:800 17px/1 var(--fd);letter-spacing:.2em;background:none;border:0;padding:6px 0;min-height:44px}
 .mark{width:34px;height:22px;flex:none}
@@ -102,7 +102,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:14px 0}
 button.li:active{background:var(--surface-2)}
 
 /* ---------- tab bar ---------- */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;padding:6px 6px calc(6px + var(--sab));background:rgba(15,16,21,.88);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid var(--line)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;padding:6px 6px calc(6px + var(--sab));background:rgba(18,22,50,.9);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid var(--line)}
 .tabs button{flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px;padding:6px 2px;border:0;background:none;color:var(--faint);font:600 11px/1 var(--fb);border-radius:12px;transition:color var(--t-fast)}
 .tabs button svg{width:24px;height:24px}
 .tabs button[aria-current=page]{color:var(--fg)}
@@ -321,6 +321,62 @@ math[display=block]{margin:.3em 0}
 .lvlup{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(5,6,10,.6);animation:fade .3s;pointer-events:none}
 .lvlup div{display:flex;flex-direction:column;align-items:center;padding:26px 40px;border-radius:26px;background:#13151B;border:2px solid #C7B6FF;box-shadow:0 0 60px rgba(199,182,255,.35);animation:starpop .6s var(--ease-out)}
 .lvlup small{font:800 13px var(--fn);letter-spacing:.2em;color:#C7B6FF}.lvlup b{font:900 64px/1 var(--fd);background:linear-gradient(90deg,#4FC8D8,#C7B6FF,#FF9F5A);-webkit-background-clip:text;background-clip:text;color:transparent}.lvlup span{font:700 16px var(--fd)}
+
+/* ===== SPAN-style game shell ===== */
+.ptop{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.ptop h1{margin:6px 0}
+.chipbtn{min-height:40px;padding:6px 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);color:var(--fg);font:650 14px var(--fd)}
+.bub{display:block;background:var(--surface);border-radius:28px;padding:20px;margin:12px 0;border:0;color:var(--fg);text-align:left;width:100%}
+.bub.tint{background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 22%,var(--surface)),var(--surface))}
+.bub.trouble{display:flex;flex-direction:column;gap:2px;background:linear-gradient(135deg,rgba(255,139,139,.18),var(--surface))}
+.row{display:flex;align-items:center;gap:12px}.small{font-size:14px}
+.eyebrow{display:block;font:800 12px var(--fd);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rankbadge{flex:none;width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font:900 26px var(--fd);color:#0D1022;background:conic-gradient(from 200deg,#FF8A65,#FFC857,#6EE7A8,#7FB2FF,#B79CFF,#FF8A65);box-shadow:0 6px 22px rgba(183,156,255,.3)}
+.prof h2{font:850 24px var(--fd)}
+.bigcta{display:block;width:100%;margin-top:14px;min-height:56px;border:0;border-radius:99px;background:var(--acc);color:#1A0E06;font:850 18px var(--fd);box-shadow:0 6px 0 color-mix(in srgb,var(--acc) 55%,#000),0 10px 26px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform var(--t-fast) var(--ease-out),box-shadow var(--t-fast)}
+.bigcta:active{transform:translateY(4px);box-shadow:0 2px 0 color-mix(in srgb,var(--acc) 55%,#000)}
+.quest{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line);font-size:17px}.quest:first-of-type{border-top:0;margin-top:8px}
+.quest span:nth-child(2){flex:1}.qc{width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);display:grid;place-items:center;font:900 14px var(--fd);color:#0D1022}
+.quest.done .qc{background:var(--good);border-color:var(--good)}.quest.done span:nth-child(2){text-decoration:line-through;color:var(--muted)}
+.isles{display:flex;flex-direction:column;gap:16px;margin-top:22px}
+.isleCard{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:18px 14px 18px 20px;border-radius:28px;border:2px solid transparent;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 18%,var(--surface)),var(--surface));text-align:left;color:var(--fg);transition:transform var(--t-fast) var(--ease-out)}
+.isleCard:active{transform:scale(.98)}.isleCard:nth-child(even){flex-direction:row-reverse}.isleCard:nth-child(even) .isleTxt{text-align:right}
+.isleCard.you{border-color:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 18%,transparent)}
+.isleCard.locked{opacity:.5}
+.isleTxt{display:flex;flex-direction:column;gap:3px;min-width:0}.isleTxt b{font:850 21px/1.15 var(--fd)}.isleTxt small{color:var(--muted);font-size:14px}
+.youtag{position:absolute;top:-11px;left:18px;background:var(--acc);color:#0D1022;font:900 11px var(--fd);padding:3px 9px;border-radius:99px;letter-spacing:.06em}
+.lchip{min-height:40px;padding:6px 14px;border-radius:99px;border:2px solid color-mix(in srgb,var(--acc) 60%,transparent);background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font:700 14px var(--fd);text-align:left}
+.lchip math{color:var(--acc)}
+.levels{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.lvrow{display:flex;align-items:center;gap:14px;padding:16px;border-radius:24px;border:0;background:var(--surface);color:var(--fg);text-align:left;min-height:76px;transition:transform var(--t-fast) var(--ease-out)}
+.lvrow:active{transform:scale(.98)}
+.lvn{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:900 20px var(--fd);background:var(--acc);color:#0D1022;box-shadow:0 4px 0 color-mix(in srgb,var(--acc) 50%,#000)}
+.lvrow.locked{opacity:.5}.lvrow.locked .lvn{background:var(--surface-2);color:var(--fg);box-shadow:none}
+.lvrow.done .lvn{background:var(--good)}
+.lvt{flex:1;min-width:0}.lvt b{display:block;font:800 18px var(--fd)}.lvt small{color:var(--muted);font-size:14px}
+.lvrow.boss{background:linear-gradient(135deg,rgba(255,139,139,.22),var(--surface))}.lvrow.boss .lvn{background:#FF8B8B}
+.hud{position:sticky;top:calc(64px + var(--sat));z-index:5;display:flex;align-items:center;gap:12px;padding:6px 0 10px;background:linear-gradient(var(--bg) 75%,transparent)}
+.xbtn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);color:var(--fg);font:700 24px var(--fd)}
+.hud .hearts{font-size:24px}.hud .hearts i{font-style:normal;color:#3A3F66}.hud .hearts i.on{color:#FF6B8A;text-shadow:0 0 12px rgba(255,107,138,.5)}
+.hudmid{flex:1;min-width:0}.hudmid small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.hudmid .progress{height:8px;margin:0;background:rgba(255,255,255,.08)}.hudmid .progress i{background:var(--acc)}
+.combo2{min-width:54px;text-align:center;font:900 20px var(--fd);color:var(--muted);padding:6px 8px;border-radius:14px;background:var(--surface)}
+.combo2.hot{color:#0D1022;background:var(--warn);animation:pop .3s var(--ease-out)}
+.timebar{height:6px;border-radius:9px;background:var(--surface);overflow:hidden;margin:-2px 0 10px}.timebar i{display:block;height:100%;width:100%;background:var(--acc);transition:width .1s linear}.timebar i.low{background:var(--bad)}
+.gcard{padding:16px}.gcard .q{font:750 19px/1.35 var(--fd)}
+.flash-ok{animation:flashok 500ms var(--ease-out)}.flash-no{animation:flashno 500ms var(--ease-out)}
+@keyframes flashok{30%{box-shadow:0 0 0 4px var(--good)}}@keyframes flashno{30%{box-shadow:0 0 0 4px var(--bad);transform:translateX(-4px)}60%{transform:translateX(4px)}}
+.fbcard{margin:12px 0;padding:16px 18px;border-radius:24px;background:var(--surface);animation:vin var(--t-base) var(--ease-out)}
+.fbcard.ok{background:linear-gradient(135deg,rgba(110,231,168,.16),var(--surface))}.fbcard.no{background:linear-gradient(135deg,rgba(255,139,139,.16),var(--surface))}
+.fbh{display:block;font:900 26px var(--fd)}.fbcard.ok .fbh{color:var(--good)}.fbcard.no .fbh{color:var(--bad)}
+.fbw{font-size:16px;margin-top:6px;color:var(--fg)}
+.endcard{text-align:center;padding:28px 18px;margin-top:20px}.endh{font:900 34px var(--fd);margin:6px 0}
+.bigstars{display:flex;justify-content:center;gap:10px;font-size:58px;color:var(--surface-2);margin:6px 0 12px}
+.bigstars span.on{color:#FFC857;text-shadow:0 0 22px rgba(255,200,87,.5);animation:starpop .55s var(--ease-out) both}
+.endstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.endstats div{background:var(--bg);border-radius:18px;padding:12px 6px}
+.endstats b{display:block;font:900 24px var(--fd)}.endstats span{font-size:13px;color:var(--muted)}
+.opt{border-radius:18px}.btn{border-radius:99px}
+body{font-size:17px}
+.lchip{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 </style>
 </head><body>
 <noscript>MAXWELL needs JavaScript.</noscript>
@@ -949,6 +1005,122 @@ function results(v,p){const ch=p.ch?A.chOf(p.ch):null;const n=B.scores.length,ac
   const nx=v.querySelector("[data-next]");if(nx)nx.onclick=()=>{reset();const st=A.NAV.stack;st.pop();st.pop();st.push({v:"level",ch:ch.id,id:nextL.id});A.render();scrollTo(0,0);};
   const mp=v.querySelector("[data-map]");if(mp)mp.onclick=()=>{reset();const st=A.NAV.stack;while(st.length&&st[st.length-1].v!=="world")st.pop();if(!st.length)A.go("play");else{A.render();scrollTo(0,0);}};
   A.setKey(e=>{if(e.key==="Enter"||e.key==="ArrowRight"){(nx||mp).click();return true;}});}
+/* =====================================================================
+   SPAN-style campaign: one game per world, 5 levels + boss, procedural rounds
+   ===================================================================== */
+const WORLDS={
+ ch1:{game:"Field Sculptor",tag:"Bend fields across boundaries",mini:"sculptor",lv:[["Cross the line","E and D at a dielectric interface"],["Magnetic side","H and B across μ₁ | μ₂"],["Hit the wall","PEC: what survives, what becomes ρ_s and J_s"]]},
+ ch2:{game:"Link Budget",tag:"Friis, loss, and what matter does to waves",mini:"friis",lv:[["Close the link","P_r from Friis in dBm"],["Find the range","Solve Friis for R, G or f"],["Into the material","Loss tangent and decay depth"]],alt:{3:"skindiver"}},
+ ch3:{game:"Wave Builder",tag:"Assemble solutions by separation of variables",mini:"waveform",lv:[["Boxes","cos, sin, e^{−jβz} in a guide"],["Cylinders","J, Y, H⁽²⁾: who's allowed where"],["Spheres & coax","j_n, h_n⁽²⁾, P_n^m, AJ+BY"]]},
+ ch4:{game:"Phase Lock",tag:"Polarization in 3D, plus lossy propagation",mini:"phaselock",lv:[["Linear & circular","Match the helix, call the sense"],["Elliptical","Axial ratio and tilt"],["Lossy media","α, β, δ: dive into the conductor"]],alt:{3:"skindiver"}},
+ ch5:{game:"Snell Sniper",tag:"Aim beams at interfaces",mini:"sniper",lv:[["Hit the target","Snell's law, phase matching"],["Kill the reflection","Brewster, the right polarization"],["Trap the beam","Critical angle, exact reflectance"]]},
+ ch6:{game:"Radiation Range",tag:"Dipole fields, near vs far, potentials",mini:"dipole",lv:[["Aim the dipole","Where it radiates, where it's dark"],["Near or far?","1/r, 1/r², 1/r³ regions"],["Far-field line","r > 2D²/λ, his derivation"]],force:{1:"aim",2:"region",3:"far"}},
+ ch8:{game:"Mode Hunter",tag:"Catch modes in a metal pipe",mini:"modehunter",lv:[["Name that mode","TE/TM mn from the fields"],["Open the gate","Set f so N modes propagate"],["Impedance & λ_g","Z_w and guide wavelength"]],force:{1:"id",2:"setN",3:"Z"}},
+ ch11:{game:"Aperture Ace",tag:"Equivalence, apertures, patterns",mini:"dipole",lv:[["Pattern sense","Max, null and half-power"],["Find the null","E-plane vs H-plane of an aperture"],["Far enough?","Aperture far-field distance"]],force:{1:"aim",2:"null",3:"far"}}};
+const LV_EXTRA=[["Prather's moves","First moves + his derivations, in order"],["Exam rounds","Timed, mixed, no mercy"]];
+const RPL=5;// rounds per level
+const isle=(hue,locked,n)=>`<svg viewBox="0 0 120 92" width="104" height="80" aria-hidden="true"><defs><linearGradient id="mxig${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hue}"/><stop offset="1" stop-color="${hue}" stop-opacity=".55"/></linearGradient></defs>
+ <polygon points="60,8 112,34 60,60 8,34" fill="url(#mxig${n})" opacity="${locked?.35:1}"/><polygon points="8,34 60,60 60,82 8,56" fill="${hue}" opacity="${locked?.18:.55}"/><polygon points="112,34 60,60 60,82 112,56" fill="${hue}" opacity="${locked?.12:.38}"/>
+ ${locked?`<text x="60" y="40" text-anchor="middle" font-size="20">🔒</text>`:`<path d="M30 30 q7 -9 14 0 t14 0 t14 0 t14 0" fill="none" stroke="rgba(11,12,16,.55)" stroke-width="3" stroke-linecap="round"/><line x1="26" y1="40" x2="96" y2="40" stroke="rgba(11,12,16,.45)" stroke-width="2.5" stroke-linecap="round"/>`}</svg>`;
+const QUESTS={rounds15:["Win 15 rounds",15],combo5:["Hit a ×5 combo",1],clear2:["Clear 2 levels",2],perfect1:["Clear a level flawless",1],world2:["Play 2 different worlds",2],boss1:["Beat a boss",1],moves3:["Clear 3 Prather's-moves rounds",3]};
+const dayStr=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
+function gq(){const g=gs();g.lv=g.lv||{};g.bossW=g.bossW||{};g.badges=g.badges||[];const t=dayStr();if(g.day!==t){g.day=t;g.q={};g.qDone=[];g.qWorlds=[];const ks=A.shuffle(Object.keys(QUESTS));g.qList=ks.slice(0,3);A.save();}return g;}
+function questsToday(){const g=gq();return g.qList.map(k=>({k,name:QUESTS[k][0],need:QUESTS[k][1],have:Math.min(QUESTS[k][1],g.q[k]||0),done:g.qDone.includes(k)}));}
+function bumpQuest(k,n){const g=gq();if(!g.qList.includes(k)||g.qDone.includes(k))return;g.q[k]=(g.q[k]||0)+(n||1);if(g.q[k]>=QUESTS[k][1]){g.qDone.push(k);g.xp+=60;A.toast("✓",`Quest done: ${QUESTS[k][0]}`,"+60 XP");sfx.win();}A.save();}
+const WL=()=>A.CH.filter(c=>c.lessons&&WORLDS[c.id]);
+const wstars=id=>{const L=gq().lv[id]||{};return [1,2,3,4,5].reduce((t,k)=>t+(L[k]||0),0)+(gq().bossW[id]||0);};
+function worldOpen(i){const g=gq();if(g.unlockAll||i===0)return true;const ws=WL();const ev=A.nextEvent();if(ev&&ev.chs&&ev.chs.includes(ws[i].id))return true;const L=g.lv[ws[i-1].id]||{};return !!L[3];}
+const lvOpen=(id,k)=>k===1||gq().unlockAll||!!((gq().lv[id]||{})[k-1]);
+function contTarget(){const ws=WL(),ev=A.nextEvent(),foc=(ev&&ev.chs)||[];const order=ws.map((c,i)=>({c,i})).sort((a,b)=>(foc.includes(b.c.id)?1:0)-(foc.includes(a.c.id)?1:0));
+  for(const {c,i} of order){if(!worldOpen(i))continue;const L=gq().lv[c.id]||{};for(let k=1;k<=5;k++)if(!L[k])return{c,k};if(!gq().bossW[c.id])return{c,k:"boss"};}return null;}
+
+A.VIEWS.play=v=>{const g=gq(),L=level(g.xp),ev=A.nextEvent(),st=A.streak(),qs=questsToday(),ct=contTarget(),ws=WL(),tr=A.troubleIds().length;
+  v.innerHTML=`<div class="ptop"><h1>Play</h1><button class="chipbtn" data-snd>${g.sound?"🔊 Sound on":"🔈 Sound off"}</button></div>
+  <section class="bub prof"><div class="row" style="flex-wrap:nowrap"><div class="rankbadge">${L.n}</div><div style="flex:1;min-width:0"><div class="eyebrow">RANK</div><h2 style="margin:0">${esc(L.rank)}</h2>
+   <div class="xpbar"><i style="width:${Math.round(100*L.cur/L.need)}%"></i></div><p class="small mut"><b class="num">${g.xp}</b> XP · ${L.need-L.cur} to level ${L.n+1}${st?` · 🔥 ${st}-day streak`:""}</p></div></div>
+   ${ct?`<button class="bigcta" data-cont>Continue · World ${ct.c.num}, ${ct.k==="boss"?"boss":"level "+ct.k}</button>`:`<button class="bigcta">Every world cleared 👑</button>`}
+   ${ev?(()=>{const u=A.until(ev.t);return `<p class="small mut" style="text-align:center;margin:8px 0 0">${esc(ev.title)} in <b style="color:var(--fg)">${u.n} ${u.u}</b></p>`;})():""}</section>
+  <section class="bub"><div class="row between"><h3 style="margin:0">Today's quests</h3><span class="small mut">+60 XP each</span></div>
+   ${qs.map(q=>`<div class="quest ${q.done?"done":""}"><span class="qc">${q.done?"✓":""}</span><span>${esc(q.name)}</span><span class="num mut">${q.have}/${q.need}</span></div>`).join("")}</section>
+  ${tr?`<button class="bub trouble" data-trouble><b>☠ ${tr} Trouble Spot${tr>1?"s":""}</b><span class="small mut">Missed twice. Clear them for good.</span></button>`:""}
+  <div class="isles">${ws.map((c,i)=>{const open=worldOpen(i),you=ct&&ct.c.id===c.id;return `<button class="isleCard ${open?"":"locked"} ${you?"you":""}" data-w="${c.id}" style="--acc:${c.color}">${you?`<span class="youtag">YOU</span>`:""}
+    <div class="isleTxt"><span class="eyebrow" style="color:var(--acc)">WORLD ${c.num}</span><b>${esc(WORLDS[c.id].game)}</b><small>${esc(WORLDS[c.id].tag)}</small><span class="small">${starSVG(true,12)} ${wstars(c.id)}/18 · ${esc(c.short)}</span></div>${isle(c.color,!open,i)}</button>`;}).join("")}</div>
+  <p class="small mut" style="text-align:center;margin:18px 0">Worlds in your next exam's scope are always open.</p>`;
+  v.addEventListener("click",e=>{if(e.target.closest("[data-snd]")){g.sound=!g.sound;A.save();A.render();}
+    if(e.target.closest("[data-cont]")&&ct){sfx.tap();A.push({v:"world",ch:ct.c.id});startRun(ct.c.id,ct.k);}
+    if(e.target.closest("[data-trouble]"))A.push({v:"trouble"});
+    const w=e.target.closest("[data-w]");if(w){const i=ws.findIndex(c=>c.id===w.dataset.w);if(!worldOpen(i)){sfx.miss();A.toast("🔒","World locked",`Clear level 3 of World ${ws[i-1].num} to open it.`);return;}sfx.tap();A.push({v:"world",ch:w.dataset.w});}});
+  A.setKey(e=>{if(e.key==="Enter"&&ct){A.push({v:"world",ch:ct.c.id});startRun(ct.c.id,ct.k);return true;}});};
+
+const lvName=(id,k)=>k<=3?WORLDS[id].lv[k-1]:LV_EXTRA[k-4];
+A.VIEWS.world=(v,p)=>{const ch=A.chOf(p.ch);A.setAcc(v,ch);const W=WORLDS[ch.id],L=gq().lv[ch.id]||{};const bossOpen=[1,2,3,4,5].every(k=>L[k]);
+  const learn=ch.lessons.filter((l,i)=>i<3||!!miniFor(l)).slice(0,4);
+  v.innerHTML=`<div class="eyebrow" style="color:var(--acc);margin-top:12px">WORLD ${ch.num} · ${esc(ch.title.toUpperCase())}</div><h1 style="margin:2px 0 10px">${esc(W.game)}</h1>
+  <section class="bub tint"><p style="margin:0 0 10px">${esc(W.tag)}. ${esc(G.mini[W.mini]?G.mini[W.mini].blurb:"")}. Every round is generated fresh, graded on the real physics, and explained in Prather's notation.</p>
+   <div class="chips" style="flex-wrap:wrap">${learn.map(l=>`<button class="lchip" data-l="${l.id}">Learn: ${M(l.title)}</button>`).join("")}</div></section>
+  <div class="levels">${[1,2,3,4,5].map(k=>{const o=lvOpen(ch.id,k),s=L[k]||0,[n,d]=lvName(ch.id,k);return `<button class="lvrow ${o?"":"locked"} ${s?"done":""}" data-k="${k}"><span class="lvn">${o?k:"🔒"}</span><span class="lvt"><b>${esc(n)}</b><small>${esc(d)}</small></span>${stars3(s,15)}</button>`;}).join("")}
+   <button class="lvrow boss ${bossOpen?"":"locked"}" data-k="boss"><span class="lvn">${bossOpen?"👾":"🔒"}</span><span class="lvt"><b>Boss · World ${ch.num}</b><small>${bossOpen?"30 s per round. HW-level First Moves and derivations.":"Clear all 5 levels to wake it"}</small></span>${stars3(gq().bossW[ch.id]||0,15)}</button></div>`;
+  v.addEventListener("click",e=>{const r=e.target.closest("[data-k]");if(r){const k=r.dataset.k==="boss"?"boss":+r.dataset.k;if(k==="boss"?!bossOpen:!lvOpen(ch.id,k)){sfx.miss();A.toast("🔒",k==="boss"?"Boss sleeping":"Locked",k==="boss"?"Clear all five levels first.":`Clear level ${k-1} first.`);return;}sfx.tap();startRun(ch.id,k);}
+    const l=e.target.closest("[data-l]");if(l)A.push({v:"lesson",ch:ch.id,id:l.dataset.l});});};
+
+/* ---------- run engine (SPAN style) ---------- */
+let RUN=null;
+function startRun(chId,k){const ch=A.chOf(chId),W=WORLDS[chId];const rounds=[];const boss=k==="boss";
+  const mk=(name,o)=>({name,...o});
+  const miniR=(key,ro,hard,force)=>mk(G.mini[key].title,{run:(el,fin)=>G.mini[key].play(el,{ch,lesson:ch.lessons[0],round:ro,hard,force,sfx,M,tex,TX,scene3d:G.scene3d},fin)});
+  const qR=id=>{const it=A.ITEMS[id];return mk(it.kind==="fm"?"First move":"Concept",{id,run:(el,fin)=>mcqRound(el,it,fin)});};
+  const dR=l=>mk("Derivation",{run:(el,fin)=>derivRound(el,l,fin)});
+  const pool=kind=>A.shuffle(A.ORDER.filter(id=>A.ITEMS[id].ch===chId&&A.ITEMS[id].kind===kind));
+  const derivLs=A.shuffle(ch.lessons.filter(hasDeriv));
+  let time=0;
+  if(!boss&&k<=3){const key=(W.alt&&W.alt[k])||W.mini;const force=W.force&&W.force[k]&&key===W.mini?W.force[k]:undefined;for(let r=0;r<RPL;r++)rounds.push(miniR(key,k-1+(r>=3?1:0),k===3&&r>=3,force));}
+  else if(k===4){const fm=pool("fm");for(let r=0;r<RPL;r++)rounds.push(r%2===1&&derivLs.length?dR(derivLs[(r>>1)%derivLs.length]):qR(fm[r%Math.max(1,fm.length)]));}
+  else{time=boss?30:45;const fm=pool("fm"),cd=pool("card");const keys=[...new Set([W.mini,...Object.values(W.alt||{})])];
+    const n=boss?8:RPL;for(let r=0;r<n;r++){const t=r%4;rounds.push(t===0?miniR(keys[r%keys.length],2,true):t===1&&fm.length?qR(fm[r%fm.length]):t===2&&derivLs.length&&boss?dR(derivLs[r%derivLs.length]):qR((cd.length?cd:fm)[r%(cd.length||fm.length)]));}
+    if(!boss)rounds.forEach(x=>{if(x.name===G.mini[W.mini]?.title)x.time=90;});else rounds.forEach(x=>{if(x.name.length&&!x.id&&x.name!=="Derivation")x.time=90;});}
+  RUN={ch:chId,k,boss,rounds,i:0,hearts:3,combo:0,best:0,score:0,wins:0,time,over:null};
+  const g=gq();g.qWorlds=g.qWorlds||[];if(!g.qWorlds.includes(chId)){g.qWorlds.push(chId);bumpQuest("world2");}
+  A.push({v:"run"});}
+A.VIEWS.run=v=>{if(!RUN){A.back();return;}const ch=A.chOf(RUN.ch);A.setAcc(v,ch);if(RUN.over)return runEnd(v);
+  const n=RUN.rounds.length,rd=RUN.rounds[RUN.i],[nm]=RUN.boss?["Boss"]:lvName(RUN.ch,RUN.k);const T=rd.time||RUN.time;
+  v.innerHTML=`<div class="battle"><div class="hud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<RUN.hearts?"on":""}">♥</i>`).join("")}</div>
+   <div class="hudmid"><div class="progress"><i style="width:${100*RUN.i/n}%"></i></div><small>${esc(RUN.boss?`Boss · World ${ch.num}`:`${WORLDS[RUN.ch].game} · ${nm}`)} · ${RUN.i+1}/${n}</small></div><span class="combo2 ${RUN.combo>=2?"hot":""}">×${Math.max(1,RUN.combo)}</span></div>
+   ${T?`<div class="timebar"><i data-tb></i></div>`:""}
+   <section class="bub gcard" data-gcard><div class="eyebrow" style="color:var(--acc)">${esc(rd.name.toUpperCase())}</div><div data-stage></div></section><div data-fb></div>
+   <p class="small mut" data-qm hidden style="text-align:center">Tap × again to leave. This run won't count.</p></div>`;
+  let qa=false;v.querySelector("[data-quit]").onclick=()=>{if(qa){clearInterval(RUN.tmr);RUN=null;A.back();}else{qa=true;v.querySelector("[data-qm]").hidden=false;}};
+  let done=false;const t0=Date.now();
+  const fin=(score,detail)=>{if(done)return;done=true;clearInterval(RUN.tmr);const ok=score>=0.7;if(rd.id)A.grade(rd.id,ok,true);
+    const card=v.querySelector("[data-gcard]");card.classList.add(ok?"flash-ok":"flash-no");
+    let head;if(ok){RUN.combo++;RUN.wins++;RUN.best=Math.max(RUN.best,RUN.combo);const mult=1+Math.min(RUN.combo-1,6)*0.25;let pts=Math.round(100*mult*(0.5+score/2));if(T)pts+=Math.round(Math.max(0,T*1000-(Date.now()-t0))/250);RUN.score+=pts;head=`+${pts}`;sfx.hit(RUN.combo);buzz(15);bumpQuest("rounds15");if(RUN.combo>=5)bumpQuest("combo5");if(rd.name==="Derivation"||rd.name==="First move")bumpQuest("moves3");}
+    else{RUN.combo=0;RUN.hearts--;head=RUN.hearts>0?"−1 heart":"Out of hearts";sfx.miss();buzz([40,30,40]);document.body.classList.add("shakey");setTimeout(()=>document.body.classList.remove("shakey"),320);}
+    v.querySelector(".hearts").innerHTML=[0,1,2].map(i=>`<i class="${i<RUN.hearts?"on":""}">♥</i>`).join("");const cb=v.querySelector(".combo2");cb.textContent="×"+Math.max(1,RUN.combo);cb.classList.toggle("hot",RUN.combo>=2);
+    const last=RUN.hearts<=0||RUN.i+1>=n;
+    v.querySelector("[data-fb]").innerHTML=`<div class="fbcard ${ok?"ok":"no"}"><b class="fbh">${head}</b>${detail?`<div class="fbw">${detail}</div>`:""}<button class="bigcta" data-next>${last?"See results":"Next round"} ▸</button></div>`;
+    v.querySelector("[data-next]").onclick=nxt;v.querySelector("[data-fb]").scrollIntoView({block:"nearest",behavior:RM()?"auto":"smooth"});A.setKey(e=>{if(e.key==="Enter"||e.key==="ArrowRight"){nxt();return true;}});};
+  const nxt=()=>{RUN.i++;if(RUN.hearts<=0||RUN.i>=n)finishRun();A.render();scrollTo(0,0);};
+  if(T){const tb=v.querySelector("[data-tb]");RUN.tmr=setInterval(()=>{const f=1-(Date.now()-t0)/(T*1000);if(tb)tb.style.width=Math.max(0,f*100)+"%";if(f<=0.2&&tb)tb.classList.add("low");if(f<=0)fin(0,"⏱ Time's up.");},100);}
+  rd.run(v.querySelector("[data-stage]"),fin);};
+function finishRun(){const g=gq();const won=RUN.hearts>0;const stars=won?RUN.hearts:0;const xp=Math.round(RUN.score/10)+(won?40:0);let newBest=false;
+  if(RUN.boss){if(won&&stars>(g.bossW[RUN.ch]||0)){g.bossW[RUN.ch]=stars;newBest=true;}if(won){bumpQuest("boss1");A.award("boss-"+RUN.ch,`World ${A.chOf(RUN.ch).num} boss defeated`,WORLDS[RUN.ch].game);}}
+  else{const L=g.lv[RUN.ch]=g.lv[RUN.ch]||{};if(won&&stars>(L[RUN.k]||0)){L[RUN.k]=stars;newBest=true;}if(won){bumpQuest("clear2");if(stars===3)bumpQuest("perfect1");}}
+  addXP(xp);A.markDay();A.save();RUN.over={won,stars,xp,newBest};if(won)sfx.win();else sfx.lose();if(won&&stars===3)A.confetti();}
+function runEnd(v){const o=RUN.over,ch=A.chOf(RUN.ch);const nextK=!RUN.boss&&RUN.k<5&&o.won?RUN.k+1:null;
+  v.innerHTML=`<section class="bub endcard ${o.won?"won":"lost"}"><div class="eyebrow">${esc(RUN.boss?`Boss · World ${ch.num}`:`${WORLDS[RUN.ch].game} · Level ${RUN.k}`)}</div>
+   <h1 class="endh">${o.won?(o.stars===3?"Flawless!":"Level cleared!"):"Out of hearts"}</h1>
+   <div class="bigstars">${[1,2,3].map(k=>`<span class="${k<=o.stars?"on":""}" style="animation-delay:${k*180}ms">★</span>`).join("")}</div>
+   <div class="endstats"><div><b class="num" data-cnt="${RUN.score}">0</b><span>score</span></div><div><b class="num">×${RUN.best}</b><span>best combo</span></div><div><b class="num">+${o.xp}</b><span>XP</span></div></div>
+   ${o.newBest?`<p class="small" style="text-align:center;color:var(--good)">New best on this level!</p>`:""}
+   ${!o.won?`<p class="small mut" style="text-align:center">Every miss went to your review queue. Run it back.</p>`:""}
+   <div class="grid2" style="margin-top:14px"><button class="btn" data-again>${o.won?"Play again":"Try again"}</button>${nextK?`<button class="bigcta" data-nextlv>Level ${nextK} ▸</button>`:`<button class="bigcta" data-map>World map</button>`}</div></section>`;
+  const el=v.querySelector("[data-cnt]");const target=+el.dataset.cnt;const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/900);el.textContent=Math.round(target*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f);})(t0);
+  const chId=RUN.ch,k=RUN.k;const pop=()=>{const st=A.NAV.stack;while(st.length&&st[st.length-1].v==="run")st.pop();};
+  v.querySelector("[data-again]").onclick=()=>{pop();startRun(chId,k);};
+  const nx=v.querySelector("[data-nextlv]");if(nx)nx.onclick=()=>{pop();startRun(chId,nextK);};
+  const mp=v.querySelector("[data-map]");if(mp)mp.onclick=()=>{RUN=null;pop();A.render();scrollTo(0,0);};
+  A.setKey(e=>{if(e.key==="Enter"){(nx||mp).click();return true;}});}
+G.unlockAll=on=>{gq().unlockAll=on;A.save();};
+
 G.API=A;
 };
 

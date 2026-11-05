@@ -406,6 +406,15 @@ body{font-size:17px}
 .hwu{font-size:16px;color:var(--muted);white-space:nowrap}
 .hwstep{margin:10px 0;padding:10px 12px;border-radius:12px;background:rgba(242,191,76,.07);border-left:3px solid #F2BF4C;overflow-x:auto}.hwstep.hint{background:rgba(199,182,255,.08);border-left-color:#C7B6FF}
 .tag{font-size:11px;padding:2px 7px;border-radius:7px;background:rgba(255,159,90,.18);color:#FF9F5A;font-weight:700}
+.hwtip{margin:12px 0 2px;padding:11px 13px;border-radius:14px;background:linear-gradient(135deg,rgba(255,159,90,.13),rgba(199,182,255,.08));border:1px solid rgba(255,159,90,.3);font-size:14.5px;line-height:1.45}
+.hwtiph{display:block;font:800 11px var(--fn);letter-spacing:.08em;text-transform:uppercase;color:#FF9F5A;margin-bottom:4px}
+.hwnotes{margin-top:12px;padding:11px 13px;border-radius:14px;background:rgba(199,182,255,.07);border-left:3px solid #C7B6FF;font-size:14px;line-height:1.45}
+.hwnotes>b{display:block;font:800 11px var(--fn);letter-spacing:.08em;text-transform:uppercase;color:#C7B6FF;margin-bottom:2px}
+.hwnotes p{margin:6px 0}.hwnotes ol{margin:6px 0 0;padding-left:20px}.hwnotes li{margin:4px 0}
+.hweq{display:block;width:100%;text-align:left;margin:12px 0 2px;padding:10px 13px;border-radius:14px;background:rgba(79,200,216,.08);border:1px solid rgba(79,200,216,.35);color:var(--fg);overflow-x:auto}
+.hweq.blur .mathbox{filter:blur(7px);opacity:.6}
+.hwsheetpop{position:sticky;top:calc(130px + var(--sat));z-index:6;max-height:62vh;overflow:auto;margin:0 0 10px;padding:12px;border-radius:18px;background:var(--surface-2);border:1px solid var(--line-2);box-shadow:0 20px 40px -10px rgba(0,0,0,.6)}
+.hwsheetpop[hidden]{display:none}
 </style>
 </head><body>
 <noscript>MAXWELL needs JavaScript.</noscript>
@@ -2282,7 +2291,7 @@ G.hwU={C0,ETA0,f3:(x,n)=>{n=n||4;if(!isFinite(x))return"—";const a=Math.abs(x)
 G.hwArena=function(A,E){
 const {esc,M,tex}=A,sfx=E.sfx,buzz=E.buzz||(()=>{});
 const st=()=>{const g=E.gs();if(!g.hw)g.hw={};return g.hw;};
-const enrich=ch=>{const C=A.chOf(ch);(G.hw[ch]||[]).forEach(d=>{if(d._e)return;d._e=1;const cp=(C&&C.problems||[]).find(x=>x.id===d.id)||{};["pic","trap","tag"].forEach(k=>{if(d[k]==null&&cp[k]!=null)d[k]=cp[k];});});};
+const enrich=ch=>{const C=A.chOf(ch);(G.hw[ch]||[]).forEach(d=>{if(d._e)return;d._e=1;const cp=(C&&C.problems||[]).find(x=>x.id===d.id)||{};["pic","trap","tag"].forEach(k=>{if(d[k]==null&&cp[k]!=null)d[k]=cp[k];});const co=((G.hwCoach||{})[ch]||{})[d.id];if(co)["notes","tips","eqs","card"].forEach(k=>{if(d[k]==null&&co[k]!=null)d[k]=co[k];});});};
 const defs=ch=>(enrich(ch),G.hw[ch]||[]).slice().sort((x,y)=>y.like-x.like||x.min-y.min);
 const chs=()=>Object.keys(G.hw).filter(k=>(G.hw[k]||[]).length);
 function quizCh(){const ev=A.nextEvent&&A.nextEvent();if(ev&&ev.chs){const c=ev.chs.find(c=>G.hw[c]);if(c)return{c,ev};}return{c:chs().sort().slice(-1)[0],ev:null};}
@@ -2310,7 +2319,6 @@ A.VIEWS.hwlist=(v,p)=>{const chId=p.ch||quizCh().c,ch=A.chOf(chId);A.setAcc(v,ch
    <p class="small mut">Ranked by how likely each problem is to show up as a quiz. Short, single-idea problems that fit 10–15 minutes and match what he stressed in lecture come first. This ranking is MAXWELL's estimate, not his list, so play them all.</p>
    <p class="small mut">First play uses the <b>assigned numbers</b>. After that, <b>Remix</b> gives you new numbers, so you can't just remember the answer.</p></section>
   <button class="bigcta" data-mock style="margin:10px 0 4px">🎲 Mock quiz · surprise problem, new numbers, no hints</button>
-  ${(G.hwSheet||{})[chId]?`<details class="bub hwsheet"><summary><b>📄 Everything you need on one card</b> <span class="small mut">(tap)</span></summary>${G.hwSheet[chId].map(r=>`<div class="hwstep"><b>${M(r[0])}</b>${A.block(r[1])}${r[2]?`<p class="small mut">${M(r[2])}</p>`:""}</div>`).join("")}</details>`:""}
   <div class="hwlist">${L.map((d,i)=>{const s=S[d.id]||{};return `<button class="hwrow" data-p="${esc(d.id)}"><span class="hwrank">#${i+1}</span>
     <span class="hwbody"><b>HW ${esc(d.id)} <span class="mut" style="font-weight:500">· ${esc(d.tag||"")}</span></b><small>${M(d.why)}</small>
     <span class="hwmeta">${flames(d.like)} <span>~${d.min} min</span> ${s.plays?`<span>${starS(s.stars||0)}</span><span class="mut">best ${s.best||0}</span>`:`<span class="mut">not played</span>`}</span></span><span class="hwgo">▸</span></button>`;}).join("")}</div>`;
@@ -2332,11 +2340,13 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
   const sg=R.stages[R.i],n=R.stages.length;
   v.innerHTML=`<div class="battle"><div class="hud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<R.hearts?"on":""}">♥</i>`).join("")}</div>
    <div class="hudmid"><div class="progress"><i style="width:${100*R.i/n}%"></i></div><small>HW ${esc(R.id)} ${R.mock?"· MOCK QUIZ":R.remix?"· Remix":"· as assigned"} · ${R.i+1}/${n}</small></div>
-   <span class="hwclock" data-clock>0:00</span><button class="xbtn" data-prob aria-label="Problem">📄</button></div>
-  <details class="bub hwst" open><summary><b>Problem HW ${esc(R.id)}</b>${R.remix?` <span class="tag">new numbers</span>`:""}</summary><div class="hwsttxt">${M(R.d.st(R.p))}</div></details>
+   <span class="hwclock" data-clock>0:00</span><button class="xbtn" data-prob aria-label="Problem">📄</button>${!R.mock&&R.d.card?`<button class="xbtn" data-sheet aria-label="Formula sheet">📐</button>`:""}</div><div class="hwsheetpop" data-sheetpop hidden></div>
+  <section class="bub hwst"><div><b>Problem HW ${esc(R.id)}</b>${R.remix?` <span class="tag">new numbers</span>`:""}</div><div class="hwsttxt">${M(R.d.st(R.p))}</div>${!R.mock&&R.d.notes&&R.i===0?`<div class="hwnotes"><b>How he’d frame it</b>${R.d.notes.map(n=>`<p>${M(n)}</p>`).join("")}</div>`:""}</section>
   ${sceneFor(R)?`<div class="hwscene"><canvas class="viz game3d"></canvas><small class="mut" data-cap></small></div>`:""}
   <section class="bub hwq"><div class="eyebrow">${sg.first?"STEP 1 · FIRST MOVE":sg.opts?"CONCEPT CHECK":"COMPUTE · "+esc(sg.k)}</div>
    <div class="q" style="font-size:17px">${M(sg.q)}</div>
+   ${!R.mock&&(R.d.eqs||[])[R.i]?`<button class="hweq ${R.remix?"blur":""}" data-eq><span class="hwtiph" style="color:#4FC8D8">📐 The equation${R.remix?" · tap to reveal (say it first)":""}</span>${A.block(R.d.eqs[R.i])}</button>`:""}
+   ${!R.mock&&(R.d.tips||[])[R.i]?`<div class="hwtip"><span class="hwtiph">🎓 Prather’s way</span>${M(R.d.tips[R.i])}</div>`:""}
    ${sg.opts?`<div class="opts">${sg.opts.map((o,k)=>`<button class="opt" data-k="${k}"><span class="k">${k+1}</span><span class="ot">${M(o)}</span></button>`).join("")}</div>`
      :`<div class="hwin"><input type="text" inputmode="decimal" autocomplete="off" placeholder="your answer" data-in aria-label="${esc(sg.k)}"><span class="hwu">${M(sg.u?("$"+sg.u+"$"):"")}</span></div>
        <div class="row" style="gap:8px;margin-top:10px">${R.mock?"":`<button class="btn" data-hint>Hint (−40)</button>`}<button class="btn cta" style="flex:1" data-go>Check ▸</button></div>
@@ -2345,7 +2355,9 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
   const clk=v.querySelector("[data-clock]");const tick=()=>{if(!clk.isConnected)return;const s=(Date.now()-R.t0)/1000;clk.textContent=fmtT(s);clk.classList.toggle("over",s>720);setTimeout(tick,500);};tick();
   const sc=sceneFor(R);if(sc){const cv=v.querySelector("canvas");drawScene(cv,sc,v.querySelector("[data-cap]"));}
   v.querySelector("[data-quit]").onclick=()=>{R=null;A.back();};
-  v.querySelector("[data-prob]").onclick=()=>{const dd=v.querySelector(".hwst");dd.open=!dd.open;dd.scrollIntoView({behavior:"smooth",block:"start"});};
+  const eqb=v.querySelector("[data-eq]");if(eqb)eqb.onclick=()=>{eqb.classList.remove("blur");sfx.tap();};
+  const shb=v.querySelector("[data-sheet]");if(shb)shb.onclick=()=>{const pop=v.querySelector("[data-sheetpop]");if(pop.hidden){pop.innerHTML=`<div class="row between"><b>📐 Equations for HW ${esc(R.id)} only</b><button class="btn" data-shx>Close</button></div>`+R.d.card.map(r=>`<div class="hwstep"><b>${M(r[0])}</b>${A.block(r[1])}${r[2]?`<p class="small mut">${M(r[2])}</p>`:""}</div>`).join("");pop.querySelector("[data-shx]").onclick=()=>{pop.hidden=true;};}pop.hidden=!pop.hidden;sfx.tap();};
+  v.querySelector("[data-prob]").onclick=()=>{const dd=v.querySelector(".hwst");dd.scrollIntoView({behavior:"smooth",block:"start"});};
   const fb=v.querySelector("[data-fb]");
   const finish=(ok,yourTxt)=>{if(R.answered)return;R.answered=true;const s=R.stages[R.i];
     if(ok){R.combo++;const pts=100+20*Math.min(R.combo,5)-(s.hinted?40:0);R.score+=pts;sfx.hit(R.combo);buzz(15);}else{R.combo=0;R.miss++;R.hearts=Math.max(0,R.hearts-1);sfx.miss();buzz([40,30,40]);v.querySelector(".hwq").classList.add("shake");}
@@ -2378,7 +2390,7 @@ function endView(v){const secs=(Date.now()-R.t0)/1000;if(!R.tEnd)R.tEnd=secs;con
    <h2 style="margin:0">${R.won?(stars===3?"Quiz-ready.":"Got there."):"Out of hearts."}</h2>
    <p class="small mut">${hits}/${n} steps right · ${fmtT(t)} on the clock ${t<=720?"(inside the 12-min quiz pace)":"(over the 12-min quiz pace)"} · ${R.score} pts</p>
    <p class="small">${stars===3?(R.remix?"You solved it with new numbers, no misses, inside quiz time. That's mastery.":"Now prove it with new numbers. Remix it."):"Replay it. Read every gold step card. The second pass is where it sticks."}</p></div>
-  <section class="bub"><h3 style="margin-top:0">The full solution, his way</h3>${R.d.pic?`<p class="small">${M(R.d.pic)}</p>`:""}<p class="small"><b>First move:</b> ${M(R.d.first.ok)}</p>
+  <section class="bub"><h3 style="margin-top:0">The full solution, his way</h3>${R.d.pic?`<p class="small">${M(R.d.pic)}</p>`:""}${R.d.notes?R.d.notes.map(n=>`<p class="small">${M(n)}</p>`).join(""):""}<p class="small"><b>First move:</b> ${M(R.d.first.ok)}</p>${R.d.tips?`<div class="hwnotes"><b>Step-by-step, his way</b><ol>${R.d.tips.map(t=>`<li>${M(t)}</li>`).join("")}</ol></div>`:""}
    ${R.sol.steps.map(s=>`<div class="hwstep"><b>${M(s[0])}</b>${A.block(s[1])}${s[2]?`<p class="small mut">${M(s[2])}</p>`:""}</div>`).join("")}
    ${R.d.trap?`<p class="small"><b style="color:#F2668A">Trap:</b> ${M(R.d.trap)}</p>`:""}</section>
   <div class="row" style="gap:8px;margin:12px 0 30px"><button class="btn" style="flex:1" data-again>${R.remix?"Remix again":"Remix (new numbers)"}</button>${nxt?`<button class="btn cta" style="flex:1" data-next>Next: HW ${esc(nxt.id)} ▸</button>`:`<button class="btn cta" style="flex:1" data-list>All problems</button>`}</div>`;
@@ -3500,15 +3512,58 @@ L.push({id:"8.6",like:1,min:20,why:"Six answers and binomial weights. Too long f
   return{steps:st,stages:[{k:"Z_1",q:"(a) Impedance of section 1 (next to the empty guide)?",u:"\\Omega",v:Z1,s:1},{k:"Z_2",q:"(a) Section 2?",u:"\\Omega",v:Z2,s:1},{k:"ε_r1",q:"(b) $\\varepsilon_{r1}$?",u:"",v:e1,s:2},{k:"ε_r2",q:"(b) $\\varepsilon_{r2}$?",u:"",v:e2,s:2},{k:"ℓ_1",q:"(c) Length of section 1?",u:"\\text{cm}",v:l1,s:3},{k:"ℓ_2",q:"(c) Length of section 2?",u:"\\text{cm}",v:l2,s:3}]};}});
 
 G.hw.ch8=L;
-G.hwSheet=G.hwSheet||{};G.hwSheet.ch8=[
- ["1 · Medium first (filled guide)","v=\\frac{c}{\\sqrt{\\varepsilon_r}},\\qquad \\eta=\\frac{120\\pi}{\\sqrt{\\varepsilon_r}},\\qquad \\lambda=\\frac vf","Everything below uses $v$, $\\eta$, $\\lambda$ of the <b>filling</b>. Air: $v=c$, $\\eta_0=377$."],
- ["2 · Cutoff","(f_c)_{mn}=\\frac{v}{2}\\sqrt{\\left(\\frac ma\\right)^2+\\left(\\frac nb\\right)^2},\\qquad (f_c)_{10}=\\frac{v}{2a}","Dominant = TE$_{10}$ when $a>b$. TM needs $m,n\\ge1$. Inches × 2.54 = cm, then to meters."],
- ["3 · The one square root","\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}","Compute it once. Every answer below is $v$, $\\lambda$ or $\\eta$ times or divided by it."],
- ["4 · The five answers","\\beta_z=\\beta\\sqrt\\cdot,\\quad \\lambda_g=\\frac{\\lambda}{\\sqrt\\cdot},\\quad v_p=\\frac{v}{\\sqrt\\cdot},\\quad v_g=v\\sqrt\\cdot","Check: $v_pv_g=v^2$. Delay uses $v_g$; phase uses $\\beta_z\\ell$ (radians!)."],
- ["5 · Wave impedance","Z^{TE}=\\frac{\\eta}{\\sqrt\\cdot}\\ (>\\eta),\\qquad Z^{TM}=\\eta\\sqrt\\cdot\\ (<\\eta)","Matching (8.5, 8.6): treat $Z_w$ as a line impedance, $Z_Q=\\sqrt{Z_1Z_3}$."],
- ["6 · Scaling and duality","f_c\\propto\\frac{1}{\\sqrt{\\varepsilon_r}}\\quad(\\text{factor }k\\Rightarrow\\varepsilon_r=k^2)\\qquad \\text{PMC: TE}\\to\\sin\\cdot\\sin,\\ \\text{TM}\\to\\cos\\cdot\\cos","Metal walls: TE is cos·cos, TM is sin·sin. PMC swaps them."]];
 
 })(window.MXG);
+
+/* QUIZ ARENA coaching for HW 9 (Ch. 8): Prather-voiced notes, a tip per stage, the equation per stage (eqs[i], aligned with
+   stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
+   Quotes are from L17/L18 as already sourced in src/coach/ch8.js; everything else is his method, paraphrased. */
+(function(G){G.hwCoach=G.hwCoach||{};
+const FC="(f_c)_{10}=\\frac{v}{2a}",ROOT="\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}",MED="v=\\frac{c}{\\sqrt{\\varepsilon_r}},\\qquad \\eta=\\frac{120\\pi}{\\sqrt{\\varepsilon_r}}";
+const VG="v_g=v\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}",VP="v_p=\\frac{v}{\\sqrt{1-(f_c/f)^2}}",LG="\\lambda_g=\\frac{\\lambda}{\\sqrt{1-(f_c/f)^2}},\\quad \\lambda=\\frac vf",ZTE="Z^{TE}=\\frac{\\eta}{\\sqrt{1-(f_c/f)^2}}";
+const BZ="\\beta_z=\\beta\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2},\\quad \\beta=\\frac{2\\pi f}{v}",ZW="Z_w=\\frac{\\eta_0}{\\sqrt{\\varepsilon_r-(f_{c0}/f)^2}}";
+G.hwCoach.ch8={
+"8.1":{notes:["He calls a waveguide “nothing more than a little hose.” A delay line is just a long hose: the question is how long the signal takes to come out the other end.","Signals ride at the <b>group velocity</b>. The phase crests run faster than light and carry nothing, so $v_p$ is never the answer for delay."],
+ tips:["Read the problem for the physical quantity. “Delay” means time for energy to travel, so $v_g$ decides the answer.","Air-filled, dominant mode, so TE$_{10}$: only the wide side $a$ matters. Put $a$ in <b>meters</b> before you divide.","Ask yourself what moves the energy. He says nothing physical moves at $v_p$.","Compute the square root once, then multiply by $c$ (air). Sanity check: $v_g$ must come out below $3\\times10^8$.","Distance = speed × time. Watch the μs: $\\tau\\times10^{-6}$."],
+ eqs:[null,"(f_c)_{10}=\\frac{c}{2a}",null,"v_g=c\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}","\\ell=v_g\\,\\tau"],
+ card:[["Cutoff","(f_c)_{10}=\\frac{c}{2a}"],["Group velocity",VG.replace("v_g=v","v_g=c")],["Delay","\\ell=v_g\\tau"]]},
+"8.2":{notes:["This is the whole L18 recipe in one problem: cutoff, then one square root, then the five answers fall out.","The one change from the air problems: the filling. Everything inside the guide uses the medium's $v$, $\\eta$ and $\\lambda$, never $c$, 377 or 3 cm."],
+ tips:["Fix the medium first. Swap $c\\to v$ and $\\eta_0\\to\\eta$, then the problem is just the air recipe.","$a>b$, so the first mode is half a wavelength across $a$. In his words, the mode starts at zero on one wall, peaks in the middle, and goes back to zero. That's TE$_{10}$.","Cutoff with the <b>medium's</b> $v$. Sanity: it's the air value divided by $\\sqrt{\\varepsilon_r}$.","Get the square root first and reuse it. $\\lambda$ here is the wavelength <b>in the dielectric</b>, $v/f$.","TE looks like an open circuit at cutoff (∞), so $Z^{TE}$ sits <b>above</b> $\\eta$. Divide by the root.","$v_p$ is faster than $v$: divide by the root.","$v_g$ is slower than $v$: multiply by the root. Check $v_pv_g=v^2$."],
+ eqs:[MED,null,FC,LG,ZTE,VP,VG],
+ card:[["Medium",MED],["Cutoff",FC],["Root",ROOT],["Guide wavelength",LG],["TE impedance",ZTE],["Velocities",VP+",\\qquad "+VG]]},
+"8.4":{notes:["Same hose as 8.1, but filled. He likes the “one change” version of a homework problem, and the change is $c\\to v$, everywhere."],
+ tips:["Medium first: $v=c/\\sqrt{\\varepsilon_r}$. Then everything from 8.1 with $v$ in place of $c$.","Cutoff uses $v$, not $c$. The filling lowers the cutoff by $\\sqrt{\\varepsilon_r}$, not by $\\varepsilon_r$.","Group velocity: $v$ times the root. Using $c$ here is the trap.","Distance = $v_g\\tau$. It should come out shorter than the air answer."],
+ eqs:[MED.split(",")[0],FC,VG,"\\ell=v_g\\,\\tau"],
+ card:[["Medium","v=\\frac{c}{\\sqrt{\\varepsilon_r}}"],["Cutoff",FC],["Group velocity",VG],["Delay","\\ell=v_g\\tau"]]},
+"8.9":{notes:["Two lines. Cutoff is $\\frac{1}{2a\\sqrt{\\mu\\varepsilon}}$, so filling the guide slows light inside it and drags every cutoff down by $\\sqrt{\\varepsilon_r}$."],
+ tips:["Write $f_c=\\frac{1}{2a\\sqrt{\\mu\\varepsilon}}$ and look at how it depends on $\\varepsilon$.","Free space: $c/2a$, with $a$ in meters.","A factor $k$ in frequency is a factor $k^2$ in $\\varepsilon_r$. Answering $k$ is the trap."],
+ eqs:[null,"(f_c)_{10}=\\frac{c}{2a}","\\frac{f_c}{f_c'}=\\sqrt{\\varepsilon_r}\\ \\Rightarrow\\ \\varepsilon_r=k^2"],
+ card:[["Cutoff","(f_c)_{10}=\\frac{1}{2a\\sqrt{\\mu\\varepsilon}}=\\frac{c}{2a\\sqrt{\\varepsilon_r}}"],["Scaling","\\varepsilon_r=\\left(\\frac{f_c}{f_c'}\\right)^2"]]},
+"8.3":{notes:["Phase builds up as $e^{-j\\beta_zz}$, so a length $\\ell$ of guide adds $\\beta_z\\ell$ radians. Filling the guide raises $\\beta_z$, so the same length gives more phase.","Two unit traps live here: inches (× 2.54) and degrees (→ radians)."],
+ tips:["Units before anything: inches to cm to meters. Then this is just $\\beta_z$.","Cutoff from $a$ only, then $\\beta=2\\pi f/c$, then multiply by the root.","Convert the phase to radians <b>before</b> dividing by $\\beta_z$.","Filled: the cutoff drops by $\\sqrt{\\varepsilon_r}$ and $\\beta$ rises by $\\sqrt{\\varepsilon_r}$. New $\\beta_z$ times the same $\\ell$, then back to degrees."],
+ eqs:[null,BZ.replace("{v}","{c}"),"\\ell=\\frac{\\phi_{\\text{rad}}}{\\beta_z},\\qquad \\phi_{\\text{rad}}=\\phi^\\circ\\frac{\\pi}{180}","\\phi=\\beta_z'\\ell,\\quad \\beta'=\\sqrt{\\varepsilon_r}\\beta,\\quad f_c'=\\frac{f_c}{\\sqrt{\\varepsilon_r}}"],
+ card:[["Units","1\\ \\text{in}=2.54\\ \\text{cm}"],["Propagation constant",BZ],["Phase","\\phi=\\beta_z\\ell\\ \\ (\\text{radians})"]]},
+"8.10":{notes:["PMC is the dual of PEC: swap E↔H. Metal kills tangential E; a magnetic wall kills tangential H.","He gets the general solution first, then lets the walls throw out terms. That's “the whole point of these vector potentials.”"],
+ tips:["Ask which field the wall zeroes, then whether that's the potential itself or its slope.","PMC: tangential $\\mathbf H$ and normal $\\mathbf E$ vanish. It's the PEC rules with E and H swapped.","TE$^z$ comes from $F_z$, and $H_z\\propto F_z$ is tangential to every wall. So $F_z$ itself is zero there, which gives sines.","Sine·sine: an index of 0 kills the whole field, so both start at 1.","Cutoff with both indices 1."],
+ eqs:[null,"\\hat n\\times\\mathbf H=0,\\qquad \\hat n\\cdot\\mathbf E=0","F_z=A\\sin\\frac{m\\pi x}{a}\\sin\\frac{n\\pi y}{b}e^{-j\\beta_zz}",null,"(f_c)_{11}=\\frac c2\\sqrt{\\frac1{a^2}+\\frac1{b^2}}"],
+ card:[["PMC wall","\\hat n\\times\\mathbf H=0,\\quad \\hat n\\cdot\\mathbf E=0"],["TE potential","F_z\\propto\\sin\\frac{m\\pi x}{a}\\sin\\frac{n\\pi y}{b},\\ m,n\\ge1"],["Cutoff","(f_c)_{mn}=\\frac{c}{2}\\sqrt{\\left(\\frac ma\\right)^2+\\left(\\frac nb\\right)^2}"]]},
+"8.8":{notes:["Rectangular guide with $a\\to\\infty$: only the plates at $y=0,b$ matter, so only the index $n$ survives.","His order: plug into Helmholtz, apply the walls, get the cutoff, then Faraday for H and integrate the Poynting vector."],
+ tips:["Helmholtz first, then the plates fix $\\beta_y$, then Faraday, then Poynting.","$\\frac{\\partial^2}{\\partial y^2}$ gives $-\\beta_y^2$ and $\\frac{\\partial^2}{\\partial z^2}$ gives $+\\gamma^2$. Set the sum to zero.","$E_x$ is tangential to both plates, so it must vanish at $y=b$. $n=0$ kills the field.","Cutoff is where $\\gamma=0$, so $\\beta_0=n\\pi/b$.","$H_y=\\frac{\\beta_z}{\\omega\\mu_0}E_x$. The $\\int_0^b\\sin^2$ gives $b/2$."],
+ eqs:[null,"\\nabla^2E_x+\\beta_0^2E_x=0","\\sin\\beta_yb=0\\Rightarrow\\beta_y=\\frac{n\\pi}{b}","(f_c)_n=\\frac{nc}{2b}","\\frac Pw=\\frac{bE_0^2}{4\\eta_0}\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}"],
+ card:[["Helmholtz","\\nabla^2E_x+\\beta_0^2E_x=0\\Rightarrow\\gamma=\\sqrt{\\beta_y^2-\\beta_0^2}"],["Eigenvalues","\\beta_y=\\frac{n\\pi}{b},\\ n\\ge1"],["Cutoff","(f_c)_n=\\frac{nc}{2b}"],["Power / width","\\frac Pw=\\int_0^b\\tfrac12\\text{Re}(E_xH_y^*)dy=\\frac{bE_0^2}{4\\eta_0}\\sqrt{1-(f_c/f)^2}"]]},
+"8.5":{notes:["Treat every guide section as a transmission line whose characteristic impedance is its wave impedance. Then it's a quarter-wave transformer.","Why he cares: on the LPD-25 radar, even a one percent back reflection is “a ton of power coming back at me.” Matching is real stuff."],
+ tips:["Impedance of each side, geometric mean, then invert for $\\varepsilon_r$.","Empty guide: $Z_w$ with $\\varepsilon_r=1$. Keep $f_{c0}$, the <b>air</b> cutoff, for every section.","Quarter-wave rule: geometric mean of the two ends.","Invert the shortcut: $\\varepsilon_r=(f_{c0}/f)^2+(\\eta_0/Z_Q)^2$. It is <b>not</b> $\\sqrt{\\varepsilon_{r1}\\varepsilon_{r3}}$.","Quarter of the <b>guide</b> wavelength in that section, not free space."],
+ eqs:[null,ZW,"Z_Q=\\sqrt{Z_1Z_3}","\\varepsilon_r=\\left(\\frac{f_{c0}}{f}\\right)^2+\\left(\\frac{\\eta_0}{Z_Q}\\right)^2","\\frac{\\lambda_g}{4}=\\frac{\\lambda_0}{4\\sqrt{\\varepsilon_r-(f_{c0}/f)^2}}"],
+ card:[["Wave impedance (any filling)",ZW],["Quarter-wave match","Z_Q=\\sqrt{Z_1Z_3}"],["Length","\\ell=\\frac{\\lambda_g}{4}=\\frac{\\lambda_0}{4\\sqrt{\\varepsilon_r-(f_{c0}/f)^2}}"]]},
+"8.11":{notes:["The TM partner of 8.10, so it's the same duality. With PMC walls the rules swap, and TM$_{10}$, impossible with metal, is allowed."],
+ tips:["$\\mathbf A=\\hat zA_z$. The walls kill tangential H, and H comes from the <b>slope</b> of $A_z$.","Zero slope at the walls gives cosines.","With cosines, an index can be 0, just not both (a constant gives no field).","$a>b$, so $m=1,n=0$ is the smallest cutoff.","Cutoff of TM$_{10}$: same number as TE$_{10}$ with metal walls."],
+ eqs:[null,"H_x\\propto\\frac{\\partial A_z}{\\partial y},\\quad H_y\\propto\\frac{\\partial A_z}{\\partial x}",null,null,"(f_c)_{10}=\\frac{c}{2a}"],
+ card:[["TM potential, PMC","A_z\\propto\\cos\\frac{m\\pi x}{a}\\cos\\frac{n\\pi y}{b},\\ m,n\\ge0\\ (\\text{not both }0)"],["Cutoff","(f_c)_{10}=\\frac{c}{2a}"]]},
+"8.6":{notes:["Instead of one big step, take two smaller steps sized by the binomial weights 1 : 2 : 1 in the <b>logs</b>. That flattens the reflection around $f_0$.","Too long for a 10-minute quiz. Know the log split and the $Z_w$ shortcut from 8.5."],
+ tips:["End impedances from 8.5, then split $\\ln(Z_L/Z_0)$ into quarters: 1, 2, 1.","First step takes $\\tfrac14$ of the log.","Second step takes $\\tfrac24$. Check: the last $\\tfrac14$ lands on $Z_L$.","Invert the 8.5 shortcut for each section.","Same inversion.","Each section is a quarter of <b>its own</b> guide wavelength.","Same formula, second section."],
+ eqs:[null,"Z_1=Z_0e^{\\frac14\\ln(Z_L/Z_0)}","Z_2=Z_1e^{\\frac24\\ln(Z_L/Z_0)}","\\varepsilon_r=\\left(\\frac{f_{c0}}{f}\\right)^2+\\left(\\frac{\\eta_0}{Z}\\right)^2","\\varepsilon_r=\\left(\\frac{f_{c0}}{f}\\right)^2+\\left(\\frac{\\eta_0}{Z}\\right)^2","\\frac{\\lambda_g}{4}=\\frac{\\lambda_0}{4\\sqrt{\\varepsilon_r-(f_{c0}/f)^2}}","\\frac{\\lambda_g}{4}=\\frac{\\lambda_0}{4\\sqrt{\\varepsilon_r-(f_{c0}/f)^2}}"],
+ card:[["Wave impedance",ZW],["Binomial, N = 2","\\ln\\frac{Z_{n+1}}{Z_n}=2^{-N}\\binom Nn\\ln\\frac{Z_L}{Z_0}"],["Section length","\\frac{\\lambda_g}{4}"]]}
+};})(window.MXG);
 
 /* Mini-game: RADIATION RANGE (Ch. 6 infinitesimal dipole & far field; Ch. 11 Example 6-4 rectangular aperture).
    Rounds: aim a probe at a pattern level of the sin²θ doughnut; classify near / intermediate / far by βr; decide which

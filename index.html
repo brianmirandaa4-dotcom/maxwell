@@ -3188,6 +3188,147 @@ L.push({id:"5.5",like:4,min:12,why:"Same interface as 5.4 read as a transmission
 G.hw.ch5=L;
 })(window.MXG);
 
+/* QUIZ ARENA · HW 8 = Balanis Ch. 6 #1, 2, 7, 8, 10, 12 (vector and Hertzian potentials, TE/TM construction).
+   All six are "show that / derive" problems: choice stages walk his key decisions, then MAXWELL adds a short numeric
+   tail that uses the derived result (ε0 = 8.854e-12, μ0 = 4πe-7, c = 3e8, η0 = 120π). Ordering = estimated quiz
+   likelihood (6.7 was already the 10/15 quiz). */
+(function(G){const U=G.hwU,{C0,ETA0,pick,rnd}=U,f=U.f3;
+const EPS0=8.854e-12,MU0=4*Math.PI*1e-7,PI=Math.PI;
+const ft=(x,n)=>{n=n||4;if(!isFinite(x))return"—";const a=Math.abs(x);if(a!==0&&(a>=1e5||a<1e-3)){const e=Math.floor(Math.log10(a));return `${+(x/Math.pow(10,e)).toPrecision(n)}\\times10^{${e}}`;}return(+x.toPrecision(n)).toString();};
+const BANDS=[{n:"X-band",a:2.286,b:1.016},{n:"Ku-band",a:1.580,b:0.790},{n:"C-band",a:3.485,b:1.580},{n:"K-band",a:1.067,b:0.432}];
+const fc11=(a,b)=>C0/2*Math.hypot(1/(a/100),1/(b/100));     // Hz, air, a,b in cm
+const L=[];
+
+/* ---- 6.12 TE from F ---- */
+L.push({id:"6.12",like:5,min:12,why:"The dual of the 10/15 quiz (6.7), and TE$^z$ is the waveguide family of L18. If he wants a fresh construction problem, this is it.",
+ orig:{band:"X-band",a:2.286,b:1.016,f:10},
+ gen(){const B=pick(BANDS);const fc=C0/(2*B.a/100)/1e9;return{band:B.n,a:B.a,b:B.b,f:rnd(Math.ceil(fc*1.25*2)/2,Math.floor(fc*1.9*2)/2,0.5)};},
+ st:p=>`In rectangular coordinates, derive the expressions for the components of $\\mathbf E$ and $\\mathbf H$ as given by (6-72), (6-74) and (6-77) that are TE$^z$, TE$^x$ and TE$^y$. <i>(MAXWELL adds: in an air-filled ${p.band} guide, $a=${p.a}$ cm, take $F_z=\\cos\\frac{\\pi x}{a}e^{-j\\beta_zz}$ (TE$_{10}$) at ${p.f} GHz. Find the cutoff and $|E_y/H_x|$.)</i>`,
+ first:{ok:"Write the general $\\mathbf E$, $\\mathbf H$, then ask which choice forces $E_z=0$: $\\mathbf F=\\hat zF_z$, $\\mathbf A=0$.",
+   bad:["Set $\\mathbf A=\\hat zA_z$, $\\mathbf F=0$, since TE starts from $\\mathbf A$.","Keep both $\\mathbf A$ and $\\mathbf F$ along $z$ and set $E_z=0$ at the end."]},
+ solve(p){const fc=C0/(2*p.a/100),F=p.f*1e9,w=2*PI*F,b=w/C0,bc=PI/(p.a/100),bz=Math.sqrt(b*b-bc*bc),Z=w*MU0/bz;
+  const st=[["Pick the potential",`E_z=0\\ \\Leftarrow\\ \\mathbf A=0,\\ \\mathbf F=\\hat zF_z:\\qquad \\mathbf E=-\\frac1\\varepsilon\\nabla\\times\\mathbf F,\\qquad \\mathbf H=-j\\omega\\mathbf F-j\\frac{1}{\\omega\\mu\\varepsilon}\\nabla(\\nabla\\cdot\\mathbf F)`,"$\\mathbf A$ would add $-j\\omega\\mathbf A-\\dots$ to E, which generally has a z part.",""],
+   ["TEᶻ: E from the curl",`\\nabla\\times(\\hat zF_z)=\\hat x\\frac{\\partial F_z}{\\partial y}-\\hat y\\frac{\\partial F_z}{\\partial x}\\ \\Rightarrow\\ E_x=-\\frac1\\varepsilon\\frac{\\partial F_z}{\\partial y},\\quad E_y=\\frac1\\varepsilon\\frac{\\partial F_z}{\\partial x},\\quad E_z=0`,"The $-\\frac1\\varepsilon$ flips both signs from the curl.",""],
+   ["TEᶻ: H (6-72)",`H_x=-j\\frac{1}{\\omega\\mu\\varepsilon}\\frac{\\partial^2F_z}{\\partial x\\partial z},\\quad H_y=-j\\frac{1}{\\omega\\mu\\varepsilon}\\frac{\\partial^2F_z}{\\partial y\\partial z},\\quad H_z=-j\\frac{1}{\\omega\\mu\\varepsilon}\\left(\\frac{\\partial^2}{\\partial z^2}+\\beta^2\\right)F_z`,"$\\nabla\\cdot\\mathbf F=\\partial F_z/\\partial z$; the diagonal absorbs $-j\\omega F_z$.",""],
+   ["TEˣ, TEʸ (6-74), (6-77)",`\\text{TE}^x:\\ E_y=-\\frac1\\varepsilon\\frac{\\partial F_x}{\\partial z},\\ E_z=\\frac1\\varepsilon\\frac{\\partial F_x}{\\partial y};\\qquad \\text{TE}^y:\\ E_x=\\frac1\\varepsilon\\frac{\\partial F_y}{\\partial z},\\ E_z=-\\frac1\\varepsilon\\frac{\\partial F_y}{\\partial x}`,"Cycle $x\\to y\\to z\\to x$. The $+\\beta^2$ goes on the H component along $\\mathbf F$.",""],
+   ["TE₁₀ cutoff",`\\beta_c=\\frac{\\pi}{a}=${f(bc)}\\ \\text{rad/m},\\qquad f_c=\\frac{c}{2a}=${f(fc/1e9)}\\ \\text{GHz}`,"","$f_c=c/(2a)$ with $a$ in meters."],
+   ["Wave impedance from the derived fields",`E_y=-\\frac{\\pi/a}{\\varepsilon}\\sin\\frac{\\pi x}{a}e^{-j\\beta_zz},\\quad H_x=-\\frac{\\beta_z\\pi/a}{\\omega\\mu\\varepsilon}\\sin\\frac{\\pi x}{a}e^{-j\\beta_zz}\\ \\Rightarrow\\ \\left|\\frac{E_y}{H_x}\\right|=\\frac{\\omega\\mu_0}{\\beta_z}=\\frac{\\eta_0}{\\sqrt{1-(f_c/f)^2}}=${f(Z)}\\ \\Omega`,`$\\beta_z=${f(bz)}$ rad/m. That's $Z^{TE}$ from L18.`,"$Z=\\omega\\mu/\\beta_z$."]];
+  return{steps:st,stages:[
+   {q:"From $\\mathbf E=-\\frac1\\varepsilon\\nabla\\times(\\hat zF_z)$, $E_x$ is:",opts:["$-\\frac1\\varepsilon\\frac{\\partial F_z}{\\partial y}$","$+\\frac1\\varepsilon\\frac{\\partial F_z}{\\partial y}$","$-\\frac1\\varepsilon\\frac{\\partial F_z}{\\partial x}$"],a:0,s:1,why:"$(\\nabla\\times\\hat zF_z)_x=\\partial F_z/\\partial y$, and (6-19) has a minus."},
+   {q:"Which H component carries $\\left(\\frac{\\partial^2}{\\partial z^2}+\\beta^2\\right)$ for TE$^z$?",opts:["$H_z$, the one along $\\mathbf F$","$H_x$","None; all are mixed partials"],a:0,s:2,why:"$-j\\omega F_z=-j\\frac{\\beta^2}{\\omega\\mu\\varepsilon}F_z$ folds into the $z$ entry of $\\nabla(\\nabla\\cdot\\mathbf F)$."},
+   {q:"For TE$^x$ the potential is:",opts:["$\\mathbf F=\\hat xF_x$, $\\mathbf A=0$","$\\mathbf A=\\hat xA_x$, $\\mathbf F=0$","$\\mathbf F=\\hat zF_z$ with $E_x=0$ imposed"],a:0,s:3,why:"TE$^u$ means $E_u=0$; the curl of $\\hat uF_u$ has no $u$ part."},
+   {k:"f_c",q:"TE$_{10}$ cutoff of the guide?",u:"\\text{GHz}",v:fc/1e9,s:4},
+   {k:"|E_y/H_x|",q:`$|E_y/H_x|$ at ${p.f} GHz?`,u:"\\Omega",v:Z,s:5}]};}});
+
+/* ---- 6.10 TMz by Maxwell back and forth ---- */
+L.push({id:"6.10",like:4,min:12,why:"Six scalar curl equations, two substitutions, no potentials. A classic 'derive it from Maxwell' quiz that fits 12 minutes.",
+ orig:{band:"X-band",a:2.286,b:1.016,f:20},
+ gen(){const B=pick(BANDS);const fc=fc11(B.a,B.b)/1e9;return{band:B.n,a:B.a,b:B.b,f:rnd(Math.ceil(fc*1.2),Math.floor(fc*1.8),1)};},
+ st:p=>`For the TM$^z$ modes ($H_z=0$) with $z$ variations $e^{-j\\beta_zz}$, derive the $\\mathbf E$ and $\\mathbf H$ rectangular components in terms of $E_z=f(x)g(y)e^{-j\\beta_zz}$, where $\\nabla^2E_z+\\beta^2E_z=0$. Use Maxwell's equations back and forth (not $A_z$). Simplify to a form similar to (6-59). <i>(MAXWELL adds: for $E_z=E_0\\sin\\frac{\\pi x}{a}\\sin\\frac{\\pi y}{b}e^{-j\\beta_zz}$ in an air-filled ${p.band} guide, $a=${p.a}$ cm, $b=${p.b}$ cm, at ${p.f} GHz, find $\\beta_z$ and $E_x/H_y$.)</i>`,
+ first:{ok:"Write the six scalar curl equations with $\\frac{\\partial}{\\partial z}\\to-j\\beta_z$ and $H_z=0$.",
+   bad:["Start from $A_z$ and (6-59), then substitute $A_z\\propto E_z$.","Use only the three Faraday rows; they contain all four transverse fields."]},
+ solve(p){const F=p.f*1e9,w=2*PI*F,b=w/C0,bx=PI/(p.a/100),by=PI/(p.b/100),bc2=bx*bx+by*by,bz=Math.sqrt(b*b-bc2),Z=ETA0*bz/b;
+  const st=[["Set up",`\\nabla\\times\\mathbf E=-j\\omega\\mu\\mathbf H,\\qquad \\nabla\\times\\mathbf H=j\\omega\\varepsilon\\mathbf E,\\qquad H_z=0,\\qquad \\frac{\\partial}{\\partial z}\\to-j\\beta_z`,"Source-free region.",""],
+   ["Faraday x and y rows",`(1)\\ -j\\omega\\mu H_x=\\frac{\\partial E_z}{\\partial y}+j\\beta_zE_y,\\qquad (2)\\ -j\\omega\\mu H_y=-j\\beta_zE_x-\\frac{\\partial E_z}{\\partial x}`,"",""],
+   ["Ampère x and y rows",`(4)\\ E_x=\\frac{\\beta_z}{\\omega\\varepsilon}H_y,\\qquad (5)\\ E_y=-\\frac{\\beta_z}{\\omega\\varepsilon}H_x`,"With $H_z=0$ the x row is $-\\frac{\\partial H_y}{\\partial z}=j\\beta_zH_y$.",""],
+   ["(4) into (2), (5) into (1)",`H_y=-j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x},\\quad H_x=j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial y},\\quad E_x=-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x},\\quad E_y=-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial y}`,"$\\omega\\mu=\\beta^2/(\\omega\\varepsilon)$, $\\beta_c^2=\\beta^2-\\beta_z^2$.",""],
+   ["Check the unused rows",`(6)\\ \\frac{\\partial H_y}{\\partial x}-\\frac{\\partial H_x}{\\partial y}=-j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\nabla_t^2E_z=j\\omega\\varepsilon E_z\\ \\checkmark`,"Row (6) closes only because $\\nabla_t^2E_z=-\\beta_c^2E_z$ (the given Helmholtz).",""],
+   ["Numbers: TM₁₁",`\\beta_c^2=\\left(\\frac{\\pi}{a}\\right)^2+\\left(\\frac{\\pi}{b}\\right)^2=${ft(bc2)},\\quad \\beta=\\frac{2\\pi f}{c}=${f(b)},\\quad \\beta_z=\\sqrt{\\beta^2-\\beta_c^2}=${f(bz)}\\ \\text{rad/m}`,`$f_c=${f(fc11(p.a,p.b)/1e9)}$ GHz.`,"$\\beta_z=\\sqrt{\\beta^2-\\beta_c^2}$."],
+   ["Numbers: E_x/H_y",`\\frac{E_x}{H_y}=\\frac{\\beta_z}{\\omega\\varepsilon_0}=\\frac{${f(bz)}}{2\\pi(${p.f}\\times10^9)(8.854\\times10^{-12})}=${f(Z)}\\ \\Omega`,"That's $Z^{TM}=\\eta_0\\sqrt{1-(f_c/f)^2}$: below 377 Ω.","Straight from row (4)."]];
+  return{steps:st,stages:[
+   {q:"With $H_z=0$ and $e^{-j\\beta_zz}$, Ampère's $x$ row gives:",opts:["$E_x=\\frac{\\beta_z}{\\omega\\varepsilon}H_y$","$E_x=-\\frac{\\beta_z}{\\omega\\varepsilon}H_y$","$E_x=\\frac{\\omega\\varepsilon}{\\beta_z}H_y$"],a:0,s:2,why:"$(\\nabla\\times\\mathbf H)_x=-\\frac{\\partial H_y}{\\partial z}=j\\beta_zH_y=j\\omega\\varepsilon E_x$."},
+   {q:"Substituting into Faraday's $y$ row, $H_y$ is:",opts:["$-j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$","$+j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$","$-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$"],a:0,s:3,why:"$-j\\frac{\\beta^2-\\beta_z^2}{\\omega\\varepsilon}H_y=-\\frac{\\partial E_z}{\\partial x}$."},
+   {q:"What makes the last Ampère row (z) consistent?",opts:["The Helmholtz equation $\\nabla_t^2E_z=-\\beta_c^2E_z$","$E_z=0$ on the walls","Nothing; it's automatically zero"],a:0,s:4,why:"That's why the problem hands you $\\nabla^2E_z+\\beta^2E_z=0$."},
+   {k:"β_z",q:"$\\beta_z$ of TM$_{11}$ at this frequency?",u:"\\text{rad/m}",v:bz,s:5},
+   {k:"E_x/H_y",q:"$E_x/H_y$ (TM wave impedance)?",u:"\\Omega",v:Z,s:6}]};}});
+
+/* ---- 6.1 electric Hertz potential ---- */
+L.push({id:"6.1",like:4,min:10,why:"The class derivation of $\\mathbf A$ (6-4 to 6-17) rerun with a new constant. Short, and 'only a derivation we covered in class' is his exam rule.",
+ orig:{f:1,er:1},
+ gen(){return{f:pick([0.3,1,2.4,3,5,10]),er:pick([1,2.25,4,9])};},
+ st:p=>`If $\\mathbf H_e=j\\omega\\varepsilon\\nabla\\times\\boldsymbol\\Pi_e$, where $\\boldsymbol\\Pi_e$ is the electric Hertzian potential, show that (a) $\\nabla^2\\boldsymbol\\Pi_e+\\beta^2\\boldsymbol\\Pi_e=j\\frac{1}{\\omega\\varepsilon}\\mathbf J$; (b) $\\mathbf E_e=\\beta^2\\boldsymbol\\Pi_e+\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_e)$; (c) $\\boldsymbol\\Pi_e=-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf A$. <i>(MAXWELL adds: in a source-free medium with $\\varepsilon_r=${p.er}$ at ${p.f} GHz, take $\\boldsymbol\\Pi_e=\\hat z\\Pi_0e^{-j\\beta x}$. Find β and $|E_z/H_y|$ from (b) and the given $\\mathbf H_e$.)</i>`,
+ first:{ok:"Put the given $\\mathbf H_e$ into Faraday (electric source only, so Faraday has no source term).",
+   bad:["Put $\\mathbf H_e$ into Ampère first and solve for $\\mathbf J$.","Start from the field wave equation (6-2a) with sources."]},
+ solve(p){const s=Math.sqrt(p.er),F=p.f*1e9,w=2*PI*F,b=w*s/C0,Z=ETA0/s;
+  const st=[["Faraday with the given H",`\\nabla\\times\\mathbf E_e=-j\\omega\\mu(j\\omega\\varepsilon\\nabla\\times\\boldsymbol\\Pi_e)=\\beta^2\\nabla\\times\\boldsymbol\\Pi_e\\ \\Rightarrow\\ \\mathbf E_e=\\beta^2\\boldsymbol\\Pi_e-\\nabla\\phi_e`,"$(-j)(j)=+1$; curl-free means gradient, as in (6-7) to (6-9).",""],
+   ["Ampère with the given H",`j\\omega\\varepsilon\\left[\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_e)-\\nabla^2\\boldsymbol\\Pi_e\\right]=\\mathbf J+j\\omega\\varepsilon\\left(\\beta^2\\boldsymbol\\Pi_e-\\nabla\\phi_e\\right)`,"Grad div minus del squared.",""],
+   ["Collect",`\\nabla^2\\boldsymbol\\Pi_e+\\beta^2\\boldsymbol\\Pi_e=-\\frac{\\mathbf J}{j\\omega\\varepsilon}+\\nabla\\left(\\nabla\\cdot\\boldsymbol\\Pi_e+\\phi_e\\right)`,"Same funny gradient term as (6-14).",""],
+   ["Gauge → (a), (b)",`\\phi_e=-\\nabla\\cdot\\boldsymbol\\Pi_e:\\quad \\nabla^2\\boldsymbol\\Pi_e+\\beta^2\\boldsymbol\\Pi_e=j\\frac{1}{\\omega\\varepsilon}\\mathbf J,\\qquad \\mathbf E_e=\\beta^2\\boldsymbol\\Pi_e+\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_e)`,"Only the curl of $\\boldsymbol\\Pi_e$ is fixed, so its divergence is ours to choose. $-\\frac1j=j$.",""],
+   ["(c) Match the two H's",`\\frac1\\mu\\nabla\\times\\mathbf A=j\\omega\\varepsilon\\nabla\\times\\boldsymbol\\Pi_e\\ \\Rightarrow\\ \\boldsymbol\\Pi_e=-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf A`,"",""],
+   ["Numbers",`\\beta=\\frac{2\\pi f\\sqrt{\\varepsilon_r}}{c}=${f(b)}\\ \\text{rad/m};\\quad \\nabla\\cdot\\boldsymbol\\Pi_e=0\\Rightarrow E_z=\\beta^2\\Pi_0,\\quad H_y=j\\omega\\varepsilon(j\\beta\\Pi_0)=-\\omega\\varepsilon\\beta\\Pi_0\\ \\Rightarrow\\ \\left|\\frac{E_z}{H_y}\\right|=\\frac{\\beta}{\\omega\\varepsilon}=${f(Z)}\\ \\Omega`,"It's η of the medium: Π builds an ordinary plane wave.","$\\nabla\\times(\\hat z\\Pi_0e^{-j\\beta x})=\\hat y\\,j\\beta\\Pi_0e^{-j\\beta x}$."]];
+  return{steps:st,stages:[
+   {q:"Faraday with $\\mathbf H_e=j\\omega\\varepsilon\\nabla\\times\\boldsymbol\\Pi_e$ gives $\\nabla\\times\\mathbf E_e=$",opts:["$+\\beta^2\\nabla\\times\\boldsymbol\\Pi_e$","$-\\beta^2\\nabla\\times\\boldsymbol\\Pi_e$","$j\\beta^2\\nabla\\times\\boldsymbol\\Pi_e$"],a:0,s:0,why:"$(-j\\omega\\mu)(j\\omega\\varepsilon)=+\\omega^2\\mu\\varepsilon=\\beta^2$."},
+   {q:"Which gauge choice kills the gradient term?",opts:["$\\phi_e=-\\nabla\\cdot\\boldsymbol\\Pi_e$","$\\nabla\\cdot\\boldsymbol\\Pi_e=0$","$\\phi_e=0$"],a:0,s:3,why:"It makes $\\nabla\\cdot\\boldsymbol\\Pi_e+\\phi_e=0$, the Lorenz-type condition for Π."},
+   {q:"(c) Matching $\\mathbf H_A=\\frac1\\mu\\nabla\\times\\mathbf A$ to $\\mathbf H_e$ gives:",opts:["$\\boldsymbol\\Pi_e=-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf A$","$\\boldsymbol\\Pi_e=+j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf A$","$\\boldsymbol\\Pi_e=\\frac{1}{\\mu}\\mathbf A$"],a:0,s:4,why:"$\\mathbf A=j\\omega\\mu\\varepsilon\\boldsymbol\\Pi_e$, and $1/j=-j$."},
+   {k:"β",q:"β in the medium?",u:"\\text{rad/m}",v:b,s:5},
+   {k:"|E_z/H_y|",q:"$|E_z/H_y|$ for this $\\boldsymbol\\Pi_e$?",u:"\\Omega",v:Z,s:5}]};}});
+
+/* ---- 6.7 TMx, TMy from A ---- */
+L.push({id:"6.7",like:3,min:12,why:"This <b>was</b> the 10/15 quiz. Less likely to repeat as a quiz, but 'every previous assignment is still fair game' for the exam.",
+ orig:{er:1,f:10,th:30},
+ gen(){return{er:pick([1,2.25,4,9]),f:pick([1,3,5,10]),th:pick([20,30,45,60])};},
+ st:p=>`Derive the expressions for the components of $\\mathbf E$ and $\\mathbf H$ of (6-61) and (6-64), in terms of the components of $\\mathbf A$ and $\\mathbf F$, so that the fields are TM$^x$ and TM$^y$. <i>(MAXWELL adds: in a medium with $\\varepsilon_r=${p.er}$ at ${p.f} GHz, take $A_x=A_0e^{-j\\beta(x\\sin\\theta+z\\cos\\theta)}$ with $\\theta=${p.th}°. Use your TM$^x$ fields to find $|E_x/H_y|$ and $|E_z/H_y|$.)</i>`,
+ first:{ok:"Write the general $\\mathbf E$, $\\mathbf H$ (6-34, 6-35), then ask which choice forces $H_x=0$.",
+   bad:["Set $\\mathbf A=\\hat zA_z$, the TM potential from the waveguide chapter.","Set $\\mathbf F=\\hat xF_x$, since TM$^x$ is the dual of TE$^x$."]},
+ solve(p){const n=ETA0/Math.sqrt(p.er),c=Math.cos(p.th*PI/180),s=Math.sin(p.th*PI/180);
+  const st=[["What kills H_x",`H_x=\\frac1\\mu\\left(\\frac{\\partial A_z}{\\partial y}-\\frac{\\partial A_y}{\\partial z}\\right)-j\\omega F_x-\\dots=0\\ \\Leftarrow\\ \\mathbf F=0,\\ \\mathbf A=\\hat xA_x`,"The curl of $\\hat x\\psi$ has no $\\hat x$ part.",""],
+   ["E components (TMˣ)",`E_x=-j\\frac{1}{\\omega\\mu\\varepsilon}\\left(\\frac{\\partial^2}{\\partial x^2}+\\beta^2\\right)A_x,\\quad E_y=-j\\frac{1}{\\omega\\mu\\varepsilon}\\frac{\\partial^2A_x}{\\partial x\\partial y},\\quad E_z=-j\\frac{1}{\\omega\\mu\\varepsilon}\\frac{\\partial^2A_x}{\\partial x\\partial z}`,"$\\nabla(\\nabla\\cdot\\mathbf A)$ spreads one component into three.",""],
+   ["H components (TMˣ, 6-61)",`H_x=0,\\quad H_y=\\frac1\\mu\\frac{\\partial A_x}{\\partial z},\\quad H_z=-\\frac1\\mu\\frac{\\partial A_x}{\\partial y}`,"",""],
+   ["TMʸ (6-64)",`\\mathbf A=\\hat yA_y:\\quad H_x=-\\frac1\\mu\\frac{\\partial A_y}{\\partial z},\\quad H_y=0,\\quad H_z=\\frac1\\mu\\frac{\\partial A_y}{\\partial x},\\quad E_y=-j\\frac{1}{\\omega\\mu\\varepsilon}\\left(\\frac{\\partial^2}{\\partial y^2}+\\beta^2\\right)A_y`,"Cyclic order: one step ahead gets +, one step behind gets −.",""],
+   ["Numbers: plug the plane wave in",`\\frac{\\partial}{\\partial x}\\to-j\\beta\\sin\\theta,\\ \\frac{\\partial}{\\partial z}\\to-j\\beta\\cos\\theta:\\quad E_x=-j\\frac{\\beta^2\\cos^2\\theta}{\\omega\\mu\\varepsilon}A_x,\\quad H_y=-j\\frac{\\beta\\cos\\theta}{\\mu}A_x`,"",""],
+   ["Ratios",`\\left|\\frac{E_x}{H_y}\\right|=\\eta\\cos\\theta=${f(n)}(${f(c)})=${f(n*c)}\\ \\Omega,\\qquad \\left|\\frac{E_z}{H_y}\\right|=\\eta\\sin\\theta=${f(n*s)}\\ \\Omega`,"Same as Ch. 5's directional impedance: E in the plane, H along y.","$\\beta/(\\omega\\varepsilon)=\\eta$."]];
+  return{steps:st,stages:[
+   {q:"Why does $E_x$ carry $\\left(\\frac{\\partial^2}{\\partial x^2}+\\beta^2\\right)$ and not just $-j\\omega A_x$?",opts:["$\\nabla(\\nabla\\cdot\\mathbf A)$ also has an $x$ part, $\\frac{\\partial^2A_x}{\\partial x^2}$","Because $\\mathbf F$ contributes to $E_x$","It doesn't; $E_x=-j\\omega A_x$"],a:0,s:1,why:"$-j\\omega A_x=-j\\frac{\\beta^2}{\\omega\\mu\\varepsilon}A_x$ joins the diagonal entry."},
+   {q:"For TM$^x$, $H_y$ and $H_z$ are:",opts:["$H_y=\\frac1\\mu\\frac{\\partial A_x}{\\partial z}$, $H_z=-\\frac1\\mu\\frac{\\partial A_x}{\\partial y}$","$H_y=-\\frac1\\mu\\frac{\\partial A_x}{\\partial z}$, $H_z=\\frac1\\mu\\frac{\\partial A_x}{\\partial y}$","$H_y=\\frac1\\mu\\frac{\\partial A_x}{\\partial y}$, $H_z=\\frac1\\mu\\frac{\\partial A_x}{\\partial z}$"],a:0,s:2,why:"$\\nabla\\times(\\hat xA_x)=\\hat y\\frac{\\partial A_x}{\\partial z}-\\hat z\\frac{\\partial A_x}{\\partial y}$."},
+   {q:"For TM$^y$, $H_x$ is:",opts:["$-\\frac1\\mu\\frac{\\partial A_y}{\\partial z}$","$+\\frac1\\mu\\frac{\\partial A_y}{\\partial z}$","$0$"],a:0,s:3,why:"$\\nabla\\times(\\hat yA_y)=-\\hat x\\frac{\\partial A_y}{\\partial z}+\\hat z\\frac{\\partial A_y}{\\partial x}$."},
+   {k:"|E_x/H_y|",q:"$|E_x/H_y|$ for the given $A_x$?",u:"\\Omega",v:n*c,s:5},
+   {k:"|E_z/H_y|",q:"$|E_z/H_y|$?",u:"\\Omega",v:n*s,s:5}]};}});
+
+/* ---- 6.8 TM from one E component ---- */
+L.push({id:"6.8",like:3,min:13,why:"Invert $E_z\\leftrightarrow A_z$, then relabel cyclically. Same physics as 6.10 by the potential route; three cases make it long.",
+ orig:{band:"X-band",a:2.286,b:1.016,f:20},
+ gen(){const B=pick(BANDS);const fc=fc11(B.a,B.b)/1e9;return{band:B.n,a:B.a,b:B.b,f:rnd(Math.ceil(fc*1.2),Math.floor(fc*1.8),1)};},
+ st:p=>`Select one component of $\\mathbf E$ and write the other components of $\\mathbf E$ and all of $\\mathbf H$ in terms of the initial component of $\\mathbf E$ so that the fields are TM$^x$, TM$^y$ and TM$^z$. Do this in rectangular coordinates. <i>(MAXWELL adds: for TM$_{11}$, $E_z=E_0\\sin\\frac{\\pi x}{a}\\sin\\frac{\\pi y}{b}e^{-j\\beta_zz}$ in an air-filled ${p.band} guide ($a=${p.a}$ cm, $b=${p.b}$ cm) at ${p.f} GHz, find $\\beta_c$, $\\beta_z$, and the peak ratio $|E_x|_{max}/|E_z|_{max}$.)</i>`,
+ first:{ok:"Pick $E_z$ for TM$^z$ and write it from $A_z$ (6-59), assuming $e^{-j\\beta_zz}$ so the operator becomes a number.",
+   bad:["Solve $\\nabla^2E_z+\\beta^2E_z=0$ explicitly first, then differentiate.","Pick $E_x$ as the starting component for TM$^z$."]},
+ solve(p){const F=p.f*1e9,b=2*PI*F/C0,bx=PI/(p.a/100),by=PI/(p.b/100),bc2=bx*bx+by*by,bc=Math.sqrt(bc2),bz=Math.sqrt(b*b-bc2),r=bz*bx/bc2;
+  const st=[["TMᶻ: E_z from A_z",`E_z=-j\\frac{1}{\\omega\\mu\\varepsilon}\\left(\\frac{\\partial^2}{\\partial z^2}+\\beta^2\\right)A_z=-j\\frac{\\beta_c^2}{\\omega\\mu\\varepsilon}A_z,\\qquad \\beta_c^2=\\beta^2-\\beta_z^2`,"Needs $A_z\\propto e^{-j\\beta_zz}$: say it.",""],
+   ["Invert",`A_z=j\\frac{\\omega\\mu\\varepsilon}{\\beta_c^2}E_z`,"$1/(-j)=j$.",""],
+   ["Transverse fields",`E_x=-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x},\\ E_y=-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial y},\\ H_x=j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial y},\\ H_y=-j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}`,"",""],
+   ["TMˣ, TMʸ by cyclic relabeling",`\\text{TM}^x:\\ E_y=-j\\frac{\\beta_x}{\\beta_c^2}\\frac{\\partial E_x}{\\partial y},\\ \\dots,\\ \\beta_c^2=\\beta^2-\\beta_x^2;\\qquad \\text{TM}^y:\\ E_z=-j\\frac{\\beta_y}{\\beta_c^2}\\frac{\\partial E_y}{\\partial z},\\ \\dots`,"Relabel all three letters, and $\\beta_c^2$ changes with the case.",""],
+   ["Numbers: β_c and β_z",`\\beta_c=\\sqrt{\\left(\\frac{\\pi}{${p.a/100}}\\right)^2+\\left(\\frac{\\pi}{${p.b/100}}\\right)^2}=${f(bc)},\\quad \\beta=${f(b)},\\quad \\beta_z=${f(bz)}\\ \\text{rad/m}`,`TM$_{11}$ cutoff ${f(fc11(p.a,p.b)/1e9)}$ GHz.`,"$\\beta_z=\\sqrt{\\beta^2-\\beta_c^2}$."],
+   ["Numbers: peak ratio",`\\frac{|E_x|_{max}}{|E_z|_{max}}=\\frac{\\beta_z}{\\beta_c^2}\\cdot\\frac{\\pi}{a}=\\frac{${f(bz)}\\,(${f(bx)})}{${ft(bc2)}}=${f(r)}`,"$\\partial/\\partial x$ of $\\sin\\frac{\\pi x}{a}$ brings down $\\pi/a$.",""]];
+  return{steps:st,stages:[
+   {q:"What lets you divide out $\\left(\\frac{\\partial^2}{\\partial z^2}+\\beta^2\\right)$?",opts:["Assuming $e^{-j\\beta_zz}$, so it becomes $\\beta^2-\\beta_z^2=\\beta_c^2$","The walls set $A_z=0$","The Lorenz gauge"],a:0,s:0,why:"A traveling wave turns $\\partial^2/\\partial z^2$ into $-\\beta_z^2$."},
+   {q:"In terms of $E_z$, $E_x$ is:",opts:["$-j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$","$+j\\frac{\\beta_z}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$","$-j\\frac{\\omega\\varepsilon}{\\beta_c^2}\\frac{\\partial E_z}{\\partial x}$"],a:0,s:2,why:"$E_x=-\\frac{j}{\\omega\\mu\\varepsilon}\\frac{\\partial^2A_z}{\\partial x\\partial z}$ with $\\partial_z\\to-j\\beta_z$ and $A_z=j\\frac{\\omega\\mu\\varepsilon}{\\beta_c^2}E_z$."},
+   {q:"For TM$^x$, $\\beta_c^2$ becomes:",opts:["$\\beta^2-\\beta_x^2$","$\\beta^2-\\beta_z^2$","$\\beta_x^2+\\beta_z^2+\\beta^2$"],a:0,s:3,why:"The traveling direction is now $x$."},
+   {k:"β_c",q:"$\\beta_c$ of TM$_{11}$?",u:"\\text{rad/m}",v:bc,s:4},
+   {k:"β_z",q:"$\\beta_z$ at this frequency?",u:"\\text{rad/m}",v:bz,s:4},
+   {k:"|E_x|/|E_z|",q:"Peak ratio $|E_x|_{max}/|E_z|_{max}$?",u:"",v:r,s:5}]};}});
+
+/* ---- 6.2 magnetic Hertz potential ---- */
+L.push({id:"6.2",like:3,min:10,why:"The mirror of 6.1. If he asks a Hertz potential, the electric one (6.1) is the likelier pick.",
+ orig:{f:1,er:2.25,mr:4},
+ gen(){return{f:pick([0.1,0.3,1,3]),er:pick([1,2.25,4,9]),mr:pick([1,2,4,10])};},
+ st:p=>`If $\\mathbf E_h=-j\\omega\\mu\\nabla\\times\\boldsymbol\\Pi_h$, where $\\boldsymbol\\Pi_h$ is the magnetic Hertzian potential, show that (a) $\\nabla^2\\boldsymbol\\Pi_h+\\beta^2\\boldsymbol\\Pi_h=j\\frac{1}{\\omega\\mu}\\mathbf M$; (b) $\\mathbf H_h=\\beta^2\\boldsymbol\\Pi_h+\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_h)$; (c) $\\boldsymbol\\Pi_h=-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf F$. <i>(MAXWELL adds: in a source-free ferrite with $\\mu_r=${p.mr}$, $\\varepsilon_r=${p.er}$ at ${p.f} GHz, take $\\boldsymbol\\Pi_h=\\hat z\\Pi_0e^{-j\\beta x}$. Find β and $|E_y/H_z|$.)</i>`,
+ first:{ok:"Put the given $\\mathbf E_h$ into Ampère (no $\\mathbf J$, so Ampère is source-free).",
+   bad:["Put $\\mathbf E_h$ into Faraday first, exactly as in 6.1.","Copy 6.1 with $\\mathbf A$ and $\\mathbf J$ unchanged and swap only E and H."]},
+ solve(p){const F=p.f*1e9,w=2*PI*F,b=w*Math.sqrt(p.mr*p.er)/C0,mu=MU0*p.mr,Z=w*mu/b;
+  const st=[["Ampère with the given E",`\\nabla\\times\\mathbf H_h=j\\omega\\varepsilon(-j\\omega\\mu\\nabla\\times\\boldsymbol\\Pi_h)=\\beta^2\\nabla\\times\\boldsymbol\\Pi_h\\ \\Rightarrow\\ \\mathbf H_h=\\beta^2\\boldsymbol\\Pi_h-\\nabla\\phi_m`,"$(j)(-j)=+1$.",""],
+   ["Faraday with the source M",`-j\\omega\\mu\\left[\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_h)-\\nabla^2\\boldsymbol\\Pi_h\\right]=-\\mathbf M-j\\omega\\mu\\left(\\beta^2\\boldsymbol\\Pi_h-\\nabla\\phi_m\\right)`,"(6-1a): mind the minus on $\\mathbf M$.",""],
+   ["Gauge → (a), (b)",`\\phi_m=-\\nabla\\cdot\\boldsymbol\\Pi_h:\\quad \\nabla^2\\boldsymbol\\Pi_h+\\beta^2\\boldsymbol\\Pi_h=j\\frac{1}{\\omega\\mu}\\mathbf M,\\qquad \\mathbf H_h=\\beta^2\\boldsymbol\\Pi_h+\\nabla(\\nabla\\cdot\\boldsymbol\\Pi_h)`,"Divide by $-j\\omega\\mu$ and collect.",""],
+   ["(c) Match the two E's",`-\\frac1\\varepsilon\\nabla\\times\\mathbf F=-j\\omega\\mu\\nabla\\times\\boldsymbol\\Pi_h\\ \\Rightarrow\\ \\boldsymbol\\Pi_h=-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf F`,"Uses (6-19): $\\mathbf E_F=-\\frac1\\varepsilon\\nabla\\times\\mathbf F$.",""],
+   ["Numbers",`\\beta=\\frac{2\\pi f\\sqrt{\\mu_r\\varepsilon_r}}{c}=${f(b)}\\ \\text{rad/m};\\quad H_z=\\beta^2\\Pi_0,\\quad E_y=-j\\omega\\mu(j\\beta\\Pi_0)=\\omega\\mu\\beta\\Pi_0\\ \\Rightarrow\\ \\left|\\frac{E_y}{H_z}\\right|=\\frac{\\omega\\mu}{\\beta}=\\eta_0\\sqrt{\\frac{\\mu_r}{\\varepsilon_r}}=${f(Z)}\\ \\Omega`,"η of the ferrite.","$\\nabla\\times(\\hat z\\Pi_0e^{-j\\beta x})=\\hat y\\,j\\beta\\Pi_0e^{-j\\beta x}$."]];
+  return{steps:st,stages:[
+   {q:"Which curl equation is source-free here?",opts:["Ampère (no $\\mathbf J$)","Faraday","Both"],a:0,s:0,why:"Only magnetic sources: $\\mathbf M$ sits in Faraday (6-1a)."},
+   {q:"Faraday reads:",opts:["$\\nabla\\times\\mathbf E_h=-\\mathbf M-j\\omega\\mu\\mathbf H_h$","$\\nabla\\times\\mathbf E_h=+\\mathbf M-j\\omega\\mu\\mathbf H_h$","$\\nabla\\times\\mathbf E_h=-j\\omega\\mu\\mathbf H_h$"],a:0,s:1,why:"Balanis' symmetric form (6-1a)."},
+   {q:"(c) Using $\\mathbf E_F=-\\frac1\\varepsilon\\nabla\\times\\mathbf F$, $\\boldsymbol\\Pi_h=$",opts:["$-j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf F$","$+j\\frac{1}{\\omega\\mu\\varepsilon}\\mathbf F$","$-\\frac{1}{\\varepsilon}\\mathbf F$"],a:0,s:3,why:"$\\mathbf F=j\\omega\\mu\\varepsilon\\boldsymbol\\Pi_h$."},
+   {k:"β",q:"β in the ferrite?",u:"\\text{rad/m}",v:b,s:4},
+   {k:"|E_y/H_z|",q:"$|E_y/H_z|$?",u:"\\Omega",v:Z,s:4}]};}});
+
+G.hw.ch6=L;
+})(window.MXG);
+
 /* QUIZ ARENA · HW 9 = Balanis Ch. 8 (rectangular waveguides). Each problem: assigned numbers + remix generator,
    graded with the real formulas (c = 3e8, η0 = 120π, TE10 dominant). Ordering = estimated quiz likelihood. */
 (function(G){const U=G.hwU,{C0,ETA0,pick,rnd}=U,f=U.f3;

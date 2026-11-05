@@ -2309,26 +2309,29 @@ A.VIEWS.hwlist=(v,p)=>{const chId=p.ch||quizCh().c,ch=A.chOf(chId);A.setAcc(v,ch
    <p class="small">One homework problem, about 10–15 minutes, closed book. As he said in L3: <i>“every previous assignment is still fair game.”</i> Each game below is one HW problem. You pick the first move, then compute every answer he would grade, against a 12-minute quiz clock.</p>
    <p class="small mut">Ranked by how likely each problem is to show up as a quiz. Short, single-idea problems that fit 10–15 minutes and match what he stressed in lecture come first. This ranking is MAXWELL's estimate, not his list, so play them all.</p>
    <p class="small mut">First play uses the <b>assigned numbers</b>. After that, <b>Remix</b> gives you new numbers, so you can't just remember the answer.</p></section>
+  <button class="bigcta" data-mock style="margin:10px 0 4px">🎲 Mock quiz · surprise problem, new numbers, no hints</button>
+  ${(G.hwSheet||{})[chId]?`<details class="bub hwsheet"><summary><b>📄 Everything you need on one card</b> <span class="small mut">(tap)</span></summary>${G.hwSheet[chId].map(r=>`<div class="hwstep"><b>${M(r[0])}</b>${A.block(r[1])}${r[2]?`<p class="small mut">${M(r[2])}</p>`:""}</div>`).join("")}</details>`:""}
   <div class="hwlist">${L.map((d,i)=>{const s=S[d.id]||{};return `<button class="hwrow" data-p="${esc(d.id)}"><span class="hwrank">#${i+1}</span>
     <span class="hwbody"><b>HW ${esc(d.id)} <span class="mut" style="font-weight:500">· ${esc(d.tag||"")}</span></b><small>${M(d.why)}</small>
     <span class="hwmeta">${flames(d.like)} <span>~${d.min} min</span> ${s.plays?`<span>${starS(s.stars||0)}</span><span class="mut">best ${s.best||0}</span>`:`<span class="mut">not played</span>`}</span></span><span class="hwgo">▸</span></button>`;}).join("")}</div>`;
   v.addEventListener("click",e=>{if(e.target.closest("[data-back]"))return A.back();const c=e.target.closest("[data-c]");if(c){sfx.tap();A.go({v:"hwlist",ch:c.dataset.c});return;}
+    if(e.target.closest("[data-mock]")){sfx.tap();const w=L.map(d=>d.like*d.like),T=w.reduce((a,b)=>a+b,0);let x=Math.random()*T,k=0;while(x>w[k]){x-=w[k];k++;}start(chId,L[k].id,true,true);return;}
     const r=e.target.closest("[data-p]");if(r){sfx.tap();start(chId,r.dataset.p,false);}});};
 
 /* ---------- one problem = one game ---------- */
 let R=null;
-function start(chId,id,remix){enrich(chId);const d=(G.hw[chId]||[]).find(x=>x.id===id);const S=st();const s=S[id]||{};const useRemix=remix==null?!!s.plays:remix;
+function start(chId,id,remix,mock){enrich(chId);const d=(G.hw[chId]||[]).find(x=>x.id===id);const S=st();const s=S[id]||{};const useRemix=remix==null?!!s.plays:remix;
   const p=useRemix?d.gen(false):Object.assign({},d.orig);const sol=d.solve(p);
   const bad=d.first.bad.slice(0,2);const opts=[d.first.ok,...bad];const order=A.shuffle([0,1,2]);
   const stages=[{first:true,q:"What's your first move?",opts:order.map(i=>opts[i]),a:order.indexOf(0)},...sol.stages];
-  R={chId,id,d,p,sol,stages,i:0,hearts:3,score:0,combo:0,miss:0,t0:Date.now(),remix:useRemix,log:[],answered:false};
+  R={chId,id,d,p,sol,stages,i:0,hearts:3,score:0,combo:0,miss:0,t0:Date.now(),remix:useRemix,mock:!!mock,log:[],answered:false};
   A.push({v:"hwrun"});}
 G.hwStart=start;G.hwCur=()=>R;
 function sceneFor(R){const sc=typeof R.d.scene==="function"?R.d.scene(R.p):R.d.scene;return sc;}
 A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch);if(R.over)return endView(v);
   const sg=R.stages[R.i],n=R.stages.length;
   v.innerHTML=`<div class="battle"><div class="hud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<R.hearts?"on":""}">♥</i>`).join("")}</div>
-   <div class="hudmid"><div class="progress"><i style="width:${100*R.i/n}%"></i></div><small>HW ${esc(R.id)} ${R.remix?"· Remix":"· as assigned"} · ${R.i+1}/${n}</small></div>
+   <div class="hudmid"><div class="progress"><i style="width:${100*R.i/n}%"></i></div><small>HW ${esc(R.id)} ${R.mock?"· MOCK QUIZ":R.remix?"· Remix":"· as assigned"} · ${R.i+1}/${n}</small></div>
    <span class="hwclock" data-clock>0:00</span><button class="xbtn" data-prob aria-label="Problem">📄</button></div>
   <details class="bub hwst" open><summary><b>Problem HW ${esc(R.id)}</b>${R.remix?` <span class="tag">new numbers</span>`:""}</summary><div class="hwsttxt">${M(R.d.st(R.p))}</div></details>
   ${sceneFor(R)?`<div class="hwscene"><canvas class="viz game3d"></canvas><small class="mut" data-cap></small></div>`:""}
@@ -2336,7 +2339,7 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
    <div class="q" style="font-size:17px">${M(sg.q)}</div>
    ${sg.opts?`<div class="opts">${sg.opts.map((o,k)=>`<button class="opt" data-k="${k}"><span class="k">${k+1}</span><span class="ot">${M(o)}</span></button>`).join("")}</div>`
      :`<div class="hwin"><input type="text" inputmode="decimal" autocomplete="off" placeholder="your answer" data-in aria-label="${esc(sg.k)}"><span class="hwu">${M(sg.u?("$"+sg.u+"$"):"")}</span></div>
-       <div class="row" style="gap:8px;margin-top:10px"><button class="btn" data-hint>Hint (−40)</button><button class="btn cta" style="flex:1" data-go>Check ▸</button></div>
+       <div class="row" style="gap:8px;margin-top:10px">${R.mock?"":`<button class="btn" data-hint>Hint (−40)</button>`}<button class="btn cta" style="flex:1" data-go>Check ▸</button></div>
        <p class="small mut" style="margin:8px 0 0">Within 2% counts. Use the units shown. You can type 2.26e8.</p>`}
    <div data-hintbox></div><div data-fb></div></section></div>`;
   const clk=v.querySelector("[data-clock]");const tick=()=>{if(!clk.isConnected)return;const s=(Date.now()-R.t0)/1000;clk.textContent=fmtT(s);clk.classList.toggle("over",s>720);setTimeout(tick,500);};tick();
@@ -2360,7 +2363,7 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
     fb.scrollIntoView({behavior:"smooth",block:"center"});};
   if(sg.opts){v.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(R.answered)return;const k=+b.dataset.k;const ok=k===sg.a;b.classList.add(ok?"right":"wrong");if(!ok)v.querySelector(`[data-k="${sg.a}"]`).classList.add("right");finish(ok);});}
   else{const inp=v.querySelector("[data-in]");setTimeout(()=>inp.focus({preventScroll:true}),60);
-    v.querySelector("[data-hint]").onclick=()=>{if(R.answered||sg.hinted)return;sg.hinted=true;sfx.tap();const step=sg.s!=null&&R.sol.steps[sg.s];
+    const hb=v.querySelector("[data-hint]");if(hb)hb.onclick=()=>{if(R.answered||sg.hinted)return;sg.hinted=true;sfx.tap();const step=sg.s!=null&&R.sol.steps[sg.s];
       v.querySelector("[data-hintbox]").innerHTML=`<div class="hwstep hint"><b>Hint · ${M(step?step[0]:"")}</b><p class="small">${M(sg.hint||(step&&step[3])||"Write the formula from this step, then plug in.")}</p></div>`;};
     const go=()=>{if(R.answered)return;const raw=inp.value.trim();const x=parseNum(raw);if(x==null){inp.classList.add("shake");setTimeout(()=>inp.classList.remove("shake"),300);return;}
       const vals=[sg.v,...(sg.alt||[])];const tol=sg.tol||0.02;const ok=vals.some(t=>Math.abs(x-t)<=tol*Math.max(Math.abs(t),1e-12)||(t===0&&Math.abs(x)<1e-6));finish(ok,raw);};
@@ -3497,6 +3500,14 @@ L.push({id:"8.6",like:1,min:20,why:"Six answers and binomial weights. Too long f
   return{steps:st,stages:[{k:"Z_1",q:"(a) Impedance of section 1 (next to the empty guide)?",u:"\\Omega",v:Z1,s:1},{k:"Z_2",q:"(a) Section 2?",u:"\\Omega",v:Z2,s:1},{k:"ε_r1",q:"(b) $\\varepsilon_{r1}$?",u:"",v:e1,s:2},{k:"ε_r2",q:"(b) $\\varepsilon_{r2}$?",u:"",v:e2,s:2},{k:"ℓ_1",q:"(c) Length of section 1?",u:"\\text{cm}",v:l1,s:3},{k:"ℓ_2",q:"(c) Length of section 2?",u:"\\text{cm}",v:l2,s:3}]};}});
 
 G.hw.ch8=L;
+G.hwSheet=G.hwSheet||{};G.hwSheet.ch8=[
+ ["1 · Medium first (filled guide)","v=\\frac{c}{\\sqrt{\\varepsilon_r}},\\qquad \\eta=\\frac{120\\pi}{\\sqrt{\\varepsilon_r}},\\qquad \\lambda=\\frac vf","Everything below uses $v$, $\\eta$, $\\lambda$ of the <b>filling</b>. Air: $v=c$, $\\eta_0=377$."],
+ ["2 · Cutoff","(f_c)_{mn}=\\frac{v}{2}\\sqrt{\\left(\\frac ma\\right)^2+\\left(\\frac nb\\right)^2},\\qquad (f_c)_{10}=\\frac{v}{2a}","Dominant = TE$_{10}$ when $a>b$. TM needs $m,n\\ge1$. Inches × 2.54 = cm, then to meters."],
+ ["3 · The one square root","\\sqrt{1-\\left(\\frac{f_c}{f}\\right)^2}","Compute it once. Every answer below is $v$, $\\lambda$ or $\\eta$ times or divided by it."],
+ ["4 · The five answers","\\beta_z=\\beta\\sqrt\\cdot,\\quad \\lambda_g=\\frac{\\lambda}{\\sqrt\\cdot},\\quad v_p=\\frac{v}{\\sqrt\\cdot},\\quad v_g=v\\sqrt\\cdot","Check: $v_pv_g=v^2$. Delay uses $v_g$; phase uses $\\beta_z\\ell$ (radians!)."],
+ ["5 · Wave impedance","Z^{TE}=\\frac{\\eta}{\\sqrt\\cdot}\\ (>\\eta),\\qquad Z^{TM}=\\eta\\sqrt\\cdot\\ (<\\eta)","Matching (8.5, 8.6): treat $Z_w$ as a line impedance, $Z_Q=\\sqrt{Z_1Z_3}$."],
+ ["6 · Scaling and duality","f_c\\propto\\frac{1}{\\sqrt{\\varepsilon_r}}\\quad(\\text{factor }k\\Rightarrow\\varepsilon_r=k^2)\\qquad \\text{PMC: TE}\\to\\sin\\cdot\\sin,\\ \\text{TM}\\to\\cos\\cdot\\cos","Metal walls: TE is cos·cos, TM is sin·sin. PMC swaps them."]];
+
 })(window.MXG);
 
 /* Mini-game: RADIATION RANGE (Ch. 6 infinitesimal dipole & far field; Ch. 11 Example 6-4 rectangular aperture).

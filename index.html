@@ -377,6 +377,13 @@ math[display=block]{margin:.3em 0}
 .opt{border-radius:18px}.btn{border-radius:99px}
 body{font-size:17px}
 .lchip{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.pb{display:flex;flex-direction:column;gap:12px}.pbgoal{font:750 18px/1.35 var(--fd);margin:0}
+.pbsec{background:var(--bg);border-radius:18px;padding:12px 14px}.pbsec ul,.pbsec ol{margin:6px 0 0;padding-left:20px}.pbsec li{margin:5px 0;font-size:16px}
+.pbsec.trap{background:rgba(255,139,139,.08)}.pbsec.quote{background:color-mix(in srgb,var(--acc) 10%,var(--bg));border-left:4px solid var(--acc)}
+.pbsec.ex{background:rgba(110,231,168,.06)}
+.quotebub{background:color-mix(in srgb,var(--acc) 10%,var(--surface));border-left:5px solid var(--acc)}
+.pbsheet{max-height:88vh;overflow:auto;background:var(--surface)}.pbbtn{font-size:18px}
+.sheet{background:var(--surface)}
 </style>
 </head><body>
 <noscript>MAXWELL needs JavaScript.</noscript>
@@ -1056,7 +1063,7 @@ const lvName=(id,k)=>k<=3?WORLDS[id].lv[k-1]:LV_EXTRA[k-4];
 A.VIEWS.world=(v,p)=>{const ch=A.chOf(p.ch);A.setAcc(v,ch);const W=WORLDS[ch.id],L=gq().lv[ch.id]||{};const bossOpen=[1,2,3,4,5].every(k=>L[k]);
   const learn=ch.lessons.filter((l,i)=>i<3||!!miniFor(l)).slice(0,4);
   v.innerHTML=`<div class="eyebrow" style="color:var(--acc);margin-top:12px">WORLD ${ch.num} · ${esc(ch.title.toUpperCase())}</div><h1 style="margin:2px 0 10px">${esc(W.game)}</h1>
-  <section class="bub tint"><p style="margin:0 0 10px">${esc(W.tag)}. ${esc(G.mini[W.mini]?G.mini[W.mini].blurb:"")}. Every round is generated fresh, graded on the real physics, and explained in Prather's notation.</p>
+  ${(G.coach||{})[ch.id]&&G.coach[ch.id].voice?`<section class="bub quotebub"><span class="eyebrow">🎙 Prather</span><p style="margin:6px 0 0">${M(G.coach[ch.id].voice)}</p></section>`:""}<section class="bub tint"><p style="margin:0 0 10px">${esc(W.tag)}. ${esc(G.mini[W.mini]?G.mini[W.mini].blurb:"")}. Every round is generated fresh, graded on the real physics, and explained in Prather's notation.</p>
    <div class="chips" style="flex-wrap:wrap">${learn.map(l=>`<button class="lchip" data-l="${l.id}">Learn: ${M(l.title)}</button>`).join("")}</div></section>
   <div class="levels">${[1,2,3,4,5].map(k=>{const o=lvOpen(ch.id,k),s=L[k]||0,[n,d]=lvName(ch.id,k);return `<button class="lvrow ${o?"":"locked"} ${s?"done":""}" data-k="${k}"><span class="lvn">${o?k:"🔒"}</span><span class="lvt"><b>${esc(n)}</b><small>${esc(d)}</small></span>${stars3(s,15)}</button>`;}).join("")}
    <button class="lvrow boss ${bossOpen?"":"locked"}" data-k="boss"><span class="lvn">${bossOpen?"👾":"🔒"}</span><span class="lvt"><b>Boss · World ${ch.num}</b><small>${bossOpen?"30 s per round. HW-level First Moves and derivations.":"Clear all 5 levels to wake it"}</small></span>${stars3(gq().bossW[ch.id]||0,15)}</button></div>`;
@@ -1064,6 +1071,21 @@ A.VIEWS.world=(v,p)=>{const ch=A.chOf(p.ch);A.setAcc(v,ch);const W=WORLDS[ch.id]
     const l=e.target.closest("[data-l]");if(l)A.push({v:"lesson",ch:ch.id,id:l.dataset.l});});};
 
 /* ---------- run engine (SPAN style) ---------- */
+
+/* ---------- Playbook (Prather-voiced coach per level) ---------- */
+const coachOf=(chId,k)=>{const c=(G.coach||{})[chId];return c?{voice:c.voice,L:c.levels&&c.levels[k]}:null;};
+function playbookHTML(chId,k,compact){const c=coachOf(chId,k);if(!c||!c.L)return "";const L=c.L;
+  return `<div class="pb">${L.goal?`<p class="pbgoal">${M(L.goal)}</p>`:""}
+   ${L.look&&L.look.length?`<div class="pbsec"><span class="eyebrow">👀 How to read the scene</span><ul>${L.look.map(x=>`<li>${M(x)}</li>`).join("")}</ul></div>`:""}
+   ${L.rule?`<div class="pbsec"><span class="eyebrow">📐 The rule</span><b>${M(L.rule.t)}</b>${L.rule.tex?block(L.rule.tex):""}</div>`:""}
+   ${L.steps&&L.steps.length?`<div class="pbsec"><span class="eyebrow">🧭 His method</span><ol>${L.steps.map(x=>`<li>${M(x)}</li>`).join("")}</ol></div>`:""}
+   ${L.example&&!compact?`<div class="pbsec ex"><span class="eyebrow">✍️ Worked example</span><p><b>${M(L.example.q)}</b></p><ol>${(L.example.a||[]).map(x=>`<li>${M(x)}</li>`).join("")}</ol></div>`:""}
+   ${L.traps&&L.traps.length?`<div class="pbsec trap"><span class="eyebrow">⚠️ Traps</span><ul>${L.traps.map(x=>`<li>${M(x)}</li>`).join("")}</ul></div>`:""}
+   ${L.prather?`<div class="pbsec quote"><span class="eyebrow">🎙 Prather</span><p>${M(L.prather)}</p></div>`:""}</div>`;}
+function pbSheet(chId,k){const h=playbookHTML(chId,k,false);if(!h)return;const bg=document.createElement("div");bg.className="sheet-bg";const sh=document.createElement("div");sh.className="sheet pbsheet";
+  sh.innerHTML=`<div class="row between"><span class="eyebrow" style="color:var(--acc)">PLAYBOOK</span><button class="xbtn" aria-label="Close">×</button></div>${h}<button class="bigcta" data-close>Back to the round</button>`;
+  sh.style.setProperty("--acc",A.chOf(chId).color);document.body.append(bg,sh);const close=()=>{bg.remove();sh.remove();};bg.onclick=close;sh.querySelector(".xbtn").onclick=close;sh.querySelector("[data-close]").onclick=close;}
+G.playbookHTML=playbookHTML;
 let RUN=null;
 function startRun(chId,k){const ch=A.chOf(chId),W=WORLDS[chId];const rounds=[];const boss=k==="boss";
   const mk=(name,o)=>({name,...o});
@@ -1082,12 +1104,20 @@ function startRun(chId,k){const ch=A.chOf(chId),W=WORLDS[chId];const rounds=[];c
   const g=gq();g.qWorlds=g.qWorlds||[];if(!g.qWorlds.includes(chId)){g.qWorlds.push(chId);bumpQuest("world2");}
   A.push({v:"run"});}
 A.VIEWS.run=v=>{if(!RUN){A.back();return;}const ch=A.chOf(RUN.ch);A.setAcc(v,ch);if(RUN.over)return runEnd(v);
+  if(!RUN.briefed&&coachOf(RUN.ch,RUN.k)&&coachOf(RUN.ch,RUN.k).L){const [nm,d]=RUN.boss?["Boss","8 rounds, 30 s each"]:lvName(RUN.ch,RUN.k);
+    v.innerHTML=`<div class="eyebrow" style="color:var(--acc);margin-top:12px">${esc(WORLDS[RUN.ch].game.toUpperCase())} · ${RUN.boss?"BOSS":"LEVEL "+RUN.k}</div><h1 style="margin:2px 0 4px">${esc(nm)}</h1><p class="mut" style="margin:0 0 6px">${esc(d)}</p>
+     <button class="bigcta" data-go>I've got it · Start ▸</button>
+     <section class="bub">${playbookHTML(RUN.ch,RUN.k)}</section><button class="bigcta" data-go>Start ▸</button>
+     <p class="small mut" style="text-align:center">This playbook stays one tap away during the run (📖).</p>`;
+    v.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{RUN.briefed=true;sfx.tap();A.render();scrollTo(0,0);});
+    A.setKey(e=>{if(e.key==="Enter"){RUN.briefed=true;A.render();return true;}});return;}
   const n=RUN.rounds.length,rd=RUN.rounds[RUN.i],[nm]=RUN.boss?["Boss"]:lvName(RUN.ch,RUN.k);const T=rd.time||RUN.time;
   v.innerHTML=`<div class="battle"><div class="hud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<RUN.hearts?"on":""}">♥</i>`).join("")}</div>
-   <div class="hudmid"><div class="progress"><i style="width:${100*RUN.i/n}%"></i></div><small>${esc(RUN.boss?`Boss · World ${ch.num}`:`${WORLDS[RUN.ch].game} · ${nm}`)} · ${RUN.i+1}/${n}</small></div><span class="combo2 ${RUN.combo>=2?"hot":""}">×${Math.max(1,RUN.combo)}</span></div>
+   <div class="hudmid"><div class="progress"><i style="width:${100*RUN.i/n}%"></i></div><small>${esc(RUN.boss?`Boss · World ${ch.num}`:`${WORLDS[RUN.ch].game} · ${nm}`)} · ${RUN.i+1}/${n}</small></div><span class="combo2 ${RUN.combo>=2?"hot":""}">×${Math.max(1,RUN.combo)}</span>${coachOf(RUN.ch,RUN.k)&&coachOf(RUN.ch,RUN.k).L?`<button class="xbtn pbbtn" data-pb aria-label="Playbook">📖</button>`:""}</div>
    ${T?`<div class="timebar"><i data-tb></i></div>`:""}
    <section class="bub gcard" data-gcard><div class="eyebrow" style="color:var(--acc)">${esc(rd.name.toUpperCase())}</div><div data-stage></div></section><div data-fb></div>
    <p class="small mut" data-qm hidden style="text-align:center">Tap × again to leave. This run won't count.</p></div>`;
+  const pbb=v.querySelector("[data-pb]");if(pbb)pbb.onclick=()=>pbSheet(RUN.ch,RUN.k);
   let qa=false;v.querySelector("[data-quit]").onclick=()=>{if(qa){clearInterval(RUN.tmr);RUN=null;A.back();}else{qa=true;v.querySelector("[data-qm]").hidden=false;}};
   let done=false;const t0=Date.now();
   const fin=(score,detail)=>{if(done)return;done=true;clearInterval(RUN.tmr);const ok=score>=0.7;if(rd.id)A.grade(rd.id,ok,true);
@@ -1096,8 +1126,8 @@ A.VIEWS.run=v=>{if(!RUN){A.back();return;}const ch=A.chOf(RUN.ch);A.setAcc(v,ch)
     else{RUN.combo=0;RUN.hearts--;head=RUN.hearts>0?"−1 heart":"Out of hearts";sfx.miss();buzz([40,30,40]);document.body.classList.add("shakey");setTimeout(()=>document.body.classList.remove("shakey"),320);}
     v.querySelector(".hearts").innerHTML=[0,1,2].map(i=>`<i class="${i<RUN.hearts?"on":""}">♥</i>`).join("");const cb=v.querySelector(".combo2");cb.textContent="×"+Math.max(1,RUN.combo);cb.classList.toggle("hot",RUN.combo>=2);
     const last=RUN.hearts<=0||RUN.i+1>=n;
-    v.querySelector("[data-fb]").innerHTML=`<div class="fbcard ${ok?"ok":"no"}"><b class="fbh">${head}</b>${detail?`<div class="fbw">${detail}</div>`:""}<button class="bigcta" data-next>${last?"See results":"Next round"} ▸</button></div>`;
-    v.querySelector("[data-next]").onclick=nxt;v.querySelector("[data-fb]").scrollIntoView({block:"nearest",behavior:RM()?"auto":"smooth"});A.setKey(e=>{if(e.key==="Enter"||e.key==="ArrowRight"){nxt();return true;}});};
+    v.querySelector("[data-fb]").innerHTML=`<div class="fbcard ${ok?"ok":"no"}"><b class="fbh">${head}</b>${detail?`<div class="fbw">${detail}</div>`:""}${!ok&&coachOf(RUN.ch,RUN.k)&&coachOf(RUN.ch,RUN.k).L?`<button class="btn block" data-pb2 style="margin-top:10px">📖 Show me how he solves this</button>`:""}<button class="bigcta" data-next>${last?"See results":"Next round"} ▸</button></div>`;
+    v.querySelector("[data-next]").onclick=nxt;const p2=v.querySelector("[data-pb2]");if(p2)p2.onclick=()=>pbSheet(RUN.ch,RUN.k);v.querySelector("[data-fb]").scrollIntoView({block:"nearest",behavior:RM()?"auto":"smooth"});A.setKey(e=>{if(e.key==="Enter"||e.key==="ArrowRight"){nxt();return true;}});};
   const nxt=()=>{RUN.i++;if(RUN.hearts<=0||RUN.i>=n)finishRun();A.render();scrollTo(0,0);};
   if(T){const tb=v.querySelector("[data-tb]");RUN.tmr=setInterval(()=>{const f=1-(Date.now()-t0)/(T*1000);if(tb)tb.style.width=Math.max(0,f*100)+"%";if(f<=0.2&&tb)tb.classList.add("low");if(f<=0)fin(0,"⏱ Time's up.");},100);}
   rd.run(v.querySelector("[data-stage]"),fin);};
@@ -1123,6 +1153,820 @@ G.unlockAll=on=>{gq().unlockAll=on;A.save();};
 
 G.API=A;
 };
+
+/* Playbook (coach) for World 1 · Field Sculptor (sculptor.js). Ch. 1, L1–L5.
+   Sources: transcripts 18d108b9 (L1), 6b4ee9bb (L2), 5f63d148 (L3), 7fd9142d (L4), 3141afb0 (L5); content/ch1.js; src/minis/sculptor.js.
+   Convention (Balanis/Prather): n̂ points from medium 1 into medium 2; in the game medium 1 is on top, so n̂ = −ẑ. */
+(function(G){ const R=String.raw; G.coach=G.coach||{}; G.coach.ch1={
+ voice:R`Boundary conditions are the whole game for him. The curl-curl equations for E and H look identical, so the general solutions look identical; "the physics that makes them different" is how they meet a boundary. And because the derivative of a discontinuity blows up, he never lets you take them from the differential form: you go to the <b>integral form</b>, wrap a <b>loop</b> or a <b>pillbox</b> around the interface, and crush it. "If you take away anything from this class," he said in L4, it's boundary conditions, and the pillbox-and-loop derivation was on Exam 1.`,
+ levels:{
+  1:{ goal:R`Bend an E field across a dielectric interface: build $\mathbf E_2$ just below the boundary from the $\mathbf E_1$ you're given.`,
+      look:[
+       R`<b>Top block = medium 1</b> (its $\varepsilon_{r1}$ is printed top-left), <b>bottom block = medium 2</b> ($\varepsilon_{r2}$ bottom-left). The flat gray sheet is the interface $z=0$; the faint dashed vertical line through the origin is the normal line.`,
+       R`The <b>cyan arrow E₁</b> is the given field above (it's <b>lavender</b> on an H round). White dots stream along it to show which way it points. Its <b>dashed shadow on the sheet</b> is its tangential part $(E_x,E_y)$; the rest is the normal part $E_z$.`,
+       R`The <b>orange n̂ arrow points down</b> ($\hat n=-\hat z$, from medium 1 into medium 2, his convention). It only changes your answer when a source sits on the interface: then an orange tile <b>q<sub>es</sub></b> appears and + or − signs are sprinkled on the sheet.`,
+       R`Tiles above the canvas: $\varepsilon_{r1}\cdot\varepsilon_{r2}$ and $\mathbf E_1=(x,y,z)$ in V/m. Sliders <b>E₂x, E₂y, E₂z</b> (0.25 steps) build your <b>gold arrow</b> below the sheet. Top-right HUD: your $|\mathbf E_2|$ and its tilt θ from the normal; the cyan θ₁ under it is the incoming tilt.`,
+       R`Press <b>SCULPT ▸</b>: a dashed <b>green "true"</b> arrow appears. Grading is ±0.13 per component: normal part 60%, tangential part 40%, so the normal slider decides the round. Drag to orbit; look edge-on along the sheet to see the bend.`],
+      rule:{t:"Integral form, crushed onto the interface (1-48)",tex:R`\hat n\times(\mathbf E_2-\mathbf E_1)=0,\qquad \hat n\cdot(\mathbf D_2-\mathbf D_1)=q_{es},\qquad \hat n=-\hat z\ \Rightarrow\ \varepsilon_{r2}E_{2z}=\varepsilon_{r1}E_{1z}-\frac{q_{es}}{\varepsilon_0}`},
+      steps:[
+       R`Split $\mathbf E_1$ against the sheet: $x$ and $y$ are <b>tangential</b>, $z$ is <b>normal</b>.`,
+       R`Tangential carries straight across (loop): set $E_{2x}=E_{1x}$, $E_{2y}=E_{1y}$. Never scale them.`,
+       R`Normal: it's <b>D</b>, not E, that's continuous (pillbox): $\varepsilon_{r1}E_{1z}=\varepsilon_{r2}E_{2z}$, so $E_{2z}=\frac{\varepsilon_{r1}}{\varepsilon_{r2}}E_{1z}$, same sign.`,
+       R`If a q<sub>es</sub> tile shows (given in units of $\varepsilon_0$): $E_{2z}=\left(\varepsilon_{r1}E_{1z}-q_{es}/\varepsilon_0\right)/\varepsilon_{r2}$. The minus is $\hat n=-\hat z$ at work.`,
+       R`Sanity check on the HUD: going into the larger ε the field leans <b>away</b> from the normal, $\frac{\tan\theta_2}{\tan\theta_1}=\frac{\varepsilon_2}{\varepsilon_1}$.`,
+       R`Lavender (H) round or gray PEC floor? H works the same with μ (level 2); PEC rules are level 3. The last two rounds here can be either.`],
+      example:{q:R`$\varepsilon_{r1}=2$ above, $\varepsilon_{r2}=8$ below, no surface charge, $\mathbf E_1=(2,-1,-4)$ V/m. Build $\mathbf E_2$.`,
+       a:[R`Tangential copies: $E_{2x}=2$, $E_{2y}=-1$.`,
+          R`Normal D continuous: $E_{2z}=\frac{2}{8}(-4)=-1$.`,
+          R`$\mathbf E_2=(2,-1,-1)$ V/m. Check: $\tan\theta_1=\sqrt5/4$, $\tan\theta_2=\sqrt5$, ratio $4=\varepsilon_2/\varepsilon_1$: bent away from the normal.`,
+          R`With $q_{es}=2\varepsilon_0$ instead, $\varepsilon_{r1}=1$, $\varepsilon_{r2}=2$, $\mathbf E_1=(1,0,-3)$: $E_{2z}=\frac{1(-3)-2}{2}=-2.5$, so $\mathbf E_2=(1,0,-2.5)$.`]},
+      traps:[R`Keeping $E_n$ continuous. It's $D_n$: "D is not E" (L4).`,
+       R`Upside-down ratio: $\frac{\varepsilon_{r1}}{\varepsilon_{r2}}$, not $\frac{\varepsilon_{r2}}{\varepsilon_{r1}}$ (that would be "tangential D continuous").`,
+       R`Scaling the tangential part by the ε ratio. Tangential E crosses untouched.`,
+       R`Sign of q<sub>es</sub>: with $\hat n=-\hat z$ it is $D_{2z}=D_{1z}-q_{es}$, not plus.`],
+      prather:R`L4, after showing tangential E and normal D are both continuous: "Does that mean the field just lives forever because it doesn't see anything? ... Well, remember, D is not E." $E_n$ jumps by $\varepsilon_1/\varepsilon_2$, and that's what makes the field bend.` },
+  2:{ goal:R`Same interface, magnetic side: build $\mathbf H_2$ across $\mu_{r1}\,|\,\mu_{r2}$, including a surface current $\mathbf J_s$ that makes tangential H jump.`,
+      look:[
+       R`H rounds are drawn in <b>lavender</b>; tiles read $\mu_{r1}\cdot\mu_{r2}$, $\mathbf H_1$ in A/m, and, when there is one, a <b>J<sub>s</sub> (A/m)</b> tile like "3x̂".`,
+       R`The surface current is the <b>row of orange "Js" arrows sliding along the sheet</b>. Its direction is the whole story: a current along $\hat x$ can only change $H_y$, and vice versa.`,
+       R`Sliders <b>H₂x, H₂y, H₂z</b> build the gold arrow; dashed shadows show the tangential parts of H₁ and your H₂ on the sheet so you can compare them directly. The orange n̂ still points down ($-\hat z$).`,
+       R`Some rounds here are E rounds with a q<sub>es</sub> tile or a gray PEC floor: use level 1 or level 3 rules for those.`],
+      rule:{t:"Ampère on the loop, ∯B·ds = 0 on the pillbox",tex:R`\hat n\times(\mathbf H_2-\mathbf H_1)=\mathbf J_s\ \Rightarrow\ \mathbf H_{2t}=\mathbf H_{1t}+\mathbf J_s\times\hat n,\qquad \mu_{r2}H_{2z}=\mu_{r1}H_{1z}`},
+      steps:[
+       R`Normal first: $B_n$ is always continuous (no magnetic charge): $H_{2z}=\frac{\mu_{r1}}{\mu_{r2}}H_{1z}$. J<sub>s</sub> never touches the normal part.`,
+       R`No J<sub>s</sub> tile: tangential H copies straight across, $H_{2x}=H_{1x}$, $H_{2y}=H_{1y}$.`,
+       R`With J<sub>s</sub>: the jump is $\mathbf J_s\times\hat n$ with $\hat n=-\hat z$. So $\mathbf J_s=J\hat x$ adds $+J$ to $H_{2y}$; $\mathbf J_s=J\hat y$ adds $-J$ to $H_{2x}$.`,
+       R`Check by plugging back: $-\hat z\times(\mathbf H_2-\mathbf H_1)$ must reproduce the J<sub>s</sub> tile.`,
+       R`Ignore ε on an H round (HW 1.7: "ignore ε<sub>r</sub>").`],
+      example:{q:R`$\mu_{r1}=1$, $\mu_{r2}=2$, $\mathbf H_1=(2,1,-4)$ A/m, $\mathbf J_s=3\hat x$ A/m. Build $\mathbf H_2$.`,
+       a:[R`Normal: $H_{2z}=\frac{1}{2}(-4)=-2$.`,
+          R`Jump: $\mathbf J_s\times\hat n=3\hat x\times(-\hat z)=3\hat y$, so $H_{2y}=1+3=4$, $H_{2x}=2$.`,
+          R`$\mathbf H_2=(2,4,-2)$ A/m. Check: $-\hat z\times(3\hat y)=3\hat x=\mathbf J_s$.`,
+          R`(Supplemental) Physical check: a current sheet along $+\hat x$ wraps H around itself, $-\hat y$ above and $+\hat y$ below, so going down through it $H_y$ rises by J.`]},
+      traps:[R`Forgetting the jump: "J<sub>s</sub> makes tangential H jump by $\mathbf J_s\times\hat n$."`,
+       R`Wrong sign of the jump ($\hat n\times\mathbf J_s$ instead of $\mathbf J_s\times\hat n$).`,
+       R`Putting the current into $H_z$, or using ε instead of μ for the normal part.`],
+      prather:R`L3, collapsing the loop for Ampère: the $\partial\mathbf D/\partial t$ term dies because fields are distributed, "but a current source is never distributed ... as I collapse everything down, this particular term doesn't go away." In L4: fields "are by definition continuous within the medium. The only way they can be discontinuous is if you have the presence of a source."` },
+  3:{ goal:R`Hit a PEC wall: build the field that survives right at the metal surface, and the surface charge or surface current it ends on.`,
+      look:[
+       R`The lower block turns <b>metallic gray, "▼ PEC σ = ∞"</b>, and the orange <b>n̂ now points up</b> ($+\hat z$, out of the conductor: Table 1-3 measures from the PEC side).`,
+       R`The faint arrow floating up-left labeled <b>"applied"</b> just tells you the direction of the incoming field. You build the field <b>at the surface</b>, at the origin.`,
+       R`There's one extra slider: <b>q<sub>es</sub>/ε₀</b> on E rounds, <b>|J<sub>s</sub>|</b> on H rounds. After SCULPT the source appears on the sheet: pink + or blue − charges, or orange J<sub>s</sub> arrows showing the current's direction.`,
+       R`Grading: tangential, normal and the source each count (30/35/35%), so get all three. Non-PEC rounds with a q<sub>es</sub> or J<sub>s</sub> tile show up here too: n̂ is back to $-\hat z$ for those.`],
+      rule:{t:"PEC column of Table 1-3 (n̂ out of the PEC)",tex:R`\hat n\times\mathbf E=0,\qquad \hat n\cdot\mathbf D=q_{es},\qquad \hat n\cdot\mathbf B=0,\qquad \hat n\times\mathbf H=\mathbf J_s`},
+      steps:[
+       R`E round: kill the tangential part, $E_x=E_y=0$: the free charges rearrange and short it out.`,
+       R`Keep the normal part: $E_z$ = the applied $E_z$.`,
+       R`Charge: $q_{es}=\hat z\cdot\mathbf D=\varepsilon_r\varepsilon_0E_z$, so the slider gets $\varepsilon_rE_z$. A field pointing up (away from the metal) starts on +; pointing into the metal it ends on −.`,
+       R`H round: kill the normal part, $H_z=0$ (eddy currents cancel B inside); keep $H_x$, $H_y$.`,
+       R`Current: $\mathbf J_s=\hat z\times\mathbf H=(-H_y,\,H_x)$; the slider wants its size $|\mathbf J_s|=\sqrt{H_x^2+H_y^2}$.`],
+      example:{q:R`(a) $\varepsilon_r=2$ above a PEC, applied $\mathbf E=(2,-1,3)$ V/m. (b) Applied $\mathbf H=(3,4,-2)$ A/m on a PEC.`,
+       a:[R`(a) Surface E $=(0,0,3)$ V/m; $q_{es}/\varepsilon_0=2\cdot3=6$ (positive: the field points away from the metal).`,
+          R`(b) Surface H $=(3,4,0)$ A/m; $\mathbf J_s=\hat z\times\mathbf H=(-4,3)$ A/m, $|\mathbf J_s|=5$ A/m.`]},
+      traps:[R`Leaving a tangential E on the metal ("tangential E must vanish on a PEC").`,
+       R`$q_{es}=\varepsilon_0E_z$: you dropped $\varepsilon_r$; it's $\hat n\cdot\mathbf D$.`,
+       R`Wrong charge sign: a field pointing into the PEC ends on negative charge.`,
+       R`Zeroing tangential H by analogy with E. Tangential H survives; it's normal B that dies.`],
+      prather:R`L4, on H at a PEC there are no charges to rearrange, so he asks if J<sub>s</sub> goes away and answers himself: "J<sub>s</sub> is not going away." The electrons spin up eddy currents whose field cancels H inside, the same eddy currents his first undergrad job used to find cracks in nuclear-reactor control-rod tubes. In L5: a normal E field "only sees one polarity," so it piles up surface charge instead of being cancelled.` },
+  4:{ goal:R`Prather's moves: name the first move of a Ch. 1 problem, and rebuild his derivations (loop, pillbox, continuity, Poynting) in his order.`,
+      look:[
+       R`<b>First-move rounds</b>: a gray tag gives the source (HW 1.x, Concept (L3), Example (L5 slide)), then the problem and "First move?" with four numbered options (keys 1–4). After you pick, the right one lights green and his reason appears.`,
+       R`<b>Derivation rounds</b>: "Rebuild <i>lesson</i> in Prather's order." Shuffled step cards, each with a short title and an equation. Tap them 1 → N; a wrong tap shakes and costs 0.25, so you can afford only one slip.`,
+       R`Order is FM, derivation, FM, derivation, FM. No timer on this level: slow down and say why each step comes next.`],
+      rule:{t:"Every boundary condition: integral law → straddle → crush → survivors",tex:R`\oint_C\mathbf E\cdot d\boldsymbol\ell=-\frac{\partial}{\partial t}\iint_S\mathbf B\cdot d\mathbf s\ \xrightarrow{\ \Delta y\to0\ }\ (E_{2t}-E_{1t})\Delta x=0\qquad \oint_S\mathbf D\cdot d\mathbf s=\iiint_V q_{ev}\,dv\ \xrightarrow{\ h\to0\ }\ (D_{2n}-D_{1n})\Delta A=q_{es}\Delta A`},
+      steps:[
+       R`"Tangential" in the question → the <b>collapsing loop</b>: Faraday's integral form for E, Ampère's for H, rectangle straddling the interface, then $\Delta y\to0$.`,
+       R`"Normal" → the <b>pillbox</b> (soda can): Gauss for D, $\oint_S\mathbf B\cdot d\mathbf s=0$ for B; crush it so the side wall $2\pi rh\to0$.`,
+       R`What survives the crush: distributed fields times a vanishing area or volume die; sources confined to the surface survive, $\mathbf J\Delta y\to\mathbf J_s$ and $q_{ev}\to q_{es}\delta(z)$.`,
+       R`Continuity → divergence of Ampère, $\nabla\cdot\nabla\times\mathbf H=0$, swap $\nabla\cdot$ and $\frac{\partial}{\partial t}$, substitute Gauss. KVL → Faraday around the circuit loop; KCL → continuity around a node.`,
+       R`Poynting → dot Faraday with H, Ampère with E, subtract, use $\nabla\cdot(\mathbf E\times\mathbf H)$. Time average → write $\mathrm{Re}\{\mathbf A\}=\frac12(\mathbf A+\mathbf A^*)$ and multiply out.`],
+      example:{q:R`"Derive the boundary condition on tangential H." Build it in his order.`,
+       a:[R`Ampère, integral form: $\oint_C\mathbf H\cdot d\boldsymbol\ell=\iint_S\left(\mathbf J+\frac{\partial\mathbf D}{\partial t}\right)\cdot d\mathbf s$.`,
+          R`Rectangle $\Delta x$ by $\Delta y$ straddling the interface; let $\Delta y\to0$: the short sides vanish, the long sides lie on the surface and pick out the tangential parts with opposite signs, giving $(H_{2t}-H_{1t})\Delta x$.`,
+          R`Right side: $\frac{\partial\mathbf D}{\partial t}\Delta x\Delta y\to0$ (distributed), but $\mathbf J\Delta y\to\mathbf J_s$ survives.`,
+          R`Result: $\hat n\times(\mathbf H_2-\mathbf H_1)=\mathbf J_s$; perfect dielectric ⇒ $\mathbf J_s=0$ ⇒ tangential H continuous.`]},
+      traps:[R`Starting from the differential form at the interface: the derivative of a step is infinite.`,
+       R`Losing the minus sign: the two long sides of the loop run in opposite directions.`,
+       R`Forgetting that normals of a closed surface always point out, so the pillbox's top and bottom normals are antiparallel.`,
+       R`Killing $\mathbf J_s$ along with $\partial\mathbf D/\partial t$: a current can live on a surface; a displacement current can't.`],
+      prather:R`L3: "What happens if I apply a derivative to a discontinuity? ... But I can integrate across a discontinuity." So "we have to go from the differential form to the integral form." And for the pillbox in L4: "take your foot and just crush the can."` },
+  5:{ goal:R`Exam rounds: a timed mix of hard Field Sculptor builds, first moves and concept cards, the way his midterms mix homework, derivation and concept.`,
+      look:[
+       R`A <b>timer bar</b> runs under the HUD: 90 s on Field Sculptor rounds, 45 s on question cards. It turns red at 20%; time-out scores zero and costs a heart.`,
+       R`Round order: hard Field Sculptor (any of q<sub>es</sub>, J<sub>s</sub>, PEC-E, PEC-H), first move, concept card, concept card, hard Field Sculptor.`,
+       R`Your combo multiplier (×N, top-right) and speed both add score; three misses and you're out.`],
+      rule:{t:"His exam format (L1 slide)",tex:R`4\ \text{questions}=2\ \text{from HW}+1\ \text{derivation from the notes}+1\ \text{arbitrary};\quad \text{no calculator, one handwritten } 8.5\times11\ \text{sheet}`},
+      steps:[
+       R`On a build, read the tiles in 5 s: E or H? PEC floor? A q<sub>es</sub> or J<sub>s</sub> tile? That alone picks the rule.`,
+       R`Set the normal slider first: it's 60% of a dielectric round, and it's where the ε or μ ratio lives.`,
+       R`On a card, name the governing law (Faraday, Ampère, Gauss, continuity) before you read the options.`,
+       R`A bare "dB" is a ratio; dBm is relative to 1 mW, dBW to 1 W, dBi to isotropic (L5).`,
+       R`For the real exam: put (1-48a–d) and Table 1-3 on your sheet, but expect to <b>derive</b> them from the integral form with the loop and the pillbox. That is the "1 derivation from the notes."`],
+      example:{q:R`Exam-style: "Derive the boundary conditions on the normal components of D and B."`,
+       a:[R`Gauss on a pillbox straddling the interface, with normals out of the closed surface.`,
+          R`Crush it: side wall $2\pi rh\to0$; top gives $D_{2n}\Delta A$, bottom $-D_{1n}\Delta A$; $q_{ev}=q_{es}\delta(z)$ integrates to $q_{es}\Delta A$.`,
+          R`$\hat n\cdot(\mathbf D_2-\mathbf D_1)=q_{es}$; for B, no magnetic charge ⇒ $\hat n\cdot(\mathbf B_2-\mathbf B_1)=0$.`]},
+      traps:[R`Using PEC rules on a dielectric round, or the reverse. The floor color tells you.`,
+       R`q<sub>es</sub> is given in units of ε₀ (C/m²): don't multiply by ε₀ again.`,
+       R`Spending the clock on arithmetic: the answers land on a 0.25 grid, so if you get 1.33, recheck your ratio.`],
+      prather:R`L5: "I want you to have an intuitive feel for the boundary conditions. I guarantee you're gonna see them again. So don't take it light." And from L2: midterms are in-class written exams with one 8.5×11 sheet, front and back.` },
+  boss:{ goal:R`The boss: 8 rounds at 30 s each (90 s on builds), with two Field Sculptor builds, two first moves, two derivations and two concept cards.`,
+      look:[
+       R`Order: build, first move, derivation, card, build, first move, derivation, card. The <b>derivation rounds get only 30 s</b>, so you must know the step order cold, not reason it out.`,
+       R`Builds are hard mode: q<sub>es</sub>, J<sub>s</sub> and both PEC types. Three hearts total.`],
+      rule:{t:"The skeletons to own",tex:R`\text{loop: Faraday}\to\Delta y\to0\to\hat n\times\to\text{Ampère}\to\mathbf J_s\qquad \text{pillbox: Gauss}\to\text{crush}\to q_{es}\qquad \text{continuity: }\nabla\cdot(\nabla\times\mathbf H)=0\to\text{Gauss}`},
+      steps:[
+       R`Collapsing loop (1.11): Faraday on the loop ($\mathbf M_i=0$) → $\Delta y\to0$ → vector form → Ampère on the same loop → result.`,
+       R`Pillbox (1.12): Gauss on the pillbox → crush it → result → no-surface-charge case → magnetic case.`,
+       R`Continuity (1.6): start from Ampère → take the divergence → div curl = 0, swap → Gauss → integral form.`,
+       R`Poynting (1.16): curl equations with all currents → dot and subtract → identity → differential form → volume integral + divergence theorem → stored-energy terms.`,
+       R`Time-average Poynting (1.18): instantaneous S → real part as a sum → multiply out → pair conjugates → average over $T=2\pi/\omega$.`],
+      example:{q:R`Boss derivation: "Rebuild the time-average Poynting vector" in 30 s.`,
+       a:[R`$\boldsymbol{\mathcal S}=\boldsymbol{\mathcal E}\times\boldsymbol{\mathcal H}$ (1-66) → $\boldsymbol{\mathcal E}=\frac12(\mathbf Ee^{j\omega t}+\mathbf E^*e^{-j\omega t})$ (1-67) → multiply out (1-68) → pair conjugates (1-69) → average: $\mathbf S_{av}=\frac12\mathrm{Re}(\mathbf E\times\mathbf H^*)$ (1-70).`,
+          R`Tip: the Balanis equation numbers in the step titles run in order. Use them to check yourself, not as a crutch.`]},
+      traps:[R`Reasoning a derivation from scratch at 30 s: rehearse the five skeletons until they're reflex.`,
+       R`On builds, flipping n̂: it's $-\hat z$ for a dielectric interface and $+\hat z$ (out of the metal) on PEC rounds.`],
+      prather:R`The L1 "recipe for success" slide: understand every step between slides, do every assigned problem, and "be able to derive every concept presented in class."` }
+ } };
+})(window.MXG);
+
+/* Playbook for World 11 (Aperture Ace: equivalence, apertures, patterns). Sources: L17 transcript 8eb701a7
+   (far-field condition derivation, N and L, Example 6-4, E/H planes, circular aperture, exam format), L18 transcript
+   5f01e25c (scattering recap), L17 slides, content/ch11.js and content/ch6.js. "look"/"steps" describe exactly what
+   src/minis/dipole.js draws (rounds aim, null, far; region appears in the hard mix). (Supplemental) = not from class. */
+(function(G){ const R=String.raw; G.coach=G.coach||{}; G.coach.ch11={
+ voice:R`Scattering and antennas, he said, are "not a whole lot different. It just happens to be that one's intentional." The FAA radar at Philadelphia airport doesn't bounce off the plane like a ball: it drives currents on the skin, and "that induced current then re-radiates." An aperture is a rect function in space, so its far field is a sinc in angle, the Fourier transform you already know from pulses. And he was explicit about the exam: know the Cartesian stuff.`,
+ levels:{
+  1:{ goal:R`Aim the probe at a named level of a Hertzian dipole's far-field pattern: the maximum, a null, the half-power (−3 dB) direction, or where $|E_\theta|$ is half its maximum.`,
+   look:[
+    R`<b>The scene:</b> the orange bar is the dipole along <b>z</b> (screen up; axes are x red, y green, z blue). The white arrow on it is the current flipping each half cycle. The translucent orange <b>doughnut</b> is the power pattern $\sin^2\theta$: its radius in any direction is the power radiated that way.`,
+    R`<b>On the gray sphere:</b> cyan arrows are the far-field $\mathbf E$ ($E_\theta$, running along the meridians, parallel to the wire's direction as seen from there). Lavender arrows are $\mathbf H$ ($H_\phi$, circling the wire). Arrows are bright at the equator and fade toward the poles, which is the $\sin\theta$ itself.`,
+    R`<b>The probe:</b> the gold line and dot, set by the <b>θ</b> slider (from +z, 0–180°) and the <b>φ</b> slider (around z). After FIRE a <b>green ring</b> marks every correct direction, the whole cone, at every φ.`,
+    R`Along the wire the doughnut pinches down to nothing (its "hole"): that pinch is the null. Drag to orbit if the probe hides behind the doughnut.`],
+   rule:{t:"Far field of a Hertzian dipole (L16 slides, reviewed in L17)", tex:R`E_\theta\simeq j\eta\frac{\beta I_0l\sin\theta}{4\pi r}e^{-j\beta r},\qquad \frac{E_\theta}{H_\phi}=\eta=120\pi,\qquad \text{power}\propto\sin^2\theta=L\ \Rightarrow\ \theta=\arcsin\sqrt L`},
+   steps:[
+    R`Translate the target into a power level $L$: max means $L=1$; null means $L=0$; half-power (−3 dB) means $L=\frac12$; half the <i>field</i> ($|E_\theta|=\frac12$ max, −6 dB) means $L=\frac14$.`,
+    R`Solve $\sin^2\theta=L$: max at $\theta=90^\circ$ (broadside), null at $0^\circ$ or $180^\circ$ (along the wire), −3 dB at $45^\circ$ or $135^\circ$, −6 dB at $30^\circ$ or $150^\circ$.`,
+    R`Set θ. Leave φ alone: the pattern is symmetric around the wire, so φ doesn't matter. You're graded on the angle from the wire, within about 3°.`,
+    R`Before you FIRE, check the picture: the probe should touch the doughnut where it's fattest (max), where it pinches to zero (null), or partway down its flank.`],
+   example:{q:R`"Aim at a direction where $|E_\theta|$ is half its maximum."`,
+    a:[R`Half the field means a quarter of the power: $\sin\theta=\frac12$, so $\sin^2\theta=\frac14$.`,
+     R`$\theta=30^\circ$ (or $150^\circ$), any φ. That's −6 dB.`,
+     R`Compare half <i>power</i>: $\sin^2\theta=\frac12$ gives $\theta=45^\circ$, so the half-power beamwidth is $135^\circ-45^\circ=90^\circ$.`]},
+   traps:[
+    R`<b>Field vs power.</b> Half the field is at 30°, half the power at 45°. Read the prompt: "half-power" means $|E|^2$, "$|E_\theta|$ is half" means $|E|$.`,
+    R`<b>Putting the null broadside.</b> The dipole is dark <i>along its own axis</i> and loudest perpendicular to it.`,
+    R`<b>Hunting with φ.</b> It does nothing for a z-directed dipole. (In the Level 5 mix the dipole may lie along x or y; then measure the angle from <i>that</i> axis, because the doughnut just tips over.)`],
+   prather:R`L17, taking the far-field limit of the dipole: the only terms that survive are $H_\phi$ and $E_\theta$, each going as $1/r$, their ratio is "377 ohms," and the power goes "in the radial direction, which is outward from the sphere, which makes a lot of sense."` },
+
+  2:{ goal:R`Uniform rectangular aperture (Example 6-4, $\mathbf E_a=\hat yE_0$): set θ on the <b>first null</b> of the E-plane or H-plane pattern.`,
+   look:[
+    R`<b>The scene:</b> the orange rectangle is the aperture, $a$ along x and $b$ along y; the axis it radiates along (+z, blue) points to the right. The cyan arrows inside it are $\mathbf E_a$, all along $y$.`,
+    R`<b>The gold translucent fan</b> is the cut you're asked about, labeled "E-plane, φ = 90°" (the yz-plane, which contains $\mathbf E_a$) or "H-plane, φ = 0°" (the xz-plane). For H-plane rounds the camera looks down from above.`,
+    R`<b>θ slider</b> (0–90°): the gold ray and arc measure θ from the z axis (broadside), not from the aperture face.`,
+    R`<b>After FIRE:</b> the bright cyan curve is the pattern in your plane, the dim lavender curve is the other plane's, and green dots mark the true nulls. The wider side always gives the narrower curve.`],
+   rule:{t:"Principal planes of Example 6-4 (L17 slides)", tex:R`\text{E-plane }(\phi=90^\circ):\ E_\theta=\frac C2(1+\cos\theta)\frac{\sin\left(\frac{\beta b}{2}\sin\theta\right)}{\frac{\beta b}{2}\sin\theta};\qquad \text{H-plane }(\phi=0):\ \frac{\beta a}{2}\sin\theta\ \text{in place of}\ \frac{\beta b}{2}\sin\theta;\qquad \frac{\beta d}{2}\sin\theta=\pi\Rightarrow\sin\theta=\frac{\lambda}{d}`},
+   steps:[
+    R`<b>Which plane, which side?</b> The E-plane contains $\mathbf E_a$ ($\hat y$) and the axis, so it's $\phi=90^\circ$ and depends only on $b$. The H-plane is $\phi=0^\circ$ and depends only on $a$. The other dimension drops out (its sinc → 1 by L'Hôpital).`,
+    R`Get that dimension in wavelengths. If it's given in cm at a frequency, $\lambda[\text{cm}]=30/f[\text{GHz}]$ (10 GHz gives 3 cm).`,
+    R`First null: the sinc's argument hits π, so $\sin\theta=\lambda/d$, and $\theta=\arcsin(\lambda/d)$.`,
+    R`Sanity: a bigger $d/\lambda$ gives a smaller null angle (narrower beam). The $(1+\cos\theta)$ factor never makes a null for $\theta<90^\circ$.`],
+   example:{q:R`Fig. 6-7's aperture, $a=3\lambda$, $b=2\lambda$. First null in each plane? Then $a=4\lambda$, $b=2.5\lambda$, H-plane.`,
+    a:[R`E-plane uses $b$: $\sin\theta=\frac{1}{2}$, so <b>θ = 30.0°</b>.`,
+     R`H-plane uses $a$: $\sin\theta=\frac13$, so <b>θ = 19.47°</b>, narrower, because $a$ is wider.`,
+     R`$a=4\lambda$, H-plane: $\sin\theta=\frac14$, so <b>θ = 14.48°</b>. (The E-plane would be $\arcsin0.4=23.58^\circ$.)`]},
+   traps:[
+    R`<b>Using the wrong side.</b> The E-plane goes with $b$, the side along $\mathbf E_a$; the H-plane goes with $a$. Set φ = 90° ↔ b, φ = 0° ↔ a in your head.`,
+    R`<b>Dropping the ½ in the sinc.</b> Setting $\beta d\sin\theta=\pi$ gives $\sin\theta=\lambda/2d$, which is half the true angle. The argument is $\frac{\beta d}{2}\sin\theta$.`,
+    R`<b>Measuring θ from the aperture face.</b> θ is from the z axis (broadside).`,
+    R`(Flag) In the L17 recording, the spoken E/H labels for the broad and narrow curves come out garbled. Trust the slide math: E-plane ↔ $b$.`],
+   prather:R`L17, on why it's a sinc: "spatial frequency corresponds effectively to a plane wave that's propagating relative to an off-axis angle... I need to take all these different angles and sum them all up to reconstruct this physical aperture." And on the two planes: "In one case, I get a much more narrow beam. The other case, I get a much wider beam. This is because we have asymmetry in the aperture."` },
+
+  3:{ goal:R`An $a\times b$ aperture radiates at $f$. For each of three observers ①②③, decide <b>far field</b> or <b>not yet</b>.`,
+   look:[
+    R`<b>The scene:</b> the orange aperture (with cyan $\mathbf E_a$ arrows) sits at the left; the dashed gray line is the observation axis (+z, to the right). The white dots ①②③ are the observers; distances along the axis are log-scaled, so equal gaps mean equal <i>ratios</i>.`,
+    R`For each observer, tap <b>far field</b> or <b>not yet</b>; FIRE needs all three. All three right scores full, two right scores partial.`,
+    R`<b>After FIRE:</b> a gold disk appears on the axis at $2D^2/\lambda$, a gold diagonal labeled <b>D</b> crosses the aperture, and the dots turn green (far) or red (not far).`,
+    R`On the 4th and 5th rounds of this level, one observer sits just 8–30% past the line. Compute it; don't eyeball it.`],
+   rule:{t:"Fraunhofer criterion (L17 board derivation)", tex:R`\Delta R_{max}=\frac{(D/2)^2}{2R},\qquad \frac{2\pi}{\lambda}\frac{D^2}{8R}\le\frac{\pi}{8}\ \Rightarrow\ R\ge\frac{2D^2}{\lambda},\qquad D=\sqrt{a^2+b^2},\quad R\gg D,\ R\gg\lambda`},
+   steps:[
+    R`$\lambda=c/f$. In cm: $\lambda=30/f[\text{GHz}]$.`,
+    R`$D$ is the <b>largest</b> dimension of the aperture: for a rectangle, the diagonal $\sqrt{a^2+b^2}$, not the long side.`,
+    R`$R_{ff}=2D^2/\lambda$. Keep units consistent (cm² ÷ cm = cm), then convert to m to compare.`,
+    R`Each observer at $r\ge R_{ff}$ is far field; anything closer is "not yet." (At these sizes $R\gg D$ and $R\gg\lambda$ come along automatically, but he lists them as conditions too.)`],
+   example:{q:R`A 12 cm × 9 cm aperture at 10 GHz. Observers at 1.2 m, 2.0 m and 0.5 m.`,
+    a:[R`$\lambda=3$ cm, $D=\sqrt{144+81}=15$ cm, $R_{ff}=\frac{2(225)}{3}=150$ cm $=$ <b>1.5 m</b>.`,
+     R`2.0 m: <b>far field</b>. 0.5 m: <b>not yet</b>.`,
+     R`1.2 m: <b>not yet</b>. It beats $2a^2/\lambda=0.96$ m (long side only) and $D^2/\lambda=0.75$ m (no 2), but neither is the criterion.`]},
+   traps:[
+    R`<b>The long side instead of the diagonal.</b> The game plants an observer between $2a^2/\lambda$ and $2D^2/\lambda$ to catch exactly this.`,
+    R`<b>Dropping the 2</b> ($D^2/\lambda$), which halves the distance.`,
+    R`<b>Using the point-source test ($\beta r\gg1$) for an aperture.</b> That's the dipole's region test. For a big aperture, the size $D$ is what sets the far field.`,
+    R`<b>cm vs m.</b> Write the units on every line.`],
+   prather:R`L17, after the derivation: setting the quadratic phase error to π/8 "will assure you that there's no phase deviation more than 22.5 degrees." Then "we have to know that R is much, much greater than D, and R much, much greater than λ. When this happens, then we are literally in the far field." Why phase and not amplitude: the phase "very much depends on a fraction of the wavelength," while "adding some little fraction of a lambda to R is not gonna change the overall magnitude."` },
+
+  4:{ goal:R`<b>Prather's moves:</b> First-move cards (Examples 6-4, 6-5, 6-6 and the L17 concepts) alternating with Derivation rounds: equivalent currents, N and L, the far-field summary, the rectangular procedure, E/H planes, the circular aperture.`,
+   look:[
+    R`<b>First move:</b> a problem and four candidate first moves. The wrong ones are his classic slips: the ground-plane rule used off a ground plane, the wrong-plane $r'\cos\psi$, $L_\theta$ paired with $E_\theta$, integrating fields instead of currents.`,
+    R`<b>Derivation:</b> a lesson's math lines, shuffled. Tap them in his order.`],
+   rule:{t:"The rectangular-coordinates procedure (L17 summary slide)", tex:R`\mathbf J_s=\hat n\times\mathbf H_a,\ \mathbf M_s=-\hat n\times\mathbf E_a\ \to\ N_\theta,N_\phi,L_\theta,L_\phi\ (6\text{-}125)\ \to\ r'\cos\psi,\ ds'\ \to\ E_\theta\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\phi+\eta N_\theta),\ E_\phi\simeq\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\theta-\eta N_\phi)`},
+   steps:[
+    R`<b>"Fields given in an opening":</b> convert to currents first: $\mathbf J_s=\hat n\times\mathbf H_a$, $\mathbf M_s=-\hat n\times\mathbf E_a$. <b>On an infinite PEC ground plane:</b> $\mathbf M_s=-2\hat n\times\mathbf E_a$, $\mathbf J_s=0$ (image theory, Example 6-6).`,
+    R`<b>"A plate hit by a wave":</b> the incident E induces the current, since the metal has to kill the tangential field. (Example 6-5's physical-optics $\mathbf J_s=2\hat n\times\mathbf H^i$ is on the slides but was not lectured.)`,
+    R`<b>"Far-zone A, define N":</b> $R\approx r-r'\cos\psi$ in the phase, $R\approx r$ in the amplitude; pull $\frac{\mu e^{-j\beta r}}{4\pi r}$ out, and $\mathbf N=\iint\mathbf J_se^{j\beta r'\cos\psi}ds'$.`,
+    R`<b>Pick the plane's phase and area:</b> xy-plane: $r'\cos\psi=x'\sin\theta\cos\phi+y'\sin\theta\sin\phi$, $ds'=dx'dy'$ (yz and xz by analogy, (6-127), (6-128)).`,
+    R`<b>Assemble with the cross-pairing:</b> $E_\theta$ takes $L_\phi$ and $N_\theta$; $E_\phi$ takes $L_\theta$ and $N_\phi$; $E_r\simeq H_r\simeq0$.`],
+   example:{q:R`Example 6-4 skeleton: $\mathbf E_a=\hat yE_0$, $\mathbf H_a=-\hat xE_0/\eta$ over $|x'|\le a/2$, $|y'|\le b/2$, no ground plane.`,
+    a:[R`Currents ($\hat n=\hat z$): $\mathbf M_s=-\hat z\times\hat yE_0=\hat xE_0$, $\mathbf J_s=\hat z\times(-\hat xE_0/\eta)=-\hat yE_0/\eta$.`,
+     R`Each integral is $\int_{-a/2}^{a/2}e^{jcx'}dx'=a\frac{\sin(ca/2)}{ca/2}$, his generic-$c$ trick, so $S=\frac{\sin X}{X}\frac{\sin Y}{Y}$ with $X=\frac{\beta a}{2}\sin\theta\cos\phi$, $Y=\frac{\beta b}{2}\sin\theta\sin\phi$.`,
+     R`$N_\theta=-\frac{abE_0}{\eta}\cos\theta\sin\phi\,S$, $N_\phi=-\frac{abE_0}{\eta}\cos\phi\,S$, $L_\theta=abE_0\cos\theta\cos\phi\,S$, $L_\phi=-abE_0\sin\phi\,S$.`,
+     R`$E_\theta=\frac C2\sin\phi(1+\cos\theta)S$, $E_\phi=\frac C2\cos\phi(1+\cos\theta)S$, with $C=j\frac{\beta abE_0e^{-j\beta r}}{2\pi r}$. The $(1+\cos\theta)$ is J and M adding.`]},
+   traps:[
+    R`<b>Dropping one current</b> off a ground plane: both $\mathbf J_s$ and $\mathbf M_s$ radiate in Example 6-4.`,
+    R`<b>Forgetting the factor 2</b> (and keeping $\mathbf J_s$) on a ground plane.`,
+    R`<b>Sign flags:</b> one L17 summary slide prints $E_\phi\simeq-j\ldots$; the derivation gives $+j$. The "Far-Field (total)" slide also has sign typos in $E_\phi$, $H_\phi$ (see Lesson 11.4).`,
+    R`<b>Fields as sources.</b> You never integrate $\mathbf E_a$ with $e^{-j\beta R}/R$ directly; convert to currents.`],
+   prather:R`L18 recap: "Don't let these L's and N's confuse you. They just represent integrals." And L17, on why this matters: "when we come to things like scattering problems, we essentially solve for the currents, or we're given the currents," and then push them through the integral.` },
+
+  5:{ goal:R`<b>Exam rounds:</b> a timed mix, 45 s per card. The Radiation Range rounds get 90 s and come in hard variants: a dipole lying along x or y, near/intermediate/far with $r$ in wavelengths, the far-field line, and nulls with the aperture given in cm at a frequency.`,
+   look:[
+    R`<b>Tipped dipole (aim):</b> the orange bar and doughnut lie along x or y. The pattern is $\sin^2\psi$ with ψ measured from <i>that</i> axis. The max is anywhere in the plane perpendicular to the wire (straight up z, θ = 0, works); the nulls are along the wire (θ = 90° and φ = 0°/180° for x, 90°/270° for y).`,
+    R`<b>Near or far? (region):</b> three probes ①②③ labeled with $r$ in λ, each tracing its $\mathbf E$ tip over one cycle (a cyan loop). Near the wire the loop is fat and has a big radial part; far out it collapses to a line perpendicular to $\hat r$. Tap near / interm. / far for each.`,
+    R`<b>Nulls in cm:</b> convert first. The same E-plane ↔ b, H-plane ↔ a rule applies.`],
+   rule:{t:"Region test for the dipole (powers of βr)", tex:R`E_\theta\propto\left[1+\frac{1}{j\beta r}-\frac{1}{(\beta r)^2}\right],\qquad \beta r=\frac{2\pi r}{\lambda}:\ \ \beta r\ll1\ \text{near (reactive)},\quad \beta r\sim1\ \text{intermediate},\quad \beta r\gg1\ \text{far}`},
+   steps:[
+    R`Convert everything first: $\beta r=2\pi r/\lambda$ ($0.2\lambda$ is already $\beta r\approx1.3$), $\lambda=30/f[\text{GHz}]$ cm.`,
+    R`Region by which term wins: $1/(\beta r)^2$ and $1/(\beta r)^3$ dominate near (reactive), all comparable in the middle, only $1/r$ far.`,
+    R`Write the setup line before any arithmetic (which plane, which dimension, which formula). On Exam 1 he allowed no calculators and one handwritten sheet, front and back, so the numbers are built to be simple.`,
+    R`Know the Cartesian procedure cold; he said he wouldn't hold you accountable for the Bessel details of the circular aperture.`],
+   example:{q:R`Hard aim: dipole along x. Aim at a null.`,
+    a:[R`The null is along the wire itself: the ±x axis.`,
+     R`In the sliders: <b>θ = 90°, φ = 0°</b> (or φ = 180°). Setting θ = 0 is the old z-dipole reflex, and here that's the <i>maximum</i>.`]},
+   traps:[
+    R`Classifying $r$ in λ as if it were $\beta r$: multiply by $2\pi$ first.`,
+    R`Measuring ψ from z for a tipped dipole.`,
+    R`Spending 90 s on the circular-aperture Bessel algebra: he flagged it as low priority.`],
+   prather:R`L17 on the exam: "you can count on at least one problem being very similar to one [homework] problem, not identical." At the end of the scattering lecture: "I won't hold you accountable for a lot of this stuff on the exam, especially this [Bessel] stuff, but you should definitely know the Cartesian stuff." In the L18 recap he noted scattering wasn't on Exam 1: "It will be on the next one."` },
+
+  boss:{ goal:R`<b>Boss:</b> 8 rounds at 30 s each. First moves on the aperture and plate examples, a derivation to order, concept cards, and one hard Radiation Range round (90 s).`,
+   look:[
+    R`The header tells you the type: <b>First move</b>, <b>Derivation</b>, <b>Concept</b>, or <b>RADIATION RANGE</b>. For the game round, read which sub-round it is (aim, region, far, null) before touching a slider.`],
+   rule:{t:"Three numbers that end most rounds", tex:R`\sin\theta_{null}=\frac{\lambda}{d}\ (d=b\ \text{E-plane},\ a\ \text{H-plane}),\qquad R_{ff}=\frac{2D^2}{\lambda}\ (D=\text{diagonal}),\qquad \text{HPBW}_{dipole}=90^\circ`},
+   steps:[
+    R`Equivalence cards: tangential H gives $\mathbf J_s=\hat n\times\mathbf H$; tangential E gives $\mathbf M_s=-\hat n\times\mathbf E$ (mind the minus); a ground plane gives $-2\hat n\times\mathbf E$ and no J.`,
+    R`Radiation-vector cards: $\mathbf N\leftrightarrow\mathbf J_s,\ \mu$; $\mathbf L\leftrightarrow\mathbf M_s,\ \varepsilon$; $E_\theta$ pairs $L_\phi$ with $N_\theta$.`,
+    R`Pattern cards: a rect in space is a sinc in angle; the wider side gives the narrower beam; a circle gives $J_1(x)/x$, the sombrero, with $\frac{J_1(x)}{x}\to\frac12$ on axis.`,
+    R`Scattering cards: a metal skin carries induced current that re-radiates; "physics happens at the boundary."`],
+   example:{q:R`Card: "Rectangular aperture $a=3\lambda$ (x), $b=2\lambda$ (y), $\mathbf E_a$ along y. Which principal plane has the broader beam?"`,
+    a:[R`The E-plane (φ = 90°), set by $b=2\lambda$: first null at 30°, vs 19.47° in the H-plane. The smaller dimension gives the broader beam.`]},
+   traps:[R`Swapping $\mathbf J_s$ and $\mathbf M_s$ under the clock.`,R`Answering "E-plane depends on a" because $a$ is listed first.`],
+   prather:R`L15 (and again in L17), the airplane: "We always think about it just bouncing off. And yeah, to the zeroth order, that's correct. But what really happens..." is that the incident field induces surface current on the skin, and that current re-radiates. "Physics happens at the boundary."` }
+ } };
+})(window.MXG);
+
+/* Playbook for World 4 (Ch. 4): Phase Lock (levels 1-2), Skin Diver (level 3).
+   Sources: L12 transcript 41244705, L13 transcript b589c360, L12/L13 slides 303044d8, content/ch4.js.
+   Convention (matches content/ch4.js and phaselock.js): e^{+jωt}, wave along +z, Δφ = φx − φy,
+   viewed from behind (wave going away from you): Δφ > 0 ⇒ E_x leads ⇒ clockwise ⇒ right-hand (IEEE/Balanis). */
+(function(G){const R=String.raw;G.coach=G.coach||{};G.coach.ch4={
+ voice:R`Polarization is just "the direction the electric field points as the wave propagates," and he wants you to see it the way he does: "like being behind a bus as you're driving down the street; all you see is the back of the bus." Upright bus, linear. Spinning bus, circular. This is real stuff to him: his group builds cross-polarized antennas, and "satellite communications, they're all basically circular polarization," because right- and left-hand are orthogonal and can carry two signals at once. Then he puts a finite $\sigma$ into Ampère's law and the wave starts paying for it: "the medium itself is taking power out of my wave as it propagates."`,
+ levels:{
+  1:{goal:R`Match the gold target helix with your cyan one (set $|E_x|$, $|E_y|$, $\Delta\phi=\phi_x-\phi_y$), then call it Linear, Right-hand or Left-hand.`,
+     look:[
+      R`<b>Get behind the bus first.</b> Drag to orbit until the orange <b>+z (k)</b> arrow points straight away from you, into the screen. In that view the red <b>x</b> arrow sits on your <b>left</b> and the green <b>y</b> arrow points <b>up</b>. That is his ⊗ picture: you are watching the back of the wave as it drives away.`,
+      R`Watch the <b>gold arrow</b> at the end of the helix, on the dark square frame (the $z$ = const plane with the x and y arrows). Its tip is $\mathbf E$ at one plane over time. Ignore the shape of the frozen corkscrew; judge only how that tip moves.`,
+      R`<b>Tip slides back and forth on a line</b> → Linear. <b>Tip runs around a circle</b> (constant length) → circular. <b>Clockwise</b> from behind → Right-hand; <b>counterclockwise</b> → Left-hand.`,
+      R`Your cyan helix is redrawn live as you drag the sliders, so you can overlay it on the gold one. The grade compares the <b>shape</b> (the ratio $|E_y|/|E_x|$ and $\Delta\phi$), not the overall size, so set the bigger component to 1 and tune the other.`,
+      R`Scoring: shape match is 60%, the RH/LH/Linear call is 40%. You need the call right to pass, so never guess it: read it off $\Delta\phi$.`],
+     rule:{t:"Linear, circular, and the sense (slides 4-52, 4-53)",tex:R`\Delta\phi=\phi_x-\phi_y:\quad \Delta\phi=0,\pm180^\circ\ \text{or one component}=0\Rightarrow\text{linear};\qquad |E_{x0}|=|E_{y0}|,\ \Delta\phi=\pm90^\circ\Rightarrow\text{circular};\qquad \Delta\phi>0\Rightarrow\text{CW}\Rightarrow\text{RH},\ \ \Delta\phi<0\Rightarrow\text{CCW}\Rightarrow\text{LH}`},
+     steps:[
+      R`Orbit to the behind view (k into the screen, x left, y up) and watch the gold tip for two or three cycles.`,
+      R`If it stays on a line: it's linear. Set the amplitudes from the line's tilt $\psi=\tan^{-1}(E_{y0}/E_{x0})$ (only x → $|E_y|=0$; 45° → equal). Line through the x̂+ŷ quadrants (on screen, with x on the left: upper-left to lower-right) → $\Delta\phi=0$; through x̂−ŷ (upper-right to lower-left) → $\Delta\phi=180^\circ$. Call <b>Linear</b>.`,
+      R`If it runs around a circle: set $|E_x|=|E_y|=1$. Clockwise → $\Delta\phi=+90^\circ$ ($E_x$ leads), call <b>Right-hand</b>. Counterclockwise → $\Delta\phi=-90^\circ$ ($E_y$ leads), call <b>Left-hand</b>.`,
+      R`If it's an ellipse (Level 2 shapes can show up here too): width in x is $2|E_{x0}|$, height in y is $2|E_{y0}|$; the sense rule is the same.`,
+      R`Check the overlay: cyan should sit on gold. Then pick the call and hit LOCK.`],
+     example:{q:R`The gold tip runs around a circle, clockwise as seen from behind.`,
+      a:[R`Constant length → circular → $|E_x|=|E_y|$: set both to 1.`,
+       R`Clockwise from behind means $E_x$ leads $E_y$ by 90°, so $\Delta\phi=\phi_x-\phi_y=+90^\circ$.`,
+       R`Check at $z=0$ with $\phi_x=90^\circ,\ \phi_y=0$: $\mathbf E=-\hat a_x\sin\omega t+\hat a_y\cos\omega t$; $\psi=\omega t+\frac{\pi}{2}$ grows with $t$ (Example 4-7).`,
+       R`<b>Right-hand circular.</b>`]},
+     traps:[
+      R`Judging from the frozen corkscrew. The spatial helix at one instant winds the <i>opposite</i> way to the time rotation (phase is $\omega t-\beta z$: going forward in $z$ is going back in $t$). Watch the tip in time.`,
+      R`Looking from the front (k pointing at you). Every call flips. He defines the sense with the wave going <b>away</b> from you, "the back of an arrow."`,
+      R`Using $\delta=\phi_y-\phi_x$ (the Poincaré-sphere variable) in place of $\Delta\phi=\phi_x-\phi_y$. The sign flips: $\delta=-\Delta\phi$.`,
+      R`Thinking equal amplitudes means circular. $(0.7,0.7,\Delta\phi=0)$ and $(0.8,0.8,180^\circ)$ are <b>linear</b> at ±45°: equal amplitudes and 90° apart are both required.`],
+     prather:R`L13: "It's like being behind a bus as you're driving down the street, all you typically see is the back of the bus... if for some reason the bus was crooked, it would have some arbitrary orientation." And for circular, the bus "would be spinning circles... spinning to the right, we call that right hand circular."`},
+  2:{goal:R`Same Phase Lock helix, now the general case: unequal amplitudes and any $\Delta\phi$. Match the ellipse (axial ratio and tilt) and call the sense.`,
+     look:[
+      R`Behind view as in Level 1 (k into the screen, x left, y up). The gold tip now traces an <b>ellipse</b>: its length changes as it goes round.`,
+      R`The ellipse always fits in a box $2|E_{x0}|$ wide (x) by $2|E_{y0}|$ tall (y). Read the box first: that fixes the amplitude ratio no matter what the tilt is.`,
+      R`<b>Upright ellipse</b> (axes along x and y) → $\Delta\phi=\pm90^\circ$. <b>Tilted toward the x̂+ŷ diagonal</b> (upper-left to lower-right on screen) → $0<|\Delta\phi|<90^\circ$. <b>Tilted toward x̂−ŷ</b> → $90^\circ<|\Delta\phi|<180^\circ$. The closer $|\Delta\phi|$ is to 0 or 180°, the thinner it gets (in the limit, a line).`,
+      R`Direction of travel round the ellipse gives the sign: clockwise from behind → $\Delta\phi>0$ (RH), counterclockwise → $\Delta\phi<0$ (LH). The slider moves in 15° steps.`,
+      R`After LOCK the feedback prints the target's axial ratio; use it to check your (4-57) arithmetic.`],
+     rule:{t:"Axial ratio and tilt (4-57), (4-61)",tex:R`OA,\,OB=\left\{\tfrac12\left[E_{x0}^2+E_{y0}^2\pm\sqrt{E_{x0}^4+E_{y0}^4+2E_{x0}^2E_{y0}^2\cos2\Delta\phi}\right]\right\}^{1/2},\qquad \text{AR}=\pm\frac{OA}{OB},\qquad \tan2\tau=\tan2\gamma\cos\delta,\ \ \gamma=\tan^{-1}\frac{E_{y0}}{E_{x0}},\ \delta=-\Delta\phi`},
+     steps:[
+      R`Read the bounding box: set the larger component to 1 and the other to the box ratio.`,
+      R`Read the tilt: upright → $|\Delta\phi|=90^\circ$; leaning toward x̂+ŷ → under 90°; toward x̂−ŷ → over 90°.`,
+      R`Read the sense: clockwise from behind → make $\Delta\phi$ positive (RH); counterclockwise → negative (LH).`,
+      R`Fine-tune $|\Delta\phi|$ by thickness until cyan lies on gold, then lock with the call.`,
+      R`On paper: AR $=OA/OB$ from (4-57), with Balanis's sign (negative = RH, positive = LH); tilt from $\tan2\tau=\tan2\gamma\cos\delta$, which he called the safer route.`],
+     example:{q:R`Target $|E_x|=1,\ |E_y|=0.6,\ \Delta\phi=+45^\circ$. Axial ratio, tilt, sense?`,
+      a:[R`$\sqrt{1+0.1296+2(0.36)\cos90^\circ}=1.063$.`,
+       R`$OA=\sqrt{\tfrac12(1.36+1.063)}=1.101,\quad OB=\sqrt{\tfrac12(1.36-1.063)}=0.385\ \Rightarrow\ |\text{AR}|=2.86$.`,
+       R`$\gamma=\tan^{-1}0.6=30.96^\circ$, $\delta=-45^\circ$: $\tan2\tau=\tan61.93^\circ\cos45^\circ=1.326\Rightarrow\tau=26.5^\circ$ from x toward y (leans toward x̂+ŷ, as $|\Delta\phi|<90^\circ$ predicts).`,
+       R`$\Delta\phi>0$ → $E_x$ leads → clockwise → <b>right-hand elliptical, AR = −2.86</b>.`]},
+     traps:[
+      R`Calling an upright ellipse with $\Delta\phi=90^\circ$ "circular." Circular needs equal amplitudes too; $(1,0.5,90^\circ)$ is RH elliptical with AR $=-2$.`,
+      R`He described the stretch as "eccentricity" ("an eccentricity of one is a circle... infinite, it collapses to a line"). What he means is the <b>axial ratio</b>: 1 = circle, ∞ = line. Geometric eccentricity runs 0 to 1.`,
+      R`Slide captions Fig. 4-17(b)/4-18(b) say "left-hand (clockwise)." Left-hand is <b>counterclockwise</b>.`,
+      R`The (4-57c) arctan has a branch ambiguity; sketch the box and the lean before trusting a calculator angle.`],
+     prather:R`L13: "Depending upon the ratio of $E$ to the left or $E$ to the right, you get different types of... what they call in this case, the axial ratio." Any ellipse is an RHCP plus an LHCP wave, and the stronger one sets the sense (Case A, 4-54).`},
+  3:{goal:R`Skin Diver: a plane wave enters a lossy block and decays as $e^{-\alpha z}$. Find the frequency that puts 1/e at the gold plane, find the −X dB depth, or classify $\sigma/\omega\varepsilon$ and set $\delta$.`,
+     look:[
+      R`Three tiles on top: $\sigma$, $\varepsilon_r$, and either $f$ or the target <b>1/e depth</b>. $\mu=\mu_0$ always. The material name is in the top-left of the scene.`,
+      R`Cyan is $\mathbf E$ (along x on screen), lavender is $\mathbf H$, orange arrow is $\mathbf k$. Inside the block is hidden ("?") until you DIVE; then the orange dashed envelope $\pm e^{-\alpha z}$ draws in, with a gold reference line at 1/e or −X dB.`,
+      R`<b>1/e mode:</b> the gold plane is at depth $d$; the ruler reads 0, d, 2d, 3d. Your slider is $f$ (log scale). The top-right HUD shows your $f$ and the live $\sigma/\omega\varepsilon$: watch it to know which formula is legal.`,
+      R`<b>−X dB mode:</b> drag the white plane to depth $z$ (HUD shows it). <b>Classify mode</b> (hard rounds): pick Good dielectric / Neither / Good conductor, then set $\delta$ with the slider.`],
+     rule:{t:"Exact α (4-28c) and its two limits (4-38), (4-43)",tex:R`\alpha=\omega\sqrt{\mu\varepsilon}\left\{\frac12\left[\sqrt{1+\left(\frac{\sigma}{\omega\varepsilon}\right)^2}-1\right]\right\}^{1/2};\qquad \frac{\sigma}{\omega\varepsilon}\ll1:\ \alpha\simeq\frac{\sigma}{2}\sqrt{\frac{\mu}{\varepsilon}};\qquad \frac{\sigma}{\omega\varepsilon}\gg1:\ \alpha\simeq\sqrt{\pi f\mu\sigma},\ \ \delta=\frac{1}{\alpha};\qquad \text{field dB}=8.686\,\alpha z`},
+     steps:[
+      R`Compute $\sigma/\omega\varepsilon=\sigma/(2\pi f\varepsilon_r\varepsilon_0)$ first. "Then pick the limit": $\ll1$ good dielectric, $\gg1$ good conductor, near 1 use exact (4-28c). (The grader calls it dielectric below 0.05, conductor above 20.)`,
+      R`<b>1/e at depth d:</b> you need $\alpha d=1$. Good conductor: $\sqrt{\pi f\mu\sigma}=1/d\Rightarrow f=\frac{1}{\pi\mu\sigma d^2}$. Set it, then confirm the HUD $\sigma/\omega\varepsilon$ really is ≫ 1 at that $f$; if not, solve (4-28c) for $f$.`,
+      R`<b>−X dB depth:</b> the field envelope is $e^{-\alpha z}$, so $20\log_{10}e^{-\alpha z}=-8.686\,\alpha z$ and $z=\frac{X}{8.686\,\alpha}$.`,
+      R`<b>Classify + δ:</b> pick the regime from the ratio, compute $\alpha$ with the matching formula (or exact), set $\delta=1/\alpha$.`,
+      R`Sanity: good-dielectric $\alpha$ is independent of $f$; good-conductor $\delta$ shrinks as $1/\sqrt f$.`],
+     example:{q:R`Moist earth (HW 4.23): $\sigma=0.1$ S/m, $\varepsilon_r=4$, 1 MHz. Where is the field down 20 dB?`,
+      a:[R`$\frac{\sigma}{\omega\varepsilon}=\frac{0.1}{2\pi(10^6)(4)(8.854\times10^{-12})}=449\gg1$: good conductor.`,
+       R`$\alpha=\sqrt{\pi(10^6)(4\pi\times10^{-7})(0.1)}=0.628$ Np/m, so $\delta=1.59$ m (exact (4-28c) agrees to 0.1%).`,
+       R`$z=\frac{20}{8.686(0.628)}=\boxed{3.67\ \text{m}}$, about $2.3\delta$.`,
+       R`Other modes, same physics: copper, 1/e at $d=10\ \mu$m → $f=\frac{1}{\pi\mu_0\sigma d^2}=43.7$ MHz. Dry earth ($10^{-3}$ S/m, $\varepsilon_r=4$) at 1 GHz: ratio $4.5\times10^{-3}$, good dielectric, $\alpha=\frac{\sigma}{2}\eta=0.094$ Np/m, $\delta=10.6$ m.`]},
+     traps:[
+      R`Using 4.34 dB/Np (that's $10\log$ of a power ratio). The envelope you're placing is the <b>field</b>: 8.686 dB per neper.`,
+      R`Using $\delta=1/\sqrt{\pi f\mu\sigma}$ without checking the ratio. In the hard rounds $\sigma/\omega\varepsilon$ is only 1 to 10, and the shortcut can be off by tens of percent.`,
+      R`Writing $J_i$ in Ampère's law for the lossy derivation. He corrected the slide: "That's actually $J_c$," the conduction current $\sigma\mathbf E$ the field itself drives.`,
+      R`Comparing $\sigma$ with $\omega\varepsilon_r$ and forgetting $\varepsilon_0$: the ratio is $\sigma/(\omega\varepsilon_r\varepsilon_0)$.`],
+     prather:R`L13, on skin depth: if we think of the surface of "a metal with finite conductivity, not infinite... it's not a PEC," and hit it with a wave, it propagates in a little and dies. On the table's $\sqrt{2/\omega\mu\sigma}$: "it's different because now it's expressed in the context of omega," same $\delta$.`},
+  4:{goal:R`Prather's moves: name the first move on Ch. 4 homework-style problems, and put his derivations in his order.`,
+     look:[
+      R`<b>First-move rounds</b> give a problem statement and four openings. The right one is his opening line, not a true-but-useless fact. <b>Derivation rounds</b> give the equations of one lesson shuffled; tap them in order.`,
+      R`Recognition cues: an exponent $e^{\mp j\beta(\cdot)}$ → read $\hat\beta$ from its sign first. A given $\mathbf H$ → $\mathbf E=\eta\mathbf H\times\hat\beta$. A real $\cos\beta x$ with no traveling phase → standing wave, split with Euler. "Lossy" → $\mathbf J_c=\sigma\mathbf E$ in Ampère. Two components with phases → write it at $z=0$ and find $\psi(t)$.`],
+     rule:{t:"His two core derivations",tex:R`\nabla^2E_x+\beta^2E_x=0\ \to\ E_x=E_0^+e^{-j\beta z}\ \to\ \mathbf H=-\frac{1}{j\omega\mu}\nabla\times\mathbf E=\hat a_y\frac{E_0^+}{\eta}e^{-j\beta z};\qquad \nabla^2\mathbf E=j\omega\mu(\sigma+j\omega\varepsilon)\mathbf E=\gamma^2\mathbf E,\ \ \gamma=\alpha+j\beta`},
+     steps:[
+      R`<b>Uniform plane wave</b> (4-2, 4-3): Helmholtz → separate → $\beta_x=\beta_y=0$ → only $h(z)$ survives → $E_0^\pm$ set by launched power → H from Faraday ("don't solve the wave equation twice") → $\beta/\omega\mu=1/\eta$.`,
+      R`<b>Lossy medium</b> (4-27, 4-28): Ampère with $\sigma\mathbf E$ → curl-curl → $\gamma^2=j\omega\mu(\sigma+j\omega\varepsilon)$ → square $\alpha+j\beta$, match real and imaginary: $\alpha^2-\beta^2=-\omega^2\mu\varepsilon$, $2\alpha\beta=\omega\mu\sigma$ → substitute, quadratic in $\alpha^2$, keep the positive root.`,
+      R`<b>Limits</b> (4-38, 4-43): binomial $\sqrt{1+x}\approx1+\frac x2$ for the good dielectric ("that's where this 2 comes from"); drop the 1 for the good conductor.`,
+      R`<b>Circular sense</b> (Ex. 4-7, 4-8): evaluate at $z=0$, show $|\mathbf E|$ is constant, find $\psi=\tan^{-1}(\mathcal E_y/\mathcal E_x)$, and see whether it grows (CW, RH) or shrinks (CCW, LH).`,
+      R`<b>Oblique</b> (4-18): $\boldsymbol\beta\cdot\mathbf r=\beta(x\sin\theta_i+z\cos\theta_i)$, project E, H from $\frac1\eta\hat\beta\times\mathbf E$, then $Z$ in a direction = E over H transverse to it ($\theta_i\to0$ must give $\eta$).`],
+     example:{q:R`First move: $\mathbf H=10^{-6}[-\hat a_x(2+j)+\hat a_z(1+j3)]e^{+j\beta y}$ in free space; find $\mathbf E$ and $\mathbf S_{av}$ (HW 4.5).`,
+      a:[R`Read the direction from the exponent: $e^{+j\beta y}=e^{-j(-\beta)y}\Rightarrow\hat\beta=-\hat a_y$. That's the move; it's also the trap.`,
+       R`Then $\mathbf E=\eta_0\mathbf H\times(-\hat a_y)$ term by term, and $\mathbf S_{av}=\hat\beta\frac{\eta_0}{2}|\mathbf H|^2=-\hat a_y2.83\times10^{-9}$ W/m².`]},
+     traps:[
+      R`$\mathbf E=\eta\hat\beta\times\mathbf H$ (wrong order): power comes out flowing backwards.`,
+      R`Reading the coefficient of $x$ as $\lambda$ instead of $\beta$ (HW 4.11).`,
+      R`TM$^y$ directional impedances: the slide (4-21) puts the minus on the wrong pair. Use $Z_z=-E_y/H_x=\eta/\cos\theta_i$; $\theta_i\to0$ must give $\eta$. He admitted on the slide in L13, "something just tells me that's not right."`],
+     prather:R`L14: "The 4th problem is the derivation... only a derivation that we covered in class... I want you to know where things come from." And L12, on starting Chapter 4 fast: "almost 99% review... slow me down."`},
+  5:{goal:R`Exam rounds: timed mix of Phase Lock (90 s) and Ch. 4 first moves and concept cards (45 s each). Exam pace.`,
+     look:[
+      R`The timer bar runs across the top; it turns red at 20%. A Phase Lock round gets 90 s; question rounds 45 s. Time out = a lost heart.`,
+      R`In Phase Lock, spend your time on the <b>call</b> (40% and required to pass) and the amplitude ratio. Don't chase the last 15° of $\Delta\phi$.`],
+     rule:{t:"The 10-second polarization call",tex:R`\text{one component, or }\Delta\phi=n\pi\Rightarrow\text{linear};\quad |E_{x0}|=|E_{y0}|\ \&\ \Delta\phi=\pm\tfrac{\pi}{2}\Rightarrow\text{circular};\quad \text{else elliptical};\quad \text{sign}(\Delta\phi)>0\Rightarrow\text{RH}`},
+     steps:[
+      R`Phase Lock under time: orbit behind, watch two cycles, decide line / circle / ellipse and CW / CCW, set the sliders, lock. Under 30 s.`,
+      R`Question rounds: find the cue word (direction from the exponent, "lossy," "standing," "rms") and pick his opening, not the end result.`,
+      R`Lossy numbers: always compute $\sigma/\omega\varepsilon$ before anything else.`,
+      R`Power: $|E|^2/2\eta$ with peak values, $E_{rms}^2/\eta$ with rms. The average energy density carries $\frac14$, not $\frac12$.`],
+     example:{q:R`$\mathcal E_x=2E_0\cos(\omega t-\beta z+\pi/2)$, $\mathcal E_y=E_0\cos(\omega t-\beta z)$. Polarization?`,
+      a:[R`Unequal amplitudes, $\Delta\phi=+90^\circ$ → elliptical, upright, major axis along x.`,
+       R`$\Delta\phi>0$ → $E_x$ leads → clockwise from behind → <b>RH elliptical, AR = −2</b> (Example 4-11: $2\varepsilon=-53.13^\circ$, southern hemisphere of the Poincaré sphere).`]},
+     traps:[
+      R`Poincaré sphere: Balanis puts LHCP at the north pole, RHCP at the south. In class he said it both ways; use Balanis.`,
+      R`Crib-sheet flag: TE$^y$ $Z_x=\eta\sin\theta_i$ (4-20a), not $\eta\cos\theta_i$.`,
+      R`PLF: linear antenna vs a CP wave is half the power (3 dB), not zero. Zero is for orthogonal states (antipodal points).`],
+     prather:R`L14 on the exam: "I always have 4 questions. I try to make 3 of them homework, or example-like. If you go through all the examples in Balanis and the homeworks, you'll probably see a problem." Exam I covers Chapters 1–5 (L15: "Chapter 6 is not on the exam... the first 5 are").`},
+  boss:{goal:R`Boss: 8 rounds at 30 s (Phase Lock gets 90 s), including derivation ordering. HW-level first moves on polarization, oblique waves and lossy media.`,
+     look:[
+      R`Two Phase Lock rounds, plus first-move, concept and derivation rounds. 30 s is about one read and one decision: know the openings cold.`,
+      R`Derivation rounds here are full lessons: plane wave (4-2 → 4-3), oblique TE$^y$ (4-17 → 4-18), lossy (Maxwell with $\sigma$ → 4-28), polarization (4-50a → linear/circular conditions), axial ratio (4-54 → 4-57).`],
+     rule:{t:"Everything in Ch. 4 on one line",tex:R`e^{-j\boldsymbol\beta\cdot\mathbf r}\ \text{travels along }+\hat\beta;\quad \mathbf H=\frac1\eta\hat\beta\times\mathbf E;\quad \gamma=\alpha+j\beta;\quad \delta=\frac1\alpha;\quad \Delta\phi=\phi_x-\phi_y>0\Rightarrow\text{RH}`},
+     steps:[
+      R`Read the direction of travel from every exponent before touching anything else.`,
+      R`Get H from E by $\frac1\eta\hat\beta\times\mathbf E$ (or the curl); never a second wave equation.`,
+      R`Lossy: ratio → regime → formula; exact (4-28c) if the ratio is near 1.`,
+      R`Polarization: behind the bus, $\Delta\phi=\phi_x-\phi_y$, CW = RH.`,
+      R`Derivation order: start from Maxwell (or Helmholtz), make the physical assumption, solve, then take derivatives to get the partner field.`],
+     example:{q:R`Order the lossy-medium derivation (4.9).`,
+      a:[R`$\nabla\times\mathbf H=(\sigma+j\omega\varepsilon)\mathbf E$ → curl-curl → $\nabla^2\mathbf E=\gamma^2\mathbf E$ → $E_x=E_0^+e^{-\gamma z}+E_0^-e^{+\gamma z}$ → square $\gamma$: $\alpha^2-\beta^2=-\omega^2\mu\varepsilon$, $2\alpha\beta=\omega\mu\sigma$ → solve: (4-28c, d).`]},
+     traps:[
+      R`$e^{+\alpha z}$ on the backward wave is still decay: it travels toward $-z$.`,
+      R`Power at $z=\delta$ is $e^{-2}=13.5\%$, not 36.8%. 36.8% is the field.`,
+      R`Rushing the call: a wrong RH/LH caps a Phase Lock round below passing even with a perfect shape.`],
+     prather:R`L13, closing Chapter 4: "But chapter 4, it'll be fair game for a quiz." And L14: "The only way you would ever learn electromagnetics is by crunching out problems. There's just no other way."`}
+ }};
+})(window.MXG);
+
+/* Playbook for World 5 (Ch. 5): Snell Sniper (all three levels).
+   Sources: L14 transcript 238711c5, first ~20 min of L15 transcript b140b059 (Ch. 5 wrap-up, 10/13), L14 slides, content/ch5.js.
+   Prather's names (same as sniper.js and content/ch5.js): ⊥ = E along y, out of the plane of incidence = TM^y = s;
+   ∥ = E in the plane of incidence (xz) = TE^y = p. μ1 = μ2 = μ0 ("optical limit"). */
+(function(G){const R=String.raw;G.coach=G.coach||{};G.coach.ch5={
+ voice:R`"These waves will propagate forever... until they hit something. So the question is, when they hit something, what happens?" His answer is always the same toolbox: write incident, reflected and transmitted waves and make tangential $\mathbf E$ and $\mathbf H$ continuous. "If you take away anything from this class, you need to understand boundary conditions" (L4). Snell's law falls out of phase matching ("we just derived Snell's law using boundary conditions"), the Brewster angle is why a CO$_2$ laser comes out with one strict polarization, and the critical angle is "exactly how an optical fiber guides" light.`,
+ levels:{
+  1:{goal:R`Snell Sniper: set $\theta_i$ and fire. Mostly <b>HIT THE TARGET</b> (steer the transmitted beam onto the gold ring at $\theta_t$), with some Brewster and "reflect exactly X%" rounds mixed in.`,
+     look:[
+      R`The gold tag at the top names the round: HIT THE TARGET, KILL THE REFLECTION, REFLECT EXACTLY X%, or TRAP THE BEAM. The grey line under it gives both media: $\varepsilon_{r1}$ (top, where the laser is) → $\varepsilon_{r2}$ (blue block below), with $n=\sqrt{\varepsilon_r}$.`,
+      R`The faint orange sheet is the <b>plane of incidence</b> (the $xz$ plane: the normal plus the beam); $y$ comes out of it. The grey dashed vertical is the normal; every angle is measured from it.`,
+      R`The cyan ribbon on the beam shows $\mathbf E$. Wiggling <b>out of the orange sheet</b> → ⊥ (TM$^y$, s). Wiggling <b>inside the sheet</b> → ∥ (TE$^y$, p). The badge in the top-left says which.`,
+      R`Slider $\theta_i$ (0–89.5°) with −/+ buttons for 0.1° nudges. After FIRE the beams' brightness is the power: bottom-left HUD gives $\theta_t$, reflected $|\Gamma|^2$ and transmitted %; top-right says BULLSEYE / HIT / MISS.`,
+      R`Target rounds: the gold dashed line and ring sit at $\theta_t$ in medium 2 (label "θt = …°" on the left). You aim $\theta_i$, so run Snell backwards. A target round passes within about 3.5°.`],
+     rule:{t:"Snell from phase matching (5-15)",tex:R`\theta_r=\theta_i,\qquad \beta_1\sin\theta_i=\beta_2\sin\theta_t\ \Rightarrow\ \sqrt{\varepsilon_{r1}}\sin\theta_i=\sqrt{\varepsilon_{r2}}\sin\theta_t\ \Rightarrow\ \theta_i=\sin^{-1}\!\left(\sqrt{\frac{\varepsilon_{r2}}{\varepsilon_{r1}}}\sin\theta_t\right)`},
+     steps:[
+      R`Read the tag and the two $\varepsilon_r$ values. Note which side is denser: going into a denser medium bends toward the normal ($\theta_t<\theta_i$).`,
+      R`Target: $\theta_i=\sin^{-1}(\sqrt{\varepsilon_{r2}/\varepsilon_{r1}}\sin\theta_t)$. Set it with the slider, nudge to 0.1°, fire.`,
+      R`Kill the reflection: polarization must be ∥ (TE$^y$); fire at $\theta_B=\tan^{-1}\sqrt{\varepsilon_{r2}/\varepsilon_{r1}}$ (Level 2 has the full method).`,
+      R`Reflect X%: the subtitle shows the normal-incidence value $\left(\frac{n_1-n_2}{n_1+n_2}\right)^2$. For ⊥, $|\Gamma_\perp|^2$ rises steadily from there to 1 at grazing, so X above it means a larger angle. Solve with (5-17a) (Level 3).`,
+      R`Sanity check after firing: reflected % + transmitted % = 100 (the HUD's transmitted value already includes the $\frac{\eta_1}{\eta_2}\frac{\cos\theta_t}{\cos\theta_i}$ factor).`],
+     example:{q:R`Air → glass ($\varepsilon_{r2}=2.25$). Gold target at $\theta_t=30^\circ$.`,
+      a:[R`$\sqrt{2.25/1}=1.5$.`,
+       R`$\theta_i=\sin^{-1}(1.5\sin30^\circ)=\sin^{-1}(0.75)=\boxed{48.59^\circ}$.`,
+       R`Fire at 48.6°. Whatever the polarization, $\theta_t$ is the same: Snell doesn't care, only $\Gamma$ and $T$ do.`]},
+     traps:[
+      R`Running Snell forward: plugging the target's $\theta_t$ in as $\theta_i$. The ring is in medium 2; you control medium 1.`,
+      R`Inverting the ratio: it's $\sqrt{\varepsilon_{r2}/\varepsilon_{r1}}\sin\theta_t$ inside the arcsine when you solve for $\theta_i$.`,
+      R`Thinking the transmitted power is $|T|^2$. $T^b$ can exceed 1 (HW 5.1 has $T^b=4/3$ and still transmits 8/9 of the power); power needs the $\eta$ and cosine factors.`],
+     prather:R`L14: "There are three exponentials, multiplied by different terms, they all sum up... That means each of these exponentials has to equal each other." Match incident to reflected: Snell's law of reflection. Incident to transmitted: Snell's law of refraction.`},
+  2:{goal:R`Kill the reflection (Brewster), plus target, X% and TIR rounds. The point of this level: <b>which polarization</b> has a zero of $\Gamma$, and at what angle.`,
+     look:[
+      R`Brewster rounds sometimes show two buttons under the scene: <b>E ⊥ plane · TM$^y$</b> and <b>E ∥ plane · TE$^y$</b>. You must pick one before FIRE.`,
+      R`Before firing, the dashed incident beam already carries the cyan $\mathbf E$ ribbon for your chosen polarization: ∥ wiggles inside the orange plane of incidence, ⊥ sticks out of it.`,
+      R`A clean Brewster shot leaves <b>no reflected beam</b> and the HUD line "reflected |Γ|² = 0.0%" turns green. Within 0.6° is full marks; about 2.5° still passes.`,
+      R`If medium 1 is the denser one, you'll also see the critical angle nearby: $\theta_B$ sits just below $\theta_c$.`],
+     rule:{t:"Brewster angle, ∥ (TE$^y$) only when μ1 = μ2 (5-33)",tex:R`\Gamma_\parallel=\frac{\eta_2\cos\theta_t-\eta_1\cos\theta_i}{\eta_2\cos\theta_t+\eta_1\cos\theta_i}=0\ \Rightarrow\ \theta_B=\tan^{-1}\sqrt{\frac{\varepsilon_2}{\varepsilon_1}};\qquad \Gamma_\perp=0\ \Rightarrow\ \sin\theta_i=\infty\ (\text{no real angle});\qquad \theta_B+\theta_B'=90^\circ`},
+     steps:[
+      R`If asked to choose, pick <b>E ∥ plane · TE$^y$</b>. Only the in-plane E has a Brewster angle for nonmagnetic media.`,
+      R`Compute $\theta_B=\tan^{-1}\sqrt{\varepsilon_{r2}/\varepsilon_{r1}}$: tangent, not sine.`,
+      R`Set the slider, nudge to 0.1°, fire. Look for the reflected beam to vanish.`,
+      R`Reverse direction check: the Brewster angle going the other way is $90^\circ-\theta_B$ (Examples 5-2, 5-3).`],
+     example:{q:R`Air → glass (2.25), choose the polarization and kill the reflection.`,
+      a:[R`Choose ∥ (TE$^y$): E lies in the plane of incidence.`,
+       R`$\theta_B=\tan^{-1}\sqrt{2.25}=\tan^{-1}1.5=\boxed{56.31^\circ}$; the reflected beam disappears.`,
+       R`Fire ⊥ at the same angle and 17.7% still reflects: that's the polarization the laser's Brewster window throws out of the cavity.`,
+       R`Glass → air the other way: $\tan^{-1}(1/1.5)=33.69^\circ=90^\circ-56.31^\circ$. His submarine pair: water → air 6.34°, air → water 83.66°.`]},
+     traps:[
+      R`Picking ⊥ (TM$^y$). With $\mu_1=\mu_2$ the ⊥ numerator only vanishes at $\sin\theta_i=\infty$. The grader caps you at 0.2.`,
+      R`Letter confusion. In <b>his</b> naming, E in the plane of incidence is TE$^y$ (E transverse to y). The summary slide uses optics names that flip the letters ("TM" for parallel, meaning transverse to the plane). He warned: "you always have to think in your mind: what exactly are they talking about?"`,
+      R`Using $\sin^{-1}$ (that's the critical angle) or $\tan^{-1}(\varepsilon_2/\varepsilon_1)$ without the square root.`,
+      R`$\Gamma_\parallel$ changes sign through $\theta_B$ (negative below, positive above for $\varepsilon_2>\varepsilon_1$): the slide's "flip in the reflected electric field."`],
+     prather:R`L14, the CO$_2$ laser: "we use it all the time in lasers... to make sure that the waves coming out of the laser has a strict polarization." Put "a piece of glass in here, oriented at an angle $\theta_B$"; the other polarization "does not have a value of 0 reflection... it's not gonna have a round trip path within the cavity," so it never builds up. L15 check: "Which polarization was it that we had a Brewster angle for?" Parallel.`},
+  3:{goal:R`Trap the beam (total internal reflection) and hit an exact reflectance. Hard rounds: stay just past $\theta_c$, Brewster from the dense side, and X% for either polarization.`,
+     look:[
+      R`TRAP rounds always go dense → less dense (medium 1 has the bigger $\varepsilon_r$). Fire past $\theta_c$ and the transmitted beam is replaced by orange ripples hugging the interface labeled "evanescent: e^(−α₂z)"; the HUD shows θt "complex" and transmitted 0% (TIR).`,
+      R`A hard TRAP says "Stay as close to the normal as you can": full marks only within about 2° past $\theta_c$, like a fiber that wants every bounce just past critical.`,
+      R`X% rounds: the subtitle gives the normal-incidence reflectance. For ∥ the reflectance first <b>dips to zero</b> at $\theta_B$, then climbs: there can be two angles that work. Passing is within about 6 percentage points; full marks within 1.5.`,
+      R`Hard Brewster rounds always make you choose the polarization, and often go dense → less dense.`],
+     rule:{t:"Critical angle (5-36) and exact reflectance (5-17a, 5-24c)",tex:R`\theta_c=\sin^{-1}\sqrt{\frac{\varepsilon_2}{\varepsilon_1}}\ (\varepsilon_1>\varepsilon_2,\ \text{both polarizations});\qquad \Gamma_\perp=\frac{\eta_2\cos\theta_i-\eta_1\cos\theta_t}{\eta_2\cos\theta_i+\eta_1\cos\theta_t},\quad \Gamma_\parallel=\frac{\eta_2\cos\theta_t-\eta_1\cos\theta_i}{\eta_2\cos\theta_t+\eta_1\cos\theta_i},\quad \frac{P_r}{P_i}=|\Gamma|^2`},
+     steps:[
+      R`Trap: check $\varepsilon_{r1}>\varepsilon_{r2}$, compute $\theta_c=\sin^{-1}\sqrt{\varepsilon_{r2}/\varepsilon_{r1}}$, fire a few tenths of a degree past it (hard: stay within 2°). Polarization doesn't matter.`,
+      R`X%: write $\eta_2/\eta_1=\sqrt{\varepsilon_{r1}/\varepsilon_{r2}}$ and $\cos\theta_t=\sqrt{1-(\varepsilon_{r1}/\varepsilon_{r2})\sin^2\theta_i}$, so each $\Gamma$ is a function of $\theta_i$ alone.`,
+      R`Bracket: evaluate $|\Gamma|^2$ at two trial angles, interpolate, check once more. For ⊥ there is one answer; for ∥ check both sides of $\theta_B$.`,
+      R`Beyond $\theta_c$, $\cos\theta_t=-j\sqrt{(\varepsilon_1/\varepsilon_2)\sin^2\theta_i-1}$, $\Gamma=\frac{R-jX}{R+jX}$, $|\Gamma|=1$, and medium 2 holds only $e^{-\alpha_2z}$.`],
+     example:{q:R`(a) Glass (2.25) → air: trap the beam. (b) Air → glass, ⊥: reflect exactly 15%.`,
+      a:[R`(a) $\theta_c=\sin^{-1}(1/1.5)=41.81^\circ$. Fire at 42°: TIR, 100% reflected, evanescent tail in the air.`,
+       R`(b) Normal incidence gives $(0.5/2.5)^2=4\%$; ⊥ climbs monotonically, so go steeper. Try 56.6°: $\sin\theta_t=\sin56.6^\circ/1.5=0.557$, $\cos\theta_t=0.831$, $\eta_2/\eta_1=1/1.5$.`,
+       R`$\Gamma_\perp=\frac{0.367-0.831}{0.367+0.831}=-0.387\Rightarrow|\Gamma_\perp|^2=\boxed{15.0\%}$ at $\theta_i=56.6^\circ$.`]},
+     traps:[
+      R`Looking for TIR going into the denser medium. It needs $\mu_2\varepsilon_2<\mu_1\varepsilon_1$: dense → less dense, "the index ratio is set up."`,
+      R`Thinking TIR is one polarization only. His L15 check: "Which polarization gives rise to total internal reflection, the critical angle?" Both, same angle.`,
+      R`Taking the growing root for the evanescent field. Pick the sign of $\cos\theta_t$ that decays into medium 2.`,
+      R`Dense → less dense Brewster: $\theta_B$ sits just <b>below</b> $\theta_c$; overshoot by a few degrees and you're trapped, not transmitted.`],
+     prather:R`L14, the fiber: "I do not want to pick up a $\theta_t$, because in that case my light's gonna leak out. So I want to make sure that the angle here is such that it's always equal to or greater than the critical angle." Snell at the end face then sets the launch cone, "your numerical aperture... And that's why the critical angle is so important to understand."`},
+  4:{goal:R`Prather's moves: first moves on Ch. 5 HW and examples, and his boundary-condition derivations in order.`,
+     look:[
+      R`<b>First-move rounds:</b> pick his opening for normal incidence (HW 5.1–5.5), Brewster (Examples 5-2, 5-3) and lossy earth (Example 5-7). <b>Derivation rounds:</b> order the equations of one lesson.`,
+      R`Cues: "normally incident" → TEM, both fields tangential, two equations two unknowns at $z=0$. "Complete transmission" → Brewster, parallel. "Angle beyond which nothing transmits" → critical angle. "Earth, σ, 1 MHz" → complex $\eta$, then $\sigma/\omega\varepsilon$.`],
+     rule:{t:"Normal incidence, the template for everything (5-2)",tex:R`1+\Gamma^b=T^b,\qquad \frac{1}{\eta_1}(1-\Gamma^b)=\frac{1}{\eta_2}T^b\ \Rightarrow\ \Gamma^b=\frac{\eta_2-\eta_1}{\eta_2+\eta_1},\quad T^b=\frac{2\eta_2}{\eta_2+\eta_1}`},
+     steps:[
+      R`<b>Normal incidence:</b> write $\mathbf E^i,\mathbf E^r,\mathbf E^t$; get each H from Faraday, with the reflected H flipped ("H better be going in the other direction because I'm propagating in the backward direction"); set $z=0$; tangential E → one equation, tangential H → the second; solve.`,
+      R`<b>Snell:</b> full $e^{-j\boldsymbol\beta\cdot\mathbf r}$ with $\beta(x\sin\theta+z\cos\theta)$; tangential E at $z=0$ holds for every $x$ only if the three $x$-exponents are equal → $\theta_r=\theta_i$, $\beta_1\sin\theta_i=\beta_2\sin\theta_t$.`,
+      R`<b>Γ⊥, T⊥ (TM$^y$):</b> once the exponents cancel, the same two equations with $\cos\theta$ factors; or plug $Z^z=\eta/\cos\theta$ into the normal-incidence formula.`,
+      R`<b>Brewster:</b> set the numerator to zero, square, eliminate $\theta_t$ with Snell → $\tan\theta_B=\sqrt{\varepsilon_2/\varepsilon_1}$ for ∥; the ⊥ version has a zero denominator.`,
+      R`<b>Critical:</b> Snell asks for $\sin\theta_t>1$ → $\cos\theta_t$ imaginary → $\Gamma=\frac{R-jX}{R+jX}$, $|\Gamma|=1$ → evanescent $e^{-\alpha_2z}$.`],
+     example:{q:R`First move: wave in $\varepsilon_r=4$ normally incident on free space, $\mathbf E^i=\hat a_y2\times10^{-3}e^{-j\beta z}$. Find everything (HW 5.1).`,
+      a:[R`TEM, both fields tangential: $\mathbf H^i=\frac1{\eta_1}\hat a_z\times\mathbf E^i$, then $\Gamma^b=\frac{\eta_0-\eta_0/2}{\eta_0+\eta_0/2}=\frac13$, $T^b=\frac43$.`,
+       R`Powers: $|\Gamma|^2=\frac19$ reflected, $|T|^2\frac{\eta_1}{\eta_2}=\frac{16}{9}\cdot\frac12=\frac89$ transmitted; they add to 1.`]},
+     traps:[
+      R`Forgetting the reflected H sign flip: the second equation comes out $1+\Gamma$ instead of $1-\Gamma$.`,
+      R`Writing $\eta_1-\eta_2$ on top. His hook (Supplemental wording): "where it goes minus where it came from."`,
+      R`Directional impedance: E over H for the two components transverse to the direction. $Z^z=\eta\cos\theta$ (TE$^y$), $\eta/\cos\theta$ (TM$^y$); $\theta=0$ must give $\eta$.`],
+     prather:R`L14, after matching the exponents: "So we just derived Snell's law using boundary conditions." And on the format: "The 4th problem is the derivation... only a derivation that we covered in class."`},
+  5:{goal:R`Exam rounds: hard Snell Sniper shots (90 s) mixed with Ch. 5 first moves and concept cards (45 s).`,
+     look:[
+      R`Sniper rounds here use the hard pool: Brewster with a forced polarization choice (often dense → less dense), X% for either polarization, steep TIR, and targets up to 62°.`,
+      R`Use the −/+ nudges: 0.1° per tap, faster and more precise than dragging.`],
+     rule:{t:"The three angles, one line each",tex:R`\text{Snell: }\sqrt{\varepsilon_1}\sin\theta_i=\sqrt{\varepsilon_2}\sin\theta_t;\qquad \theta_B=\tan^{-1}\sqrt{\varepsilon_2/\varepsilon_1}\ (\parallel,\ \text{TE}^y);\qquad \theta_c=\sin^{-1}\sqrt{\varepsilon_2/\varepsilon_1}\ (\text{both},\ \varepsilon_1>\varepsilon_2)`},
+     steps:[
+      R`Tag first: TARGET → Snell backwards; KILL → ∥ and tangent; TRAP → check dense → less dense, sine, fire just past; X% → bracket with the Fresnel formula.`,
+      R`Question rounds: identify the geometry (normal vs oblique), the polarization (where is E relative to the plane of incidence?), then the boundary-condition move.`,
+      R`Lossy medium 2: same $\Gamma$ and $T$ form with complex $\eta$; power needs $\text{Re}(1/\eta^*)$ and $e^{-2\alpha z}$.`,
+      R`Commit $\delta=1/\sqrt{\pi f\mu\sigma}=\sqrt{2/\omega\mu\sigma}$: he asked for it cold in class.`],
+     example:{q:R`Example 5-7: $E_0=10^{-3}$ V/m onto earth ($\varepsilon_r=9$, $\sigma=0.1$ S/m) at 1 MHz. What's the first move?`,
+      a:[R`$\sigma/\omega\varepsilon=200\gg1$: good conductor, $\eta_2\simeq(1+j)\sqrt{\omega\mu/2\sigma}$, tiny next to 377 Ω.`,
+       R`So $|\Gamma|=0.967$ (most of it reflects), $\delta\approx1.6$ m, and $\mathbf J=\sigma\mathbf E^t$ decays as $e^{-z/\delta}$. His spin: "ground-penetrating radar... for things like improvised explosive devices or landmines."`]},
+     traps:[
+      R`Mixing $\sin$ and $\tan$ under time pressure. Brewster is tangent (no reflection); critical is sine (no transmission).`,
+      R`Choosing ⊥ for "complete transmission." Only ∥.`,
+      R`"SWR = 0." "Lowest it can ever be is one."`],
+     prather:R`Exam I covers Chapters 1–5 (L15: "Chapter 6 is not on the exam... the first 5 are"). Format (L14): "I always have 4 questions. I try to make 3 of them homework, or example-like... The 4th problem is the derivation." And: "The only way you would ever learn electromagnetics is by crunching out problems."`},
+  boss:{goal:R`Boss: 8 rounds at 30 s (Sniper rounds 90 s), HW-level first moves and full boundary-condition derivations.`,
+     look:[
+      R`Two hard Sniper shots, plus first-move, concept and derivation rounds. Derivations come from the Ch. 5 lessons: normal incidence Γ/T, total field and SWR, oblique ⊥ and ∥ coefficients, Brewster, critical angle, lossy earth.`,
+      R`In every Sniper round, decide polarization from the cyan ribbon before you compute: in the orange plane → ∥ (TE$^y$), out of it → ⊥ (TM$^y$).`],
+     rule:{t:"Boundary conditions → everything",tex:R`\hat n\times(\mathbf E_1-\mathbf E_2)=0,\quad \hat n\times(\mathbf H_1-\mathbf H_2)=0\ \Rightarrow\ \text{Snell},\ \Gamma,\ T,\ \theta_B,\ \theta_c`},
+     steps:[
+      R`Write the three waves with their $e^{-j\boldsymbol\beta\cdot\mathbf r}$.`,
+      R`Get each H from E by the right-hand rule (reflected H flips).`,
+      R`Apply tangential E and tangential H at $z=0$; phase matching first, then amplitudes.`,
+      R`Ask the two questions he asked: can $\Gamma=0$? (Brewster, ∥ only.) Can $|\Gamma|=1$? (Critical, both, dense → less dense.)`],
+     example:{q:R`Order the critical-angle derivation.`,
+      a:[R`Snell: $\sin\theta_t=\sqrt{\varepsilon_1/\varepsilon_2}\sin\theta_i$ → exceeds 1 when $\varepsilon_1>\varepsilon_2$ and $\theta_i>\theta_c$ → $\cos\theta_t=-j\sqrt{(\varepsilon_1/\varepsilon_2)\sin^2\theta_i-1}$ → $\Gamma=\frac{R-jX}{R+jX}$, $|\Gamma|=1$ → transmitted field $e^{-\alpha_2z}e^{-j\beta_2x\sin\theta_t}$: a slow surface wave.`]},
+     traps:[
+      R`At normal incidence polarization doesn't matter (both fields tangential). It only matters off-normal.`,
+      R`Transmitted power past $\theta_c$ is zero, not $|T|^2$: the evanescent field carries no average power into medium 2.`,
+      R`TE$^y$/TM$^y$ vs s/p vs the summary slide's TE/TM: anchor on "where is E?" and you can't get lost.`],
+     prather:R`L14: "It gets really confusing because of the bookkeeping. You can have TM$^x$, TM$^z$, TEM$^z$... you always have to think in your mind: what exactly are they talking about?"`}
+ }};
+})(window.MXG);
+
+/* Playbook for World 6 (Ch. 6): Radiation Range (dipole.js), forced round types 1:"aim", 2:"region", 3:"far".
+   Sources: L15 transcript b140b059 (vector potentials, coat hanger, Lorenz gauge, Green's function), L16 slides (no transcript:
+   Hertzian dipole fields, field regions, P_rad, far-field criterion), L17 transcript 8eb701a7 (dipole review, field regions,
+   2D²/λ board derivation, far-zone E = −jωA), content/ch6.js. Conventions: e^{+jωt}, η = 120π, primed = source. */
+(function(G){const R=String.raw;G.coach=G.coach||{};G.coach.ch6={
+ voice:R`Now the sources come back, and the shortcut is the potential: integrate the current into $\mathbf A$, then "we always have to just take derivatives of those to get back to the fields" (L15). His picture of the source is a metal coat hanger stretched along $z$ with current on it, shrunk until it's "a little teeny tiny" point radiator (L17). Close in, the reactive $1/r^2$ and $1/r^3$ terms dominate; far out only $1/r$ survives, $E_\theta/H_\phi=377\ \Omega$, and you're in the far field once $R\ge2D^2/\lambda$, a criterion he derived on the board so there is "no phase deviation more than 22.5 degrees."`,
+ levels:{
+  1:{goal:R`Aim the dipole: a Hertzian dipole along $z$ radiates a $\sin^2\theta$ doughnut. Put the gold probe on the maximum, a null, the half-power ($-3$ dB) direction, or where $|E_\theta|$ is half its maximum.`,
+     look:[
+      R`The orange doughnut is the far-field <b>power</b> pattern $\sin^2\psi$, with $\psi$ the angle from the wire. The orange wire with a white current arrow is the dipole; x red, y green, z blue (up).`,
+      R`On the grey sphere: <b>cyan arrows are $\mathbf E$</b> (along $\hat\theta$, on the meridians, pointing parallel to the wire's direction), <b>lavender are $\mathbf H$</b> (along $\hat\phi$, circling the wire). Both are biggest at the equator and vanish at the poles: that is the pattern.`,
+      R`Two sliders: $\theta$ (0–180°, from +z) and $\phi$ (0–360°). The gold line and dot is your probe. For a $z$-dipole, $\phi$ does nothing to the level (the doughnut is symmetric about the wire).`,
+      R`After FIRE a green ring shows every correct direction. Within 3° of the target angle from the wire is full marks; about 6° still passes.`],
+     rule:{t:"Far-field pattern of the infinitesimal dipole (L16)",tex:R`E_\theta\simeq j\eta\frac{\beta I_0l\sin\theta}{4\pi r}e^{-j\beta r},\qquad \frac{E_\theta}{H_\phi}=\eta,\qquad U\propto|E_\theta|^2\propto\sin^2\theta:\ \ \text{max }90^\circ,\ \text{null }0^\circ,180^\circ,\ -3\text{ dB }45^\circ,135^\circ,\ |E|=\tfrac12\text{ max at }30^\circ,150^\circ`},
+     steps:[
+      R`Read the target in the prompt: maximum, null, half-power (−3 dB), or $|E_\theta|$ half its maximum.`,
+      R`Translate to the wire angle: max → $\sin^2\psi=1$, $\psi=90^\circ$; null → $\psi=0$; −3 dB → $\sin^2\psi=\frac12$, $\psi=45^\circ$; half-field → $\sin\psi=\frac12$, $\psi=30^\circ$ (power down to $\frac14$, −6 dB).`,
+      R`For the $z$-dipole set $\theta=\psi$ (or $180^\circ-\psi$); leave $\phi$ anywhere.`,
+      R`If the wire is along $x$ or $y$ (exam/boss rounds), $\psi$ is measured from that axis: $\cos\psi=\sin\theta\cos\phi$ for $x$, $\sin\theta\sin\phi$ for $y$. The doughnut just tips over; straight up ($\theta=0$) is then a maximum.`],
+     example:{q:R`$z$-dipole: aim at a direction where $|E_\theta|$ is half its maximum.`,
+      a:[R`$|E_\theta|\propto\sin\theta=\frac12\Rightarrow\theta=30^\circ$ (or 150°), any $\phi$.`,
+       R`Check: power $\sin^2 30^\circ=0.25$, i.e. −6 dB. Half <i>power</i> would be 45°, which gives the 90° half-power beamwidth.`]},
+     traps:[
+      R`Mixing $|E|$ and $|E|^2$: field halves at 30°, power halves at 45°.`,
+      R`Aiming along the wire for the maximum. A dipole is dark off its ends and brightest broadside ($\theta=90^\circ$).`,
+      R`For a tipped dipole, using $\theta$ from $z$ as if it were the angle from the wire.`],
+     prather:R`L17, reviewing the dipole: think of an open-circuited transmission line, "taking a center... having it stick out a little bit, and bending it down" into two arms; then shrink it until it's "a little teeny tiny" point-source radiator. The L16 slide's lesson: "One of the goals of antenna design is to place lobes at the desired angles. Every null introduces a 180° phase shift."`},
+  2:{goal:R`Near or far? Three probes around the dipole, each at a given $\beta r$. Call each reactive <b>near</b> field, <b>intermediate</b>, or <b>far</b> field. All three must be right.`,
+     look:[
+      R`Each numbered probe ①②③ sits on a grey spoke from the dipole and shows its $\mathbf E$ vector (cyan arrow) plus the cyan loop its tip traces over one cycle. Radius on screen is logarithmic in $\beta r$.`,
+      R`<b>Far:</b> the trace is a straight line <b>perpendicular to the spoke</b>: only $E_\theta$, transverse, a plane wave.`,
+      R`<b>Near:</b> again a straight line, but <b>leaning hard along the spoke</b> (big radial part): $E_r$ and $E_\theta$ are both dominated by the same $1/(\beta r)^3$ term, so they're in phase, like a static dipole's field.`,
+      R`<b>Intermediate:</b> an open <b>ellipse</b>: $E_r$ and $E_\theta$ comparable and out of phase. After FIRE, gold dashed rings mark $\beta r=1$ and $\beta r=10$.`],
+     rule:{t:"Powers of 1/(βr) decide the region (L16 fields)",tex:R`E_\theta=j\eta\frac{\beta I_0l\sin\theta}{4\pi r}\left[1+\frac{1}{j\beta r}-\frac{1}{(\beta r)^2}\right]e^{-j\beta r},\qquad E_r=\eta\frac{I_0l\cos\theta}{2\pi r^2}\left[1+\frac{1}{j\beta r}\right]e^{-j\beta r};\qquad \beta r\ll1:\text{ near},\ \ \beta r\sim1:\text{ intermediate},\ \ \beta r\gg1:\text{ far}`},
+     steps:[
+      R`Read $\beta r$ for each probe. (Exam rounds give $r$ in wavelengths: convert first, $\beta r=2\pi r/\lambda$.)`,
+      R`Compute the bracket terms $1/(\beta r)$ and $1/(\beta r)^2$. If they are much bigger than 1 → <b>near</b> (the game uses $\beta r<0.3$).`,
+      R`If they are comparable to 1 → <b>intermediate</b> ($\beta r$ about 0.5 to 3).`,
+      R`If they are much smaller than 1 → <b>far</b> ($\beta r>10$): only the 1 survives, $E\perp\hat r$, $E_\theta/H_\phi=120\pi$.`,
+      R`Confirm with the trace shape: tilted line (near), ellipse (intermediate), transverse line (far).`],
+     example:{q:R`Probes at $\beta r=0.1$, $1.5$, $30$.`,
+      a:[R`$\beta r=0.1$: $1/(\beta r)^2=100\gg1$ → <b>near</b>; trace leans along the spoke.`,
+       R`$\beta r=1.5$: $1/\beta r=0.67$, $1/(\beta r)^2=0.44$ → <b>intermediate</b>; trace is an ellipse.`,
+       R`$\beta r=30$: $1/\beta r=0.033$ → <b>far</b>; trace is a line across the spoke.`,
+       R`Exam version: $r=0.2\lambda$ is already $\beta r=2\pi(0.2)=1.26$, intermediate, not near.`]},
+     traps:[
+      R`Treating $r$ in wavelengths as $\beta r$. $0.2\lambda$ looks "small," but $\beta r=1.26$.`,
+      R`Calling the near field "weak." It's the strongest region; it just doesn't radiate. The terms are imaginary: "we call these reactive fields, because they have essentially inductive or capacitive types of reactance" (L17).`,
+      R`Confusing these regions with $2D^2/\lambda$. For an infinitesimal dipole $D\to0$, so the far-field condition is set by $\beta r\gg1$ ($r\gg\lambda$).`],
+     prather:R`L17: "We start out in something called the reactive near-field region... super duper close... all the terms that I just said don't exist, they dominate." In the mid region "these become what we call quadratic waves," and in the far field only the $1/r$ term survives, "and all the other... go to zero."`},
+  3:{goal:R`Far-field line: an $a\times b$ aperture radiates at $f$. Decide which of three observers are in its far field, $R\ge2D^2/\lambda$ with $D$ the largest dimension.`,
+     look:[
+      R`The orange rectangle is the aperture (cyan arrows: $\mathbf E_a=\hat yE_0$), the blue $z$ axis is the observation line, and ①②③ are observers at the listed distances (log-spaced on screen).`,
+      R`Toggle each observer to <b>far field</b> or <b>not yet</b>; all three must be right. After FIRE a gold disc marks $2D^2/\lambda$ and a gold diagonal labeled D shows which dimension counts.`,
+      R`Hard rounds put one observer just past the line (8 to 30% beyond $2D^2/\lambda$): do the arithmetic, don't eyeball it.`],
+     rule:{t:"His board derivation (L17): cap the quadratic phase at π/8",tex:R`R'\simeq R-r'\cos\psi+\frac{r'^2\sin^2\psi}{2R};\qquad k\frac{(D/2)^2}{2R}=\frac{\pi D^2}{4\lambda R}\le\frac{\pi}{8}\ \Rightarrow\ R\ge\frac{2D^2}{\lambda},\qquad R\gg D,\ \ R\gg\lambda`},
+     steps:[
+      R`$\lambda=c/f$ (10 GHz → 3 cm).`,
+      R`$D$ is the <b>largest</b> dimension: for a rectangle the diagonal, $D=\sqrt{a^2+b^2}$.`,
+      R`Compute $2D^2/\lambda$ in the same units as the observers.`,
+      R`Each observer with $r\ge2D^2/\lambda$ (and obviously $r\gg D$, $r\gg\lambda$) is far field; the rest are "not yet."`],
+     example:{q:R`$12\ \text{cm}\times9\ \text{cm}$ aperture at 10 GHz. Observers at 0.5 m, 1.2 m, 3 m.`,
+      a:[R`$\lambda=3$ cm, $D=\sqrt{144+81}=15$ cm.`,
+       R`$2D^2/\lambda=2(225)/3=150$ cm $=\boxed{1.5\ \text{m}}$.`,
+       R`0.5 m: not yet. 1.2 m: <b>not yet</b> (it beats $2a^2/\lambda=96$ cm, but $D$ is the diagonal). 3 m: far field.`]},
+     traps:[
+      R`Using the long side $a$ for $D$. The phase error is set by the farthest point of the aperture: the diagonal.`,
+      R`Dropping the 2 ($D^2/\lambda$): that's a $\pi/4$ (45°) phase error, not 22.5°.`,
+      R`Forgetting the other two conditions. A tiny antenna can satisfy $2D^2/\lambda$ at a fraction of a wavelength; you still need $R\gg\lambda$.`],
+     prather:R`L17: set the maximum phase error "around 22.5 degrees... This will assure you that... there's no phase deviation more than 22.5 degrees." Then "we have to know that R is much, much greater than D, and R is much, much greater than lambda. When this happens, then we are literally in the far field."`},
+  4:{goal:R`Prather's moves: first moves on the potential problems (HW 8: 6.1, 6.2, 6.7, 6.8, 6.10, 6.12) and his Ch. 6 derivations in order.`,
+     look:[
+      R`<b>First-move rounds:</b> Hertz potentials (6.1, 6.2), TM/TE construction (6.7, 6.8, 6.10, 6.12), Lorenz gauge, Green's function, short dipole, far-zone fields. <b>Derivation rounds:</b> order one lesson's equations.`,
+      R`Cues: "show you may impose the Lorenz condition" → gauge transformation with $\nabla\lambda$. "Solve $\nabla^2\mathbf A+\beta^2\mathbf A=-\mu\mathbf J$" → Green's function superposition. "Short wire, constant current" → $R\approx r$, pull everything out of the integral. "TM$^z$" → keep $A_z$ only, $\mathbf F=0$. "$r\ge2D^2/\lambda$, have $\mathbf A$" → $E_\theta\simeq-j\omega A_\theta$.`],
+     rule:{t:"Path two: sources → potential → fields",tex:R`\nabla\cdot\mathbf B=0\Rightarrow\mathbf B=\nabla\times\mathbf A;\quad \nabla\cdot\mathbf A=-j\omega\mu\varepsilon\phi_e\ (\text{Lorenz});\quad \nabla^2\mathbf A+\beta^2\mathbf A=-\mu\mathbf J;\quad \mathbf A=\frac{\mu}{4\pi}\iiint\mathbf J\frac{e^{-j\beta R}}{R}dv';\quad \mathbf H=\frac1\mu\nabla\times\mathbf A`},
+     steps:[
+      R`<b>Where A comes from:</b> $\nabla\cdot(\nabla\times\mathbf A)=0$ for any $\mathbf A$, and $\nabla\cdot\mathbf B=0$, so $\mathbf B=\nabla\times\mathbf A$. "$\mathbf A$ doesn't really have a physical existence... It's really just a mathematical tool."`,
+      R`<b>Wave equation + gauge:</b> curl of $\mathbf B=\nabla\times\mathbf A$ → Ampère → a "funny term" $\nabla(\nabla\cdot\mathbf A+j\omega\mu\varepsilon\phi_e)$ → we only fixed the curl, so choose the divergence to kill it: Lorenz (no t).`,
+      R`<b>Green's function:</b> break $\mathbf J$ into point sources, each radiates $e^{-j\beta R}/R$, add them up. Valid because the system is linear and time-invariant.`,
+      R`<b>Dipole (Ex. 6-3, L16):</b> $\mathbf A=\hat a_z\frac{\mu I_0l}{4\pi r}e^{-j\beta r}$ → $A_r=A_z\cos\theta$, $A_\theta=-A_z\sin\theta$ → $H_\phi$ from the spherical curl → $\mathbf E$ from the curl of $\mathbf H$ ("the easier way").`,
+      R`<b>Far zone (L17):</b> $\mathbf A\sim\frac{e^{-j\beta r}}{r}\times f(\theta,\phi)$; the $\nabla(\nabla\cdot\mathbf A)$ term is $1/r^2$ → $E_r\simeq0$, $E_\theta\simeq-j\omega A_\theta$, $E_\phi\simeq-j\omega A_\phi$, $\mathbf H=\frac1\eta\hat a_r\times\mathbf E$.`],
+     example:{q:R`First move: a very short ($l\ll\lambda$) $z$-directed wire with constant current $I_0$. Find E and H.`,
+      a:[R`Line source, $dv'\to dl'$ (his coat hanger), constant current, and every point is the same distance away: $R\approx r$.`,
+       R`$\mathbf A=\hat a_z\frac{\mu I_0}{4\pi}\frac{e^{-j\beta r}}{r}\int_{-l/2}^{l/2}dz'=\hat a_z\frac{\mu I_0l}{4\pi r}e^{-j\beta r}$; transform to spherical, curl for $H_\phi$, curl again for $E_r$, $E_\theta$.`]},
+     traps:[
+      R`Duality sign: $\mathbf H_A=+\frac1\mu\nabla\times\mathbf A$ but $\mathbf E_F=-\frac1\varepsilon\nabla\times\mathbf F$. The minus is the one everyone drops.`,
+      R`Lorenz vs Lorentz vs Lenz: "There's no t. Lorenz gauge" (L15). Three different people.`,
+      R`$\nabla\cdot(\mu\mathbf H)=0\Rightarrow\nabla\cdot\mathbf H=0$ only if $\mu$ is constant.`,
+      R`Far-zone H: use the cross product $\frac1\eta\hat a_r\times\mathbf E$, not the curl. He caught himself saying it in L17: "the cross product rather than the curl."`],
+     prather:R`L15, on why path two wins: integrate "from the sources to get the vector potentials... and then we always have to just take derivatives of those to get back to the fields." On the Green's function's requirement: "If I run this system at 10 o'clock in the morning, and then go to lunch, and then come back at 2 o'clock in the afternoon, you better get the same exact answer."`},
+  5:{goal:R`Exam rounds: hard Radiation Range rounds (90 s, any type: tipped dipole, $r$ in wavelengths, near-the-line far field, aperture nulls) mixed with Ch. 6 first moves and cards (45 s).`,
+     look:[
+      R`Mini rounds here are random: <b>aim</b> with the dipole along x or y, <b>region</b> with $r$ in $\lambda$, <b>far</b> with one observer just past $2D^2/\lambda$, or <b>null</b>.`,
+      R`<b>Null round</b> (uniform $a\times b$ aperture, $\mathbf E_a=\hat yE_0$, Example 6-4): the gold fan is the cut. <b>E-plane is $\phi=90^\circ$</b> (contains $\mathbf E_a=\hat y$) and depends on <b>b</b>; <b>H-plane is $\phi=0^\circ$</b> and depends on <b>a</b>. Slide $\theta$ to the first null.`],
+     rule:{t:"Quick formulas for the timed mini rounds",tex:R`\psi_{-3\,\text{dB}}=45^\circ\ \text{from the wire};\qquad \beta r=\frac{2\pi r}{\lambda};\qquad R_{ff}=\frac{2(a^2+b^2)}{\lambda};\qquad \text{E-plane null: }\frac{\beta b}{2}\sin\theta=\pi\Rightarrow\sin\theta=\frac{\lambda}{b}`},
+     steps:[
+      R`Aim, tipped dipole: find the wire axis first; for an $x$-dipole the null is $\theta=90^\circ,\phi=0^\circ$ and $\theta=0$ (straight up) is a maximum.`,
+      R`Region: convert every $r$ to $\beta r$ before thinking.`,
+      R`Far: diagonal, square it, double it, divide by $\lambda$; compare each observer.`,
+      R`Null: pick the dimension for the plane (E ↔ b, H ↔ a), $\theta=\sin^{-1}(\lambda/\text{dim})$. The wider side gives the narrower beam.`,
+      R`Question rounds: name the path (direct integration vs potential), the gauge, and which terms survive in the far field.`],
+     example:{q:R`Aperture $a=4\lambda$, $b=2\lambda$: first null of the E-plane pattern.`,
+      a:[R`E-plane is $\phi=90^\circ$, depends on $b$: $\sin\theta=\lambda/b=\frac12$.`,
+       R`$\theta=\boxed{30^\circ}$. The H-plane null would be $\sin^{-1}(1/4)=14.5^\circ$: narrower, because $a$ is wider.`]},
+     traps:[
+      R`Using $a$ for the E-plane. The E-plane contains the aperture field $\hat y$, which spans $b$.`,
+      R`Setting $\beta b\sin\theta=\pi$: the sinc argument is $(\beta b/2)\sin\theta$.`,
+      R`Scope: Chapter 6 was explicitly not on Exam I ("Chapter 6 is not on the exam... the first 5 are," L15). It is on the next one, in the same format.`],
+     prather:R`L17, on what he'll test: "I won't hold you accountable on a lot of this stuff in the exam, especially this [circular-aperture Bessel] stuff, but you should definitely know the Cartesian stuff." The $2D^2/\lambda$ derivation and the rectangular aperture are the Cartesian stuff. Format (L14): 4 questions, 3 homework- or example-like, the 4th "a derivation that we covered in class."`},
+  boss:{goal:R`Boss: 8 rounds at 30 s (Radiation Range rounds 90 s), HW 8 first moves and full Ch. 6 derivations: gauge, Green's function, dipole fields, far-field criterion, far-zone fields.`,
+     look:[
+      R`Two Radiation Range rounds of any type, plus first-move, concept and derivation rounds. In 30 s you have time for one recognition: know which "path" each problem wants.`,
+      R`For a region round, do the trace-shape check (tilted line / ellipse / transverse line) if you're short on time.`],
+     rule:{t:"The dipole and the far field on one line",tex:R`\mathbf A=\hat a_z\frac{\mu I_0l}{4\pi r}e^{-j\beta r}\ \to\ H_\phi\ \to\ E_r,E_\theta;\qquad r\to\infty:\ E_\theta\simeq-j\omega A_\theta,\ \ H_\phi=\frac{E_\theta}{\eta};\qquad P_{rad}=\frac{\eta(\beta I_0l)^2}{12\pi};\qquad R\ge\frac{2D^2}{\lambda}`},
+     steps:[
+      R`Sources given → potential integral (path two), never the direct (6-2) route.`,
+      R`Short source → $R\approx r$ in both amplitude and phase. Large source in the far field → $R\approx r-r'\cos\psi$ in the phase, $R\approx r$ in the amplitude.`,
+      R`H by one curl, E by a second curl of H (near and far), or by $-j\omega\mathbf A_{transverse}$ (far only).`,
+      R`Far-field criterion: binomial expansion → quadratic term at $r'=D/2$, $\psi=90^\circ$ → times $k$ → $\le\pi/8$.`],
+     example:{q:R`Order the far-field criterion derivation.`,
+      a:[R`$R'=\sqrt{R^2+r'^2-2Rr'\cos\psi}$ → binomial: $R-r'\cos\psi+\frac{r'^2\sin^2\psi}{2R}$ → worst case $r'=D/2$, $\psi=90^\circ$: $\Delta R_{max}=\frac{D^2}{8R}$ → $\Delta\psi=k\Delta R_{max}=\frac{\pi D^2}{4\lambda R}$ → $\le\frac{\pi}{8}$ → $R\ge\frac{2D^2}{\lambda}$.`]},
+     traps:[
+      R`Approximating $R\approx r$ in the phase of a large aperture. His reason it fails: "the phase can never be bigger than $2\pi$... All of that happens within one $\lambda$," so a fraction of a wavelength matters in the exponent, but not in the $1/R$ amplitude.`,
+      R`Keeping $E_r$ in the far field: it's a $1/r^2$ term.`,
+      R`$P_{rad}$ integral: $\int_0^\pi\sin^3\theta\,d\theta=\frac43$, which turns $\frac{1}{16\pi}$ into $\frac{1}{12\pi}$.`],
+     prather:R`L17: "The phase can never be bigger than $2\pi$... All of that happens within one lambda... the percentage of that one wavelength becomes the corresponding phase." That's why the phase gets the careful approximation and the amplitude gets $R\approx r$.`}
+ }};
+})(window.MXG);
+
+/* Playbook for World 8 (Mode Hunter, Ch. 8 rectangular waveguides). Sources: L18 transcript 5f01e25c (10/27),
+   L19 slides (no transcript; summarized in content/ch8.js), L17 transcript 8eb701a7 (exam format), HW 9.
+   "look"/"steps" describe exactly what src/minis/modehunter.js draws. Anything not from class is marked (Supplemental). */
+(function(G){ const R=String.raw; G.coach=G.coach||{}; G.coach.ch8={
+ voice:R`A waveguide, in his words, is "nothing more than a little hose": a spigot (a big amplifier, a TWT), a rigid metal pipe, a nozzle (the antenna). He calls it his least favorite part of the course, because Balanis builds it from $\mathbf A$ and $\mathbf F$, so he goes through it fast. But he tells the LPD-25 story to make the point: a semi-rigid section on an SPS-48 radar got so hot it bowed at the bolts, the mismatch fed the reflection, the reflection fed the heat. "Impedance matching and back reflections and standing waves: it's all real stuff."`,
+ levels:{
+  1:{ goal:R`Read the fields in the pipe and name the mode: TE or TM, then $m$ (half-cycles across $a$) and $n$ (half-cycles across $b$).`,
+   look:[
+    R`<b>Colors.</b> Cyan arrows = $\mathbf E$. Lavender arrows = $\mathbf H$. The thick orange arrow labeled <b>+z</b> is the propagation direction (the "water in the hose"). The orange box is the PEC wall. The wide face is $a$ (along $x$), the short face is $b$ (along $y$): "always, always, always."`,
+    R`<b>The three buttons (E + H / E only / H only)</b> switch the 3D guide <i>and</i> the 2D cross-section together. Never decide with E + H on: the two arrow sets overlap and you can't tell which one is tilting.`,
+    R`<b>3D, press E only.</b> If every cyan arrow lies flat, in planes parallel to the orange front rectangle (perpendicular to the +z arrow), then $E_z=0$ and it's <b>TE</b>. If some cyan arrows tilt or stand up along the guide, $E_z\neq0$: <b>TM</b>. Look along the length: $E_z$ is a quarter cycle out of step with the transverse part, so a quarter guide wavelength from where the transverse arrows are strongest, the TM arrows point almost straight down $z$ (and at the center of each blob they always do).`,
+    R`<b>3D, press H only</b> to confirm. TE: lavender arrows tilt into $z$ (they form loops lying in planes that contain the $z$ axis; for TE$_{10}$ they loop in the $x$-$z$ plane). TM: lavender arrows lie flat and circle in the cross-section. Exactly one family tilts. That family's field has the $z$ part and names the mode: $H_z$ means TE, $E_z$ means TM.`,
+    R`<b>2D panel</b> ("cross-section at z = 0, looking down +z"): $x$ runs left to right (the label "x → (a)"), $y$ runs bottom to top (top edge is $y=b$). The color map is the <b>z-field</b> (legend: orange ■+, blue ■−). It's $H_z\propto F_z$ for a TE mode and $E_z\propto A_z$ for a TM mode. The map holds still; only the arrows breathe and flip every half period.`,
+    R`<b>Frame test (2D).</b> TM: the color map goes dark on all four walls, because $E_z$ is tangential to every wall and must vanish ($\sin\cdot\sin$). TE: the color runs right up to the walls and is strongest in the corners ($\cos\cdot\cos$, zero <i>slope</i> at the walls); only the dividing lines touch the walls dark. A dark frame means TM, a bright frame means TE.`,
+    R`<b>Arrow test (2D).</b> TE: cyan $\mathbf E$ runs <i>along</i> the color contours, swirling around the patches, while lavender $\mathbf H$ points <i>across</i> them from one color to the other. TM is the reverse: cyan points across, lavender swirls. Either way, cyan E always meets a metal wall at a right angle, never along it ($\hat n\times\mathbf E=0$).`],
+   rule:{t:"Family from the z-part, indices from the walls", tex:R`\text{TE}^z:\ F_z\propto\cos\frac{m\pi x}{a}\cos\frac{n\pi y}{b}\ (m+n\ge1)\qquad\text{TM}^z:\ A_z\propto\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b}\ (m,n\ge1)`},
+   steps:[
+    R`<b>Family first.</b> In 3D press <b>E only</b>: cyan tilting into $z$ means TM. Press <b>H only</b>: lavender tilting into $z$ means TE. Check it with the frame test in 2D (dark frame = TM, bright frame = TE).`,
+    R`<b>Count $m$ across the wide side (left to right in 2D).</b> TM: count the color blobs in a row; each blob is one half-cycle of $\sin\frac{m\pi x}{a}$. TE: count the dark dividing lines you cross (the orange/blue flips); each flip is one half-cycle of $\cos\frac{m\pi x}{a}$. No flip means $m=0$.`,
+    R`<b>Count $n$ up the short side (bottom to top)</b> with the same rule: TM counts blobs, TE counts dark dividing lines.`,
+    R`<b>Sanity check before you tap.</b> TM needs $m,n\ge1$, so TM$_{10}$, TM$_{01}$ and TM$_{20}$ are dead choices (sin 0 = 0, every field vanishes). TE can have one zero index but not both. $m$ always goes with $a$, the long horizontal side, so a choice with the indices swapped is a trap.`,
+    R`<b>Read the feedback.</b> It shows the cutoff ratio $\sqrt{m^2+(n\,a/b)^2}$. TE$_{mn}$ and TM$_{mn}$ with $m,n\ge1$ give the same number. A cutoff can never split them; only the fields can.`],
+   example:{q:R`The round you missed: $a/b=2$, and the choices include TE$_{12}$ and TM$_{12}$. How do you tell?`,
+    a:[R`Both have cutoff ratio $\sqrt{1^2+(2\cdot2)^2}=\sqrt{17}=4.12$: degenerate. The cutoff can't decide this one; the fields have to.`,
+     R`<b>If it's TE$_{12}$:</b> with E only, the cyan arrows all lie flat. With H only, the lavender arrows tilt into $z$. The 2D map is a checkerboard <b>2 columns × 3 rows</b> ($\cos\frac{\pi x}{a}$: one vertical dark line; $\cos\frac{2\pi y}{b}$: two horizontal dark lines), brightest at the walls. One flip across $a$ gives $m=1$; two flips up $b$ give $n=2$.`,
+     R`<b>If it's TM$_{12}$:</b> with E only, the cyan arrows stand up along $z$ at the centers of the blobs. The 2D map is <b>1 column × 2 rows</b>: one orange blob over one blue blob, dark on all four walls. One blob across $a$ gives $m=1$; two blobs up $b$ give $n=2$.`,
+     R`Same indices, very different pictures: TE$_{12}$ has 6 patches with a bright frame, TM$_{12}$ has 2 blobs with a dark frame.`]},
+   traps:[
+    R`<b>Counting TE patches as half-cycles.</b> TE$_{10}$ shows <i>two</i> color halves (orange | blue), but $m=1$: $\cos\frac{\pi x}{a}$ goes from + to − once. For TE, count the flips, not the patches. (TM blobs, on the other hand, are counted directly.)`,
+    R`<b>Using the 2D arrows to pick the family.</b> The cross-section draws only transverse $\mathbf E$ and $\mathbf H$, and both families have both. The $z$-part shows up only as the 3D tilt or the color map.`,
+    R`<b>Swapping $m$ and $n$.</b> $m$ goes with $a$ ($x$, the long side), $n$ with $b$ ($y$, the short side). His convention, "always, always, always."`,
+    R`<b>Picking a mode that can't exist.</b> TM$_{10}$ and TM$_{01}$ with metal walls, or TE$_{00}$: the game includes them as decoys.`],
+   prather:R`As he put it in L18, $m$ and $n$ "correspond to essentially distributions of the field": for an index of 1 the field "starts off with zero, goes to a maximum value halfway, goes back to zero"; for 2 you get "a hotspot here and a hotspot here" with "that null in the middle." "Notice it's always zero at the boundary." And on TM: it's "the easiest one to solve, because the $E_z$ field is always tangential to the boundaries."` },
+
+  2:{ goal:R`Slide $f$ so that <b>exactly N</b> modes propagate in the given guide, counting TE and TM separately, then FIRE.`,
+   look:[
+    R`The prompt gives the guide (WR-90, WR-62, …, or "a = 2b"), $a$ and $b$ in cm, and the filling (air or $\varepsilon_r$; a filled guide has a faint blue tint and an "εr =" tag in 3D). $c=3\times10^8$ m/s.`,
+    R`<b>Controls:</b> the <b>f (GHz)</b> slider for coarse moves, and −0.1 / −0.01 / +0.01 / +0.1 for fine moves. The gold vertical line on the strip below is your $f$. The slider starts at a random value; don't trust it.`,
+    R`<b>Before FIRE</b> the strip says "cutoff ladder hidden until you fire" and the 3D pipe is empty. You have to work out the ladder yourself.`,
+    R`<b>After FIRE</b> the ladder appears: a rung at each cutoff, labeled TE10, TE20, …; a <b>lavender</b> rung marked "TE/TM" is a degenerate pair (two modes at one frequency); the green band is the window for exactly N. The 3D pipe then cycles through every mode that propagates at your $f$, labeled "TE10 ✓ (1/3)" and so on, with the real guide wavelength.`],
+   rule:{t:"Cutoff ladder (8-16), (8-23)", tex:R`(f_c)_{mn}=\frac{c}{2\sqrt{\varepsilon_r}}\sqrt{\left(\frac ma\right)^2+\left(\frac nb\right)^2},\qquad \frac{(f_c)_{mn}}{(f_c)_{10}}=\sqrt{m^2+\left(n\frac ab\right)^2},\qquad (f_c)_N<f<(f_c)_{N+1}`},
+   steps:[
+    R`Compute the dominant cutoff once: $(f_c)_{10}=\frac{c}{2a\sqrt{\varepsilon_r}}$ (with $a$ in meters). It uses $a$ only.`,
+    R`Build the ladder with ratios: TE$_{20}$: 2, TE$_{01}$: $a/b$, TE/TM$_{11}$: $\sqrt{1+(a/b)^2}$, TE$_{30}$: 3, TE/TM$_{21}$: $\sqrt{4+(a/b)^2}$, … Multiply each by $(f_c)_{10}$ and sort.`,
+    R`Count as you climb: TE$_{m0}$ and TE$_{0n}$ count once; every $m,n\ge1$ rung counts <b>twice</b> (TE$_{mn}$ and TM$_{mn}$ arrive together).`,
+    R`The window for exactly N runs from the N-th cutoff to the next one. Aim for the middle, not the edge: a mode exactly at cutoff isn't propagating ($\beta_z=0$).`,
+    R`Use the slider to get close, then ±0.01 to land. FIRE, and check your $f$ sits inside the green band.`],
+   example:{q:R`WR-90 ($a=2.286$ cm, $b=1.016$ cm), air. Exactly 3 modes. (Example 8-2's ladder.)`,
+    a:[R`$(f_c)_{10}=\frac{3\times10^8}{2(0.02286)}=6.562$ GHz; $a/b=2.25$.`,
+     R`Ladder: TE$_{10}$ 6.562, TE$_{20}$ 13.12, TE$_{01}$ 14.76, TE/TM$_{11}$ 16.16 (×2), TE$_{30}$ 19.69, TE/TM$_{21}$ 19.75 (×2) GHz.`,
+     R`Count: 1, 2, 3, then jumps to 5. Exactly 3 means $14.76<f<16.16$ GHz, so set <b>f ≈ 15.4 GHz</b>. (Exactly 4 is impossible here; the game never asks for N in the middle of a pair.)`,
+     R`Filled with $\varepsilon_r=2.25$: divide every rung by 1.5, giving TE$_{10}$ 4.374, TE$_{20}$ 8.749, TE$_{01}$ 9.843, TE/TM$_{11}$ 10.77. Exactly 3 is now $9.84<f<10.77$, so set f ≈ 10.3 GHz.`]},
+   traps:[
+    R`<b>Forgetting the TM twin.</b> Above TE$_{11}$'s cutoff, TM$_{11}$ is on too. The prompt says "count TE and TM separately."`,
+    R`<b>Ordering TE$_{20}$ vs TE$_{01}$ by habit.</b> It depends on $a/b$: for $a/b>2$, TE$_{20}$ comes first; for $a/b<2$ (e.g. "a = 1.5b"), TE$_{01}$ comes first; at $a=2b$ they tie.`,
+    R`<b>Forgetting the filling.</b> Every cutoff drops by $\sqrt{\varepsilon_r}$ (not $\varepsilon_r$).`,
+    R`<b>cm left as cm.</b> Put $a$ in meters with $c=3\times10^8$, or use $c=30$ cm·GHz.`],
+   prather:R`L18: "If I'm in free space, I can have any frequency go in any direction... But in a waveguide, I don't have that same degree of freedom," because the boundary conditions "impose discrete values." The first mode is half a wavelength across $a$: "the largest wavelength that I can fit inside my waveguide such that the boundary conditions are satisfied." Practical guides are cut so the bottom of the band is set by cutoff, and "we just simply don't use it above a certain frequency" because of modal dispersion.` },
+
+  3:{ goal:R`Given a mode, a guide and $f$, type its wave impedance $Z_w$ in ohms, within 1%. (The same machinery gives $\lambda_g$, which the hard rounds in Level 5 can ask for.)`,
+   look:[
+    R`The prompt names the mode (e.g. <b>TE<sub>10</sub></b>), $f$ (gold), $a$, $b$ and the filling. Constants: $c=3\times10^8$, $\eta_0=120\pi$.`,
+    R`The 3D pipe shows that mode with its true guide wavelength: the arrow pattern repeats along $z$ every $\lambda_g$. Close to cutoff the pattern stretches out (long $\lambda_g$, huge TE impedance); far above cutoff it packs tight toward the free-space $\lambda$.`,
+    R`Type the number in the box and FIRE (Enter works). Within 1% scores full, within 2% partial. If your number matches a known slip (η₀ instead of η, the wrong family, the air cutoff, a and b swapped), the feedback names it.`],
+   rule:{t:"Wave impedance (8-20), (8-29) and guide wavelength (8-50)", tex:R`Z_w^{TE}=\frac{\eta}{\sqrt{1-(f_c/f)^2}},\qquad Z_w^{TM}=\eta\sqrt{1-(f_c/f)^2},\qquad \lambda_g=\frac{\lambda}{\sqrt{1-(f_c/f)^2}},\qquad \eta=\frac{120\pi}{\sqrt{\varepsilon_r}}`},
+   steps:[
+    R`Read the family from the name: TE divides by the root, TM multiplies.`,
+    R`Compute <i>that mode's</i> cutoff in <i>the filling</i>: $(f_c)_{mn}=\frac{c}{2\sqrt{\varepsilon_r}}\sqrt{(m/a)^2+(n/b)^2}$.`,
+    R`Form the root once: $s=\sqrt{1-(f_c/f)^2}$. It's the same factor in $Z_w$, $\lambda_g$, $v_p$ and $v_g$.`,
+    R`Use the medium's impedance $\eta=\eta_0/\sqrt{\varepsilon_r}$, then $Z^{TE}=\eta/s$ or $Z^{TM}=\eta s$.`,
+    R`Sanity: TE comes out above $\eta$ (and goes to ∞ at cutoff), TM below $\eta$ (0 at cutoff). For $\lambda_g$: always longer than $\lambda$ in the filling.`],
+   example:{q:R`TE$_{10}$ in air-filled WR-90 at 10 GHz. Then the same guide filled with $\varepsilon_r=2.25$ at 6 GHz.`,
+    a:[R`Air: $(f_c)_{10}=6.562$ GHz, $s=\sqrt{1-(0.6562)^2}=0.7546$, $Z^{TE}=\frac{376.99}{0.7546}=$ <b>499.6 Ω</b>. (And $\lambda_g=\frac{3\ \text{cm}}{0.7546}=3.976$ cm.)`,
+     R`Filled: $(f_c)_{10}=\frac{6.562}{1.5}=4.374$ GHz, $\eta=\frac{376.99}{1.5}=251.3\ \Omega$, $s=\sqrt{1-(4.374/6)^2}=0.6845$, $Z^{TE}=\frac{251.3}{0.6845}=$ <b>367.2 Ω</b>.`,
+     R`TM check: TM$_{11}$ in air WR-90 at 20 GHz has $f_c=16.16$ GHz, $s=0.5894$, $Z^{TM}=376.99(0.5894)=222.2\ \Omega$, below η as it should be.`]},
+   traps:[
+    R`<b>η₀ in a filled guide.</b> The filling changes both $f_c$ and $\eta$.`,
+    R`<b>TE/TM formula swap.</b> Remember the picture: at cutoff TE looks like an open circuit (∞), TM like a short (0).`,
+    R`<b>Air cutoff with a filling.</b> The cutoff in the filled guide is lower by $\sqrt{\varepsilon_r}$.`,
+    R`<b>a and b swapped</b> for TE$_{01}$ vs TE$_{10}$: TE$_{10}$'s cutoff uses $a$ only, TE$_{01}$'s uses $b$ only.`],
+   prather:R`L18, on the impedance: "Notice at cutoff your impedance is infinite... whenever I have an infinite impedance, nothing's gonna go in there. It's like an open circuit." And the reason he cares, from the radar on LPD-25 with megawatts going up the mast: even a one percent back reflection is "a ton of power coming back at me." Impedance in a guide is not academic.` },
+
+  4:{ goal:R`<b>Prather's moves:</b> First-move cards from HW 9 (8.1–8.11) and the lecture examples, alternating with Derivation rounds where you put his steps in order.`,
+   look:[
+    R`<b>First move:</b> a problem statement and four candidate first moves. Only one is the move he'd make; the others are classic wrong starts (the free-space $\beta$, $v_p$ for a delay, $b$ for TE$_{10}$, the PEC answer for PMC walls).`,
+    R`<b>Derivation:</b> the lines of a lesson's math (TE$^z$ fields, TM$^z$ fields, cutoff, or the two-plane-wave picture) shuffled. Tap them in the order he builds it.`],
+   rule:{t:"Start general, kill terms with physics, apply the walls", tex:R`E_z=0\Rightarrow\mathbf A=0,\ \mathbf F=\hat zF_z\ (\text{TE}^z);\qquad H_z=0\Rightarrow\mathbf F=0,\ \mathbf A=\hat zA_z\ (\text{TM}^z);\qquad \beta_x^2+\beta_y^2+\beta_z^2=\beta^2`},
+   steps:[
+    R`<b>Read the keyword, pick the quantity.</b> "Delay line" means $v_g$ ($\ell=v_g\tau$). "Phase shifter" means $\beta_z$ ($\ell=\phi/\beta_z$). "List the first N modes" means the ratio table. "Match two sections" means treat each as a line with $Z=Z_w$, a quarter-wave section with $Z_Q=\sqrt{Z_1Z_3}$, length $\lambda_g/4$.`,
+    R`<b>Filled guide?</b> Switch to the medium first: $v=c/\sqrt{\varepsilon_r}$, $\eta=\eta_0/\sqrt{\varepsilon_r}$, $f_c$ lower by $\sqrt{\varepsilon_r}$. Then run the air recipe.`,
+    R`<b>PMC walls (HW 8.10, 8.11)?</b> Duality: tangential $\mathbf H=0$, so TE becomes $\sin\cdot\sin$ (lowest TE$_{11}$) and TM becomes $\cos\cdot\cos$ (lowest TM$_{10}$).`,
+    R`<b>TE$^z$ derivation order:</b> fields from $F_z$ (6-72) → separation of variables, cos/sin in $x,y$ and $e^{-j\beta_zz}$ → bottom wall $E_x(y=0)=0\Rightarrow D_2=0$ → top wall $\Rightarrow\beta_y=\frac{n\pi}{b}$ → side walls $\Rightarrow D_1=0,\ \beta_x=\frac{m\pi}{a}$ → result $\cos\cdot\cos$.`,
+    R`<b>TM$^z$:</b> $A_z$ and $E_z\propto A_z$ → walls give sines → fields (8-24). <b>Cutoff:</b> constraint (8-14c) → $f_c$ (8-16) → three regimes (8-17). <b>Bouncing waves (L19 slides):</b> $\cos\psi$ → $v_p,v_g$ → $\lambda_g$.`],
+   example:{q:R`"Derive the TE$^z$ fields of a rectangular waveguide." Lay out his skeleton.`,
+    a:[R`$E_z=0$ kills $A_x,A_y,A_z,F_x,F_y$; only $F_z$ survives: $E_x=-\frac1\varepsilon\frac{\partial F_z}{\partial y}$, $E_y=\frac1\varepsilon\frac{\partial F_z}{\partial x}$.`,
+     R`Separate: $F_z=(C_1\cos\beta_xx+D_1\sin\beta_xx)(C_2\cos\beta_yy+D_2\sin\beta_yy)A_3e^{-j\beta_zz}$, standing waves where it's bounded, a traveling wave where it isn't.`,
+     R`$E_x\propto\frac{\partial F_z}{\partial y}$ at $y=0$: $\sin0=0$, $\cos0=1$, so $D_2=0$. At $y=b$: $\sin\beta_yb=0$, so $\beta_y=\frac{n\pi}{b}$ (not $C_2=0$: that's the trivial solution).`,
+     R`$E_y$ at $x=0,a$ gives $D_1=0$ and $\beta_x=\frac{m\pi}{a}$. Result: $F_z=A_{mn}\cos\frac{m\pi x}{a}\cos\frac{n\pi y}{b}e^{-j\beta_zz}$, with $m=n=0$ excluded. $A_{mn}$ is set by how much power you launch.`]},
+   traps:[
+    R`Applying boundary conditions before you have the general solution: he gets the general solution first, then the walls fix the coefficients.`,
+    R`Setting $C_2=0$ (or both indices 0): every field vanishes, the trivial solution.`,
+    R`Zeroing tangential $\mathbf H$ on a metal wall: PEC zeroes tangential $\mathbf E$ (PMC is the one that zeroes $\mathbf H$).`,
+    R`$v_p$ for a delay line: no energy travels at $v_p$ (HW 8.1 gives 795 m that way, which is wrong).`],
+   prather:R`L18: "That's the whole point of these vector potentials: we start off with very general solutions and slowly eliminate terms based on the physics of the problem." On why TE takes more work: $E_x$ has to die on the top and bottom, $E_y$ on the sides, two components and two pairs of walls, while TM has one $E_z$ that is tangential everywhere.` },
+
+  5:{ goal:R`<b>Exam rounds:</b> a timed mix, 45 s per card, with hard Mode Hunter rounds at 90 s: PMC walls, the lowest TE mode of a PMC guide, and N-mode tuning in a filled guide (N up to 7).`,
+   look:[
+    R`<b>PMC rounds:</b> the walls are drawn <b>dashed lavender</b>, and the 2D legend reads "PMC: tangential H = 0". The family test in 3D is unchanged: whichever field tilts into $z$ names the family.`,
+    R`<b>Under PMC the frame test flips:</b> TE is now $\sin\cdot\sin$ (its $H_z$ map is dark on the walls, so count blobs), and TM is $\cos\cdot\cos$ (bright frame, so count flips). Decide the family in 3D first, then pick the counting rule.`,
+    R`<b>"Lowest TE mode" with PMC:</b> the 3D pipe stays empty and asks "which TE mode comes first?" It's TE$_{11}$, since TE$_{10}$ can't exist.`,
+    R`<b>Filled N-mode rounds:</b> $\varepsilon_r$ of 2.25, 2.56 or 4, and larger N. Same ladder, every rung divided by $\sqrt{\varepsilon_r}$.`],
+   rule:{t:"PEC ↔ PMC duality (HW 8.10, 8.11)", tex:R`\text{PEC: TE}\to\cos\cdot\cos\ (\text{TE}_{10}),\ \text{TM}\to\sin\cdot\sin\ (\text{TM}_{11})\qquad\text{PMC: TE}\to\sin\cdot\sin\ (\text{TE}_{11}),\ \text{TM}\to\cos\cdot\cos\ (\text{TM}_{10})`},
+   steps:[
+    R`First line on paper: which family (which potential), which walls. That's half the partial credit before any number appears.`,
+    R`Write the cutoff formula symbolically, then plug in. On Exam 1 there were no calculators (one handwritten sheet, front and back), so work in ratios: $\sqrt{m^2+(n\,a/b)^2}$, $\sqrt{\varepsilon_r}$, $1-(f_c/f)^2$.`,
+    R`Sanity-check every answer: $Z^{TE}>\eta$, $Z^{TM}<\eta$, $\lambda_g>\lambda$, $v_g<v<v_p$, $v_pv_g=v^2$.`,
+    R`Answer exactly what's asked. On Exam 1 he pointed out that some people derived reflection coefficients when he'd asked for Snell's law: "I did not ask you for that."`],
+   example:{q:R`Hard round: WR-90 with PMC walls, air, $f=20$ GHz. Find $Z_w$ of the lowest TE$^z$ mode.`,
+    a:[R`PMC flips TE to $\sin\cdot\sin$, so TE$_{10}$ doesn't exist; the lowest TE is <b>TE$_{11}$</b>.`,
+     R`$(f_c)_{11}=6.562\sqrt{1+2.25^2}=16.16$ GHz, $s=\sqrt{1-(16.16/20)^2}=0.5894$.`,
+     R`$Z^{TE}=\frac{376.99}{0.5894}=$ <b>639.6 Ω</b>. (The trap answer uses TE$_{10}$, $s=0.9446$, and gives 399.1 Ω; the feedback will call it out.)`]},
+   traps:[
+    R`Carrying the PEC answer into a PMC problem (TE$_{10}$ "dominant" with PMC walls).`,
+    R`Spending the whole 90 s on arithmetic: set up the ratio, then compute once.`,
+    R`In filled-guide tuning, forgetting that the <i>whole ladder</i> shifts, not just TE$_{10}$.`],
+   prather:R`About the exams, L18: the final is "6 questions," structurally like the midterms: derivations, "maybe some homework problems, and some other crazy stuff." Exam 1 averaged 72, and he grades coarsely, in chunks of about five points, so a clear setup earns real partial credit. L17: "at least one problem being very similar to one [homework] problem, not identical." He also said he wouldn't weight the potential-based waveguide formulation very heavily, so expect the physics (cutoff, modes, impedance) more than the A/F bookkeeping.` },
+
+  boss:{ goal:R`<b>Boss:</b> 8 rounds at 30 s each. HW-level first moves, a derivation to order, concept cards, and one hard Mode Hunter round (90 s).`,
+   look:[
+    R`The round header tells you the type: <b>First move</b>, <b>Derivation</b>, <b>Concept</b>, or <b>MODE HUNTER</b>. Decide in the first two seconds which playbook you're in.`,
+    R`For the Mode Hunter round: check for dashed lavender walls (PMC) before anything else, then E only / H only, then count.`],
+   rule:{t:"The four facts the whole world rests on", tex:R`(f_c)_{10}=\frac{c}{2a\sqrt{\varepsilon_r}},\qquad \frac{(f_c)_{mn}}{(f_c)_{10}}=\sqrt{m^2+\left(n\frac ab\right)^2},\qquad Z_w^{TE/TM}=\eta\left[1-\left(\frac{f_c}{f}\right)^2\right]^{\mp1/2},\qquad v_pv_g=v^2`},
+   steps:[
+    R`First move cards: name the quantity the keyword asks for ($v_g$, $\beta_z$, $Z_w$, $\lambda_g$, the cutoff ratio), then the medium ($\varepsilon_r$), then the mode.`,
+    R`Derivation: TE goes potential → separate → bottom → top → sides → result; TM goes potential → sines → fields; cutoff goes constraint → $f_c$ → regimes.`,
+    R`Concept cards: answer from the picture. Cutoff is half a wavelength across $a$; $m$ counts half-cycles across $a$; TE sits above η, TM below; nothing physical moves at $v_p$.`,
+    R`If you're unsure, eliminate the impossible first: TM$_{10}$ with metal walls, $\varepsilon_r$ instead of $\sqrt{\varepsilon_r}$, $b$ in TE$_{10}$'s cutoff.`],
+   example:{q:R`HW 8.10 card: "Dielectric rod modeled with PMC walls. TE$^z$ modes: BCs, potential, lowest mode." First move?`,
+    a:[R`$\mathbf F=\hat zF_z$, and $H_z\propto F_z$ is tangential to every wall, so $F_z$ itself must vanish there: $\sin\cdot\sin$, lowest TE$_{11}$. It's the dual of PEC TM.`]},
+   traps:[R`Reflexively answering "TE$_{10}$" for "lowest mode" without checking the walls and $a>b$.`,R`Mixing $|\mathbf E|$ conditions with $|\mathbf H|$ conditions under the clock: PEC zeroes tangential E, PMC zeroes tangential H.`],
+   prather:R`L17, before Exam 1: "I'm not trying to throw you curveballs... I'm just trying to see what you know... I'm your biggest advocate for this subject." And if you don't know something entirely, he said, write down your best attempt anyway, because he gives partial credit.` }
+ } };
+})(window.MXG);
 
 /* Mini-game: RADIATION RANGE (Ch. 6 infinitesimal dipole & far field; Ch. 11 Example 6-4 rectangular aperture).
    Rounds: aim a probe at a pattern level of the sin²θ doughnut; classify near / intermediate / far by βr; decide which

@@ -2409,6 +2409,785 @@ function drawScene(cv,sc,cap){const a=sc.a||2.286,b=sc.b||1.016;const W=1.7,Hh=W
 };
 })(window.MXG);
 
+/* QUIZ ARENA · HW 1–2 = Balanis Ch. 1 (Maxwell's equations, integral form, boundary conditions). Problems 1.1–1.7
+   (1.8–1.10 statements are missing from the provided PDF). Statics problems are graded in units of E0, H0, ε0, μ0,
+   as the book asks. Ordering = estimated quiz likelihood. */
+(function(G){const U=G.hwU,{pick}=U,f=U.f3;
+const D=Math.PI/180;
+const ft=(x,n)=>{n=n||4;if(!isFinite(x))return"—";const a=Math.abs(x);if(a!==0&&(a>=1e5||a<1e-3)){const e=Math.floor(Math.log10(a));return `${+(x/Math.pow(10,e)).toPrecision(n)}\\times10^{${e}}`;}return(+x.toPrecision(n)).toString();};
+const cf=x=>x===1?"":String(x);                       // coefficient 1 is silent
+const sg=x=>x<0?`-${f(-x)}`:`+${f(x)}`;
+const L=[];
+
+/* ---- 1.3 Gauss in a cube ---- */
+L.push({id:"1.3",like:5,min:6,why:"One divergence, one triple integral, a two-face check. The shortest closed-surface problem he can give, and the porcupine story is in the lecture.",
+ orig:{a:3,b:1,c:4,d:1,s:1},
+ gen(){return{a:pick([1,2,3,4,5]),b:pick([1,2,3,0.5]),c:pick([1,2,4,6]),d:pick([1,2,3,0.5]),s:pick([1,2,0.5])};},
+ st:p=>`The electric flux density inside a cube is given by (a) $\\mathbf D=\\hat a_x(${p.a}+${cf(p.b)}x)$, (b) $\\mathbf D=\\hat a_y(${p.c}+${cf(p.d)}y^2)$ C/m². Find the total electric charge enclosed inside the cubical volume when the cube is in the first octant with three edges coincident with the x, y, z axes and one corner at the origin. Each side of the cube is ${p.s} m long.`,
+ first:{ok:"Divergence theorem: $Q_e=\\iiint_V\\nabla\\cdot\\mathbf D\\,dv$, then check with the two faces that carry flux.",
+   bad:["Integrate $\\mathbf D$ itself over the volume: $Q_e=\\iiint_V|\\mathbf D|\\,dv$.","Only the face at $x=\\ell$ carries flux out, so $Q_e=D_x(\\ell)\\,\\ell^2$."]},
+ solve(p){const s=p.s,Qa=p.b*s*s*s,Qb=p.d*Math.pow(s,4),out=(p.a+p.b*s)*s*s,inn=p.a*s*s;
+  const st=[["(a) Divergence",`\\nabla\\cdot\\mathbf D=\\frac{\\partial}{\\partial x}(${p.a}+${cf(p.b)}x)=${p.b}`,"Only $D_x$ exists and it depends only on $x$.","Differentiate $D_x$ with respect to $x$."],
+   ["(a) Volume integral",`Q_e=\\int_0^{${s}}\\!\\!\\int_0^{${s}}\\!\\!\\int_0^{${s}}(${p.b})\\,dx\\,dy\\,dz=${p.b}(${s})^3=${f(Qa)}\\ \\text{C}`,"",""],
+   ["(a) Face check",`\\underbrace{(${p.a}+${p.b}\\cdot${s})(${s})^2}_{x=${s}\\ \\text{out}}-\\underbrace{${p.a}(${s})^2}_{x=0\\ \\text{in}}=${f(out)}-${f(inn)}=${f(Qa)}\\ \\text{C}`,"The outward normal at $x=0$ is $-\\hat a_x$. The other four faces have $\\mathbf D$ parallel to them.","Flux out of $x=\\ell$ is $D_x(\\ell)\\,\\ell^2$."],
+   ["(b) Divergence and integral",`\\nabla\\cdot\\mathbf D=${f(2*p.d)}y,\\qquad Q_e=\\ell^2\\int_0^{${s}}${f(2*p.d)}y\\,dy=${f(p.d)}(${s})^4=${f(Qb)}\\ \\text{C}`,"Check: $D_y(\\ell)\\ell^2-D_y(0)\\ell^2$ gives the same.","$\\int_0^\\ell 2dy\\,dy=d\\ell^2$, times the face area $\\ell^2$."]];
+  return{steps:st,stages:[
+   {q:"Why must the surface be <b>closed</b>?",opts:["Gauss counts every flux line leaving, so every face of the cube is included","Because $\\mathbf D$ is uniform, any face will do","Stokes' theorem needs a closed contour"],a:0,s:2,why:"The porcupine in the bag: count only through the top and you miss the ones lying upside down."},
+   {k:"flux out x=ℓ",q:"(a) Flux leaving through the face at $x=\\ell$?",u:"\\text{C}",v:out,s:2},
+   {k:"Q (a)",q:"(a) Total enclosed charge?",u:"\\text{C}",v:Qa,s:1},
+   {k:"Q (b)",q:"(b) Total enclosed charge?",u:"\\text{C}",v:Qb,s:3}]};}});
+
+/* ---- 1.6 E bending into a dielectric ---- */
+L.push({id:"1.6",like:5,min:8,why:"Tangential $E$ and normal $D$ in one picture, plus one $\\tan^{-1}$. Exactly the 'orientation to the boundary' point he hammered in L4.",
+ orig:{er:4,th:30},
+ gen(){return{er:pick([2,2.25,2.56,4,6,9]),th:pick([20,30,40,45,50,60])};},
+ st:p=>`A static electric field $\\mathbf E_0$ is established in free space at ${p.th}° relative to the principal z axis. A semi-infinite dielectric slab of relative permittivity ${p.er} and relative permeability 1 is immersed in it (free space $z<0$, slab $z>0$, normal along z). Determine (a) the total $\\mathbf E_1$ and $\\mathbf D_1$ within the slab, in terms of $E_0$, $\\varepsilon_0$; (b) the angle θ (degrees) of the field in the slab from the z axis.`,
+ first:{ok:"Decompose $\\mathbf E_0$ into $E_{0t}=E_0\\sin\\theta_0$ and $E_{0n}=E_0\\cos\\theta_0$. Tangential E and normal D carry across.",
+   bad:["Make tangential $\\mathbf D$ continuous and normal $\\mathbf E$ continuous.","The field enters undeflected; only its magnitude drops by $\\varepsilon_r$."]},
+ solve(p){const s=Math.sin(p.th*D),c=Math.cos(p.th*D),Ex=s,Ez=c/p.er,th=Math.atan(p.er*Math.tan(p.th*D))/D;
+  const st=[["Components in free space",`E_{0t}=E_0\\sin${p.th}^\\circ=${f(s)}E_0,\\qquad E_{0n}=E_0\\cos${p.th}^\\circ=${f(c)}E_0`,"Normal = z, tangential = x.",""],
+   ["Tangential E continuous",`E_{1x}=E_{0t}=${f(Ex)}E_0`,"No surface current, no jump.","$\\hat n\\times(\\mathbf E_1-\\mathbf E_0)=0$."],
+   ["Normal D continuous",`\\varepsilon_0(${f(c)}E_0)=${p.er}\\varepsilon_0E_{1z}\\ \\Rightarrow\\ E_{1z}=${f(Ez)}E_0`,"No free surface charge.","$D_{1n}=D_{0n}$, then divide by $\\varepsilon_r\\varepsilon_0$."],
+   ["(a) Fields in the slab",`\\mathbf E_1=E_0\\left(${f(Ex)}\\hat a_x+${f(Ez)}\\hat a_z\\right),\\qquad \\mathbf D_1=${p.er}\\varepsilon_0\\mathbf E_1=\\varepsilon_0E_0\\left(${f(p.er*Ex)}\\hat a_x+${f(c)}\\hat a_z\\right)`,"Check: $D_{1z}$ equals the free-space $D_{0z}$.","$\\mathbf D_1=\\varepsilon_r\\varepsilon_0\\mathbf E_1$."],
+   ["(b) Angle",`\\tan\\theta=\\frac{E_{1x}}{E_{1z}}=${p.er}\\tan${p.th}^\\circ=${f(p.er*Math.tan(p.th*D))}\\ \\Rightarrow\\ \\theta=${f(th)}^\\circ`,"Into the higher-ε medium the field leans away from the normal.","$\\frac{\\tan\\theta_2}{\\tan\\theta_1}=\\frac{\\varepsilon_2}{\\varepsilon_1}$."]];
+  return{steps:st,stages:[
+   {q:"Which two components cross the interface unchanged?",opts:["Tangential $\\mathbf E$ and normal $\\mathbf D$","Tangential $\\mathbf D$ and normal $\\mathbf E$","All of $\\mathbf E$"],a:0,s:1,why:"No surface sources: $E_t$ continuous (Faraday loop), $D_n$ continuous (Gauss pillbox)."},
+   {k:"E_1x/E0",q:"(a) $E_{1x}$ in units of $E_0$?",u:"E_0",v:Ex,s:1},
+   {k:"E_1z/E0",q:"(a) $E_{1z}$ in units of $E_0$?",u:"E_0",v:Ez,s:2},
+   {k:"D_1x",q:"(a) $D_{1x}$ in units of $\\varepsilon_0E_0$?",u:"\\varepsilon_0E_0",v:p.er*Ex,s:3},
+   {k:"θ",q:"(b) Angle of the field in the slab from the z axis?",u:"^\\circ",v:th,s:4}]};}});
+
+
+/* ---- 1.4 dielectric interface with surface charge ---- */
+L.push({id:"1.4",like:5,min:10,why:"Constitutive relations inside each medium, boundary conditions across, and a $q_{es}$ sign to get right. His favorite kind of 'know which component' problem.",
+ orig:{er:2.56,q:0.2,Dx:6,Dz:3},
+ gen(){return{er:pick([2.25,2.56,4,5,9]),q:pick([0.1,0.2,0.4,0.5,1]),Dx:pick([2,4,5,6,8]),Dz:pick([2,3,4,5])};},
+ st:p=>`An infinite planar interface has air (medium #1, $z<0$) and a lossless dielectric (medium #2, $z>0$, dielectric constant ${p.er}). An electric surface charge density $q_{es}=${p.q}$ C/m² exists along the interface. The static electric flux density inside the dielectric is $\\mathbf D_2=${p.Dx}\\hat a_x+${p.Dz}\\hat a_z$ C/m². Determine: (a) $\\mathbf E$ inside the dielectric, (b) the polarization vector inside it, (c) $\\mathbf D$ in the air, (d) $\\mathbf E$ in the air, (e) the polarization in the air. Leave answers in terms of $\\varepsilon_0$.`,
+ first:{ok:"Split $\\mathbf D_2$ into normal ($z$) and tangential ($x$) parts. Get $\\mathbf E_2=\\mathbf D_2/\\varepsilon_2$ first, then cross with $E_t$ continuous and $D_n$ jumping by $q_{es}$.",
+   bad:["Make all of $\\mathbf D$ continuous, then subtract $q_{es}$ from both components.","Treat $\\hat a_x$ as the normal, since it is the larger component."]},
+ solve(p){const e=p.er,E2x=p.Dx/e,E2z=p.Dz/e,P2x=p.Dx*(1-1/e),P2z=p.Dz*(1-1/e),D1x=E2x,D1z=p.Dz-p.q;
+  const st=[["Split the given field",`D_{2n}=D_{2z}=${p.Dz},\\qquad D_{2t}=D_{2x}=${p.Dx}\\ \\ \\text{C/m}^2`,"$\\hat n=\\hat a_z$ points from air into the dielectric.",""],
+   ["(a) E in the dielectric",`\\mathbf E_2=\\frac{\\mathbf D_2}{${e}\\varepsilon_0}=\\frac{1}{\\varepsilon_0}\\left(${f(E2x)}\\hat a_x+${f(E2z)}\\hat a_z\\right)\\ \\text{V/m}`,"","Divide each component by $\\varepsilon_r$."],
+   ["(b) Polarization",`\\mathbf P_2=\\mathbf D_2-\\varepsilon_0\\mathbf E_2=\\mathbf D_2\\left(1-\\tfrac{1}{${e}}\\right)=${f(P2x)}\\hat a_x+${f(P2z)}\\hat a_z\\ \\text{C/m}^2`,`Same as $\\varepsilon_0\\chi_e\\mathbf E_2$ with $\\chi_e=${f(e-1)}$.`,"$\\mathbf P=\\mathbf D-\\varepsilon_0\\mathbf E$."],
+   ["(c) Tangential: E continuous",`E_{1x}=E_{2x}\\ \\Rightarrow\\ D_{1x}=\\varepsilon_0E_{2x}=${f(D1x)}\\ \\text{C/m}^2`,"Tangential D is <b>not</b> continuous.","$D_{1x}=\\varepsilon_0E_{1x}$ with $E_{1x}=E_{2x}$."],
+   ["(c) Normal: D jumps by q_es",`\\hat n\\cdot(\\mathbf D_2-\\mathbf D_1)=q_{es}\\ \\Rightarrow\\ ${p.Dz}-D_{1z}=${p.q}\\ \\Rightarrow\\ D_{1z}=${f(D1z)}\\ \\text{C/m}^2`,"$\\hat n$ points from 1 into 2.","$D_{2n}-D_{1n}=q_{es}$."],
+   ["(d), (e) Air",`\\mathbf E_1=\\frac{1}{\\varepsilon_0}\\left(${f(D1x)}\\hat a_x+${f(D1z)}\\hat a_z\\right)\\ \\text{V/m},\\qquad \\mathbf P_1=0`,"Free space has nothing to polarize.",""]];
+  return{steps:st,stages:[
+   {q:"With $\\hat n=\\hat a_z$ (air → dielectric), the normal condition reads:",opts:[`$D_{1z}=D_{2z}-q_{es}$`,`$D_{1z}=D_{2z}+q_{es}$`,`$D_{1z}=D_{2z}$`],a:0,s:4,why:"$\\hat n\\cdot(\\mathbf D_2-\\mathbf D_1)=q_{es}$, with $\\hat n$ pointing from medium 1 into medium 2."},
+   {k:"ε0 E_2x",q:"(a) $\\varepsilon_0E_{2x}$?",u:"\\text{C/m}^2",v:E2x,s:1},
+   {k:"P_2x",q:"(b) $P_{2x}$?",u:"\\text{C/m}^2",v:P2x,s:2},
+   {k:"D_1x",q:"(c) $D_{1x}$ in the air?",u:"\\text{C/m}^2",v:D1x,s:3},
+   {k:"D_1z",q:"(c) $D_{1z}$ in the air?",u:"\\text{C/m}^2",v:D1z,s:4}]};}});
+
+/* ---- 1.1 continuity ---- */
+L.push({id:"1.1",like:4,min:5,why:"A five-line derivation from Ampère + Gauss. He put it up in L5 and said it was on his own quiz. A one-problem quiz candidate.",
+ orig:{k:3,m:2,x0:1},
+ gen(){return{k:pick([1,2,3,4,5]),m:pick([1,2,4,-2,6]),x0:pick([0.5,1,1.5,2])};},
+ st:p=>`Derive the differential form of the continuity equation, as given by (1-6), from Maxwell's equations (1-1) through (1-4). <i>(MAXWELL adds: if $\\mathbf J_{ic}=\\hat a_x${p.k}x^2+\\hat a_y(${p.m})y$ A/m², find $\\frac{\\partial q_{ev}}{\\partial t}$ at $x=${p.x0}$ m.)</i>`,
+ first:{ok:"Take the divergence of Ampère's law (1-2).",bad:["Take the divergence of Faraday's law (1-1).","Start from Gauss's law (1-3) and take its time derivative, with no other law."]},
+ solve(p){const div=2*p.k*p.x0+p.m,dq=-div;
+  const st=[["Pick the right law",`\\nabla\\times\\mathbf H=\\mathbf J_{ic}+\\frac{\\partial\\mathbf D}{\\partial t}\\quad(1\\text{-}2)`,"Only Ampère and Gauss for D contain $\\mathbf J$ and $q_{ev}$.",""],
+   ["Divergence of both sides",`\\nabla\\cdot(\\nabla\\times\\mathbf H)=\\nabla\\cdot\\mathbf J_{ic}+\\nabla\\cdot\\frac{\\partial\\mathbf D}{\\partial t}`,"",""],
+   ["div curl ≡ 0, swap ∇· and ∂/∂t",`0=\\nabla\\cdot\\mathbf J_{ic}+\\frac{\\partial}{\\partial t}(\\nabla\\cdot\\mathbf D)`,"Things that spin don't diverge. Both operators are linear, so their order doesn't matter.",""],
+   ["Gauss (1-3) → result",`\\nabla\\cdot\\mathbf D=q_{ev}\\ \\Rightarrow\\ \\nabla\\cdot\\mathbf J_{ic}=-\\frac{\\partial q_{ev}}{\\partial t}\\quad(1\\text{-}6)`,"Not an independent law: Ampère + Gauss.",""],
+   ["Numbers",`\\nabla\\cdot\\mathbf J_{ic}=\\frac{\\partial}{\\partial x}(${p.k}x^2)+\\frac{\\partial}{\\partial y}(${p.m}y)=${f(2*p.k)}x${sg(p.m)}\\Big|_{x=${p.x0}}=${f(div)}\\ \\Rightarrow\\ \\frac{\\partial q_{ev}}{\\partial t}=${f(dq)}\\ \\text{C/(m}^3\\text{s)}`,"Current spreading out means charge draining.","$\\frac{\\partial q_{ev}}{\\partial t}=-\\nabla\\cdot\\mathbf J_{ic}$."]];
+  return{steps:st,stages:[
+   {q:"Why does the left side vanish?",opts:["$\\nabla\\cdot(\\nabla\\times\\mathbf H)\\equiv0$ for any field","$\\mathbf H$ is zero where there is charge","$\\nabla\\times\\mathbf H=0$ in statics"],a:0,s:2,why:"The curl is orthogonal to its operand, like $\\mathbf A\\cdot(\\mathbf A\\times\\mathbf B)=0$."},
+   {q:"Which law do you substitute for $\\nabla\\cdot\\mathbf D$?",opts:["Gauss: $\\nabla\\cdot\\mathbf D=q_{ev}$","Faraday: $\\nabla\\times\\mathbf E=-\\partial\\mathbf B/\\partial t$","Magnetic Gauss: $\\nabla\\cdot\\mathbf B=0$"],a:0,s:3,why:"The source law is Ampère; Gauss is only substituted."},
+   {q:"Final form:",opts:["$\\nabla\\cdot\\mathbf J_{ic}=-\\frac{\\partial q_{ev}}{\\partial t}$","$\\nabla\\cdot\\mathbf J_{ic}=+\\frac{\\partial q_{ev}}{\\partial t}$","$\\nabla\\times\\mathbf J_{ic}=-\\frac{\\partial q_{ev}}{\\partial t}$"],a:0,s:3,why:"Current out of a point drains the charge there: the minus sign."},
+   {k:"∂q/∂t",q:`$\\frac{\\partial q_{ev}}{\\partial t}$ at $x=${p.x0}$ m?`,u:"\\text{C/(m}^3\\text{s)}",v:dq,s:4}]};}});
+
+/* ---- 1.7 H bending into a magnetic slab ---- */
+L.push({id:"1.7",like:4,min:7,why:"The exact dual of 1.6, with a distractor $\\varepsilon_r$. Short, but if he picks one of the pair it's more likely 1.6.",
+ orig:{mr:4,er:9,th:30},
+ gen(){return{mr:pick([2,3,4,5,10]),er:pick([2.25,4,9,16]),th:pick([20,30,40,45,50,60])};},
+ st:p=>`A static magnetic field $\\mathbf H_0$ is established in free space at ${p.th}° relative to the principal z axis. A semi-infinite magnetic slab of relative permeability ${p.mr} and relative permittivity ${p.er} is immersed in it (free space $z<0$, slab $z>0$). Determine (a) the total $\\mathbf H_1$ and $\\mathbf B_1$ within the slab, in terms of $H_0$, $\\mu_0$; (b) the angle θ (degrees) from the z axis.`,
+ first:{ok:"Same decomposition as 1.6 with H and B: tangential H continuous, normal B continuous.",bad:["Tangential B continuous and normal H continuous.","Use $\\varepsilon_r$ and $\\mu_r$ together: $\\tan\\theta_1=\\sqrt{\\mu_r\\varepsilon_r}\\tan\\theta_0$."]},
+ solve(p){const s=Math.sin(p.th*D),c=Math.cos(p.th*D),Hz=c/p.mr,th=Math.atan(p.mr*Math.tan(p.th*D))/D;
+  const st=[["Tangential H continuous",`H_{1x}=H_0\\sin${p.th}^\\circ=${f(s)}H_0`,"$\\mathbf J_s=0$.",""],
+   ["Normal B continuous",`\\mu_0H_0\\cos${p.th}^\\circ=${p.mr}\\mu_0H_{1z}\\ \\Rightarrow\\ H_{1z}=${f(Hz)}H_0`,"No magnetic charge.","$B_{1n}=B_{0n}$."],
+   ["(a) Fields",`\\mathbf H_1=H_0\\left(${f(s)}\\hat a_x+${f(Hz)}\\hat a_z\\right),\\qquad \\mathbf B_1=\\mu_0H_0\\left(${f(p.mr*s)}\\hat a_x+${f(c)}\\hat a_z\\right)`,"","$\\mathbf B_1=\\mu_r\\mu_0\\mathbf H_1$."],
+   ["(b) Angle",`\\tan\\theta=${p.mr}\\tan${p.th}^\\circ\\ \\Rightarrow\\ \\theta=${f(th)}^\\circ`,"$\\tan\\theta_2/\\tan\\theta_1=\\mu_2/\\mu_1$.",""]];
+  return{steps:st,stages:[
+   {q:`Does $\\varepsilon_r=${p.er}$ enter?`,opts:["No. In statics H and B only care about μ","Yes, through $\\sqrt{\\mu_r\\varepsilon_r}$","Yes, it scales $B_n$"],a:0,s:1,why:"Static E and H decouple. ε is a distractor."},
+   {k:"H_1z/H0",q:"(a) $H_{1z}$ in units of $H_0$?",u:"H_0",v:Hz,s:1},
+   {k:"B_1x",q:"(a) $B_{1x}$ in units of $\\mu_0H_0$?",u:"\\mu_0H_0",v:p.mr*s,s:2},
+   {k:"θ",q:"(b) Angle in the slab from the z axis?",u:"^\\circ",v:th,s:3}]};}});
+
+/* ---- 1.5 magnetic interface ---- */
+L.push({id:"1.5",like:4,min:9,why:"The magnetic twin of 1.4: $H_t$ and $B_n$ continuous, then $\\mathbf M=\\mathbf B/\\mu_0-\\mathbf H$. Five parts, but each is one line.",
+ orig:{mr:4,er:2.56,Hx:3,Hz:9},
+ gen(){return{mr:pick([2,3,4,5,8]),er:pick([2.56,4,9]),Hx:pick([1,2,3,4,6]),Hz:pick([2,4,6,8,9,10])};},
+ st:p=>`An infinite planar interface has air (medium #1, $z<0$) and a lossless magnetic material (medium #2, $z>0$, relative permeability ${p.mr}, relative permittivity ${p.er}). The static magnetic field intensity in the air is $\\mathbf H_1=${p.Hx}\\hat a_x+${p.Hz}\\hat a_z$ A/m. Determine: (a) $\\mathbf B$ in the air, (b) the magnetic polarization in the air, (c) $\\mathbf H$ in the magnetic material, (d) $\\mathbf B$ in the magnetic material, (e) the magnetic polarization in the material. Leave answers in terms of $\\mu_0$.`,
+ first:{ok:"$\\mathbf B_1=\\mu_0\\mathbf H_1$, then cross the interface with $H_t$ continuous and $B_n$ continuous.",bad:["Make $H_n$ continuous and $B_t$ continuous.","Scale the whole $\\mathbf H_1$ by $1/\\mu_r$ to get $\\mathbf H_2$."]},
+ solve(p){const m=p.mr,H2z=p.Hz/m,B2x=m*p.Hx,M2x=(m-1)*p.Hx,M2z=(m-1)*H2z;
+  const st=[["(a), (b) Air",`\\mathbf B_1=\\mu_0\\left(${p.Hx}\\hat a_x+${p.Hz}\\hat a_z\\right),\\qquad \\mathbf M_1=\\frac{\\mathbf B_1}{\\mu_0}-\\mathbf H_1=0`,"$\\mathbf B=\\mu_0(\\mathbf H+\\mathbf M)$.",""],
+   ["(c) Tangential H",`H_{2x}=H_{1x}=${p.Hx}\\ \\text{A/m}`,"$\\hat n\\times(\\mathbf H_2-\\mathbf H_1)=\\mathbf J_s=0$.",""],
+   ["(c) Normal B",`${m}\\mu_0H_{2z}=\\mu_0(${p.Hz})\\ \\Rightarrow\\ H_{2z}=${f(H2z)}\\ \\text{A/m}`,"$B_{2n}=B_{1n}$.","$\\mu_rH_{2z}=H_{1z}$."],
+   ["(d) B in the material",`\\mathbf B_2=${m}\\mu_0\\mathbf H_2=\\mu_0\\left(${f(B2x)}\\hat a_x+${p.Hz}\\hat a_z\\right)`,"Check: $B_{2z}=B_{1z}$.","$\\mathbf B_2=\\mu_r\\mu_0\\mathbf H_2$."],
+   ["(e) Magnetization",`\\mathbf M_2=\\frac{\\mathbf B_2}{\\mu_0}-\\mathbf H_2=(\\mu_r-1)\\mathbf H_2=${f(M2x)}\\hat a_x+${f(M2z)}\\hat a_z\\ \\text{A/m}`,`$\\chi_m=${m-1}$. ε never enters.`,"$\\mathbf M=\\chi_m\\mathbf H$."]];
+  return{steps:st,stages:[
+   {q:"Which two components are continuous here?",opts:["Tangential $\\mathbf H$ and normal $\\mathbf B$","Tangential $\\mathbf B$ and normal $\\mathbf H$","Normal $\\mathbf H$ and normal $\\mathbf B$"],a:0,s:1,why:"No surface current, no magnetic charge."},
+   {k:"H_2z",q:"(c) $H_{2z}$?",u:"\\text{A/m}",v:H2z,s:2},
+   {k:"B_2x",q:"(d) $B_{2x}$ in units of $\\mu_0$?",u:"\\mu_0\\ \\text{A/m}",v:B2x,s:3},
+   {k:"M_2x",q:"(e) $M_{2x}$?",u:"\\text{A/m}",v:M2x,s:4},
+   {k:"M_2z",q:"(e) $M_{2z}$?",u:"\\text{A/m}",v:M2z,s:4}]};}});
+
+/* ---- 1.2 integral forms ---- */
+L.push({id:"1.2",like:2,min:12,why:"Six laws to convert. The ideas are quick (Stokes vs divergence) but writing all of Table 1-1 is long for a 10–15 min quiz. Know which theorem goes with which law.",
+ orig:{Q0:50,tau:2,t1:1},
+ gen(){return{Q0:pick([10,20,50,100]),tau:pick([0.5,1,2,5]),t1:pick([0,0.5,1,2])};},
+ st:p=>`Derive the integral forms of Maxwell's equations and the continuity equation, as listed in Table 1-1, from the corresponding ones in differential form. <i>(MAXWELL adds: a fixed closed surface encloses charge $Q_e(t)=${p.Q0}e^{-t/${p.tau}\\,\\text{ms}}\\ \\mu$C. Find the net current leaving the surface at $t=${p.t1}$ ms.)</i>`,
+ first:{ok:"Integrate each curl equation over an open surface and apply Stokes; integrate each divergence equation over a volume and apply the divergence theorem.",
+   bad:["Integrate every equation over a closed surface.","Apply Stokes to the divergence equations and the divergence theorem to the curl equations."]},
+ solve(p){const I=p.Q0/p.tau*Math.exp(-p.t1/p.tau);
+  const st=[["Faraday over an open S, Stokes",`\\oint_C\\mathbf E\\cdot d\\boldsymbol\\ell=-\\iint_S\\mathbf M_i\\cdot d\\mathbf s-\\frac{\\partial}{\\partial t}\\iint_S\\mathbf B\\cdot d\\mathbf s`,"S is fixed in space, so $\\frac{\\partial}{\\partial t}$ comes outside.",""],
+   ["Ampère, same steps",`\\oint_C\\mathbf H\\cdot d\\boldsymbol\\ell=\\iint_S\\mathbf J_i\\cdot d\\mathbf s+\\iint_S\\mathbf J_c\\cdot d\\mathbf s+\\frac{\\partial}{\\partial t}\\iint_S\\mathbf D\\cdot d\\mathbf s`,"",""],
+   ["Gauss over V, divergence theorem",`\\oint\\!\\!\\oint_S\\mathbf D\\cdot d\\mathbf s=Q_e,\\qquad \\oint\\!\\!\\oint_S\\mathbf B\\cdot d\\mathbf s=Q_m\\ (=0)`,"Closed surface: the porcupine in the bag.",""],
+   ["Continuity",`\\oint\\!\\!\\oint_S\\mathbf J_{ic}\\cdot d\\mathbf s=-\\frac{\\partial Q_e}{\\partial t}`,"",""],
+   ["Numbers",`I_{out}=-\\frac{dQ_e}{dt}=\\frac{${p.Q0}\\ \\mu\\text{C}}{${p.tau}\\ \\text{ms}}e^{-${p.t1}/${p.tau}}=${f(I)}\\ \\text{mA}`,"Charge draining out shows up as positive outward current.","μC/ms = mA."]];
+  return{steps:st,stages:[
+   {q:"Faraday and Ampère (curl equations) are integrated over:",opts:["An open surface S bounded by C, then Stokes","A closed surface, then the divergence theorem","A volume V, then Stokes"],a:0,s:0,why:"Stokes pairs a closed line integral with the open surface it bounds."},
+   {q:"The two Gauss laws are integrated over:",opts:["A volume V, then the divergence theorem to its closed surface","An open surface, then Stokes","A contour C"],a:0,s:2,why:"Divergence theorem: volume ↔ the closed surface enclosing it."},
+   {q:"Why can $\\frac{\\partial}{\\partial t}$ move outside the surface integral?",opts:["The surface is fixed in space (not moving)","Fields are time-harmonic","$\\mathbf B$ is uniform over S"],a:0,s:0,why:"For a moving surface you'd pick up motional EMF terms."},
+   {k:"I_out",q:`Net current leaving the surface at $t=${p.t1}$ ms?`,u:"\\text{mA}",v:I,s:4}]};}});
+
+G.hw.ch1=L;
+})(window.MXG);
+
+/* QUIZ ARENA · HW 3 = Balanis Ch. 2 (electrical properties of matter), odd problems 2.1–2.25. Each problem: assigned
+   numbers + remix generator, graded with the real formulas (ε0 = 8.854e-12, e = 1.602e-19). Ordering = estimated quiz
+   likelihood. No 3D scene kind exists for this chapter, so scenes are omitted. */
+(function(G){const U=G.hwU,{pick}=U;
+const EPS=8.854e-12,QE=1.602e-19,PI=Math.PI;
+// TeX number: 4 sig figs, scientific as m\times10^{e} (U.f3's "×10^-11" is not valid TeX)
+const T=(x,n)=>{n=n||4;if(!isFinite(x))return"—";const a=Math.abs(x);if(a!==0&&(a>=1e5||a<1e-2)){let e=Math.floor(Math.log10(a));let m=+(x/Math.pow(10,e)).toPrecision(n);if(Math.abs(m)>=10){m=+(m/10).toPrecision(n);e++;}return `${m}\\times10^{${e}}`;}return(+x.toPrecision(n)).toString();};
+const sig=(x,n)=>+x.toPrecision(n||4);
+const EPST="8.854\\times10^{-12}";
+const L=[];
+
+/* ---- 2.9 V fixed, stacked ---- */
+L.push({id:"2.9",like:5,min:8,why:"Pure boundary condition: normal $D$ continuous, then one voltage sum. The substitute said BCs <i>will</i> be on a quiz. Short and numeric.",
+ orig:{er1:2,er2:6,t1:1,t2:1,V:10,A:1},
+ gen(){const er1=pick([2,3,4,2.56]);let er2=pick([6,9,5,2.25,10]);if(er2===er1)er2=6;return{er1,er2,t1:pick([0.5,1,2]),t2:pick([0.5,1,2]),V:pick([5,10,20,50]),A:pick([1,2,5,10])};},
+ st:p=>`Two dielectric slabs, $\\varepsilon_{r1}=${p.er1}$ (${p.t1} cm thick) and $\\varepsilon_{r2}=${p.er2}$ (${p.t2} cm thick), are stacked between parallel plates of area ${p.A} cm². A ${p.V}-V source is connected and maintained across the plates. Find E and D in each slab, the plate charge, and the capacitance of each slab and the total.`,
+ first:{ok:"Normal D is continuous at the slab interface: $\\varepsilon_{r1}E_1=\\varepsilon_{r2}E_2$. Then $E_1t_1+E_2t_2=V$.",bad:["$E=V/d$ in both slabs, as if the gap were uniform.","Split the voltage equally between the two slabs."]},
+ solve(p){const t1=p.t1/100,t2=p.t2/100,A=p.A*1e-4,E1=p.V/(t1+t2*p.er1/p.er2),E2=p.er1*E1/p.er2,D=p.er1*EPS*E1,Q=D*A,C1=p.er1*EPS*A/t1,C2=p.er2*EPS*A/t2,CT=C1*C2/(C1+C2);
+  const st=[["Interface condition",`D_{1n}=D_{2n}:\\ ${p.er1}\\varepsilon_0E_1=${p.er2}\\varepsilon_0E_2\\ \\Rightarrow\\ E_2=${T(p.er1/p.er2)}E_1`,"No free charge on the interface, and E is normal to it.","Normal $D$ is continuous across a charge-free interface."],
+   ["Voltage sum",`${p.V}=E_1(${t1})+E_2(${t2})\\ \\Rightarrow\\ E_1=\\boxed{${T(E1)}\\ \\text{V/m}},\\quad E_2=\\boxed{${T(E2)}\\ \\text{V/m}}`,"The low-$\\varepsilon$ slab takes the bigger field.","Substitute $E_2$ in terms of $E_1$ into $E_1t_1+E_2t_2=V$."],
+   ["D",`D=${p.er1}\\varepsilon_0E_1=${T(D)}\\ \\text{C/m}^2`,"Same in both slabs. Equals the plate surface charge density.",""],
+   ["Charge",`Q=DA=(${T(D)})(${T(A)})=${T(Q*1e12)}\\ \\text{pC}`,"","$Q=DA$, with $A$ in m²."],
+   ["Capacitances",`C_1=\\frac{${p.er1}\\varepsilon_0A}{t_1}=${T(C1*1e12)}\\ \\text{pF},\\quad C_2=${T(C2*1e12)}\\ \\text{pF},\\quad C_T=\\frac{C_1C_2}{C_1+C_2}=\\boxed{${T(CT*1e12)}\\ \\text{pF}}`,`Check: $Q/V=${T(Q/p.V*1e12)}$ pF.`,"Stacked layers are in series."]];
+  return{steps:st,stages:[
+   {q:"Which condition ties the two slabs together?",opts:["Normal $D$ continuous: $\\varepsilon_{r1}E_1=\\varepsilon_{r2}E_2$","Tangential $E$ continuous: $E_1=E_2$","Each slab gets half the voltage"],a:0,s:0,why:"E is normal to the interface, and there's no free charge on it, so $D_n$ matches."},
+   {k:"E_1",q:`$E$ in slab 1 ($\\varepsilon_r=${p.er1}$)?`,u:"\\text{V/m}",v:E1,s:1},
+   {k:"E_2",q:`$E$ in slab 2 ($\\varepsilon_r=${p.er2}$)?`,u:"\\text{V/m}",v:E2,s:1},
+   {k:"Q",q:"Charge on the plates?",u:"\\text{pC}",v:Q*1e12,s:3},
+   {k:"C_T",q:"Total capacitance?",u:"\\text{pF}",v:CT*1e12,s:4}]};}});
+
+/* ---- 2.1 uniform P ---- */
+L.push({id:"2.1",like:5,min:6,why:"Two rules ($q_{vp}=-\\nabla\\cdot\\mathbf P$, $q_{sp}=\\mathbf P\\cdot\\hat n$) and one ratio for $\\varepsilon_r$. The lecture used these exact numbers. Fits a quiz easily.",
+ orig:{ax:"y",P:2.762e-11,E:2},
+ gen(){const er=pick([2.56,2.25,4,5,9,3.2]),E=pick([0.5,1,2,5,10]);return{ax:pick(["x","y","z"]),P:sig(EPS*(er-1)*E),E};},
+ st:p=>`The polarization inside a rectangular dielectric slab, whose faces are perpendicular to the coordinate axes, is uniform: $\\mathbf P=\\hat a_${p.ax}${T(p.P)}$ C/m² when the field inside is $\\mathbf E=\\hat a_${p.ax}${p.E}$ V/m. Find (a) the volume and surface polarization (bound) charge densities, (b) the net bound charge, (c) the electric susceptibility and dielectric constant.`,
+ first:{ok:"Uniform $\\mathbf P$ means $q_{vp}=-\\nabla\\cdot\\mathbf P=0$ immediately. Then $q_{sp}=\\mathbf P\\cdot\\hat n$, face by face, with the outward normal.",bad:["$q_{sp}=|\\mathbf P|$ on all six faces of the slab.","$\\chi_e=P/E$, then find the charges from $\\varepsilon_r$."]},
+ solve(p){const a=p.ax,chi=p.P/(EPS*p.E),er=1+chi;
+  const st=[["Volume bound charge",`q_{vp}=-\\nabla\\cdot\\mathbf P=-\\frac{\\partial P_${a}}{\\partial ${a}}=0`,"A constant has no divergence.","Uniform means constant."],
+   [`Surface bound charge on the $\\pm ${a}$ faces`,`q_{sp}=\\mathbf P\\cdot\\hat n=\\pm${T(p.P)}\\ \\text{C/m}^2\\quad(\\hat n=\\pm\\hat a_${a})`,"Outward normal: + on the face the dipoles point toward.","$q_{sp}=\\mathbf P\\cdot\\hat n$ with the outward normal."],
+   ["Other four faces",`\\hat a_${a}\\cdot\\hat n=0\\ \\Rightarrow\\ q_{sp}=0`,"$\\mathbf P$ is tangent to them.",""],
+   ["Net bound charge","Q_p=(+q_{sp})A-(q_{sp})A+0=0","Polarization only moves charge. It never creates it.",""],
+   ["Susceptibility (2-10a)",`\\chi_e=\\frac{P}{\\varepsilon_0E}=\\frac{${T(p.P)}}{(${EPST})(${p.E})}=\\boxed{${T(chi)}}`,"$\\chi_e$ is dimensionless, so $\\varepsilon_0$ must be there.","$\\mathbf P=\\varepsilon_0\\chi_e\\mathbf E$."],
+   ["Dielectric constant (2-12)",`\\varepsilon_r=1+\\chi_e=\\boxed{${T(er)}}`,"",""]];
+  return{steps:st,stages:[
+   {q:"(a) Volume bound charge density $q_{vp}$?",opts:["$0$: uniform $\\mathbf P$ has no divergence","$-P$ divided by the slab thickness","$|\\mathbf P|$ spread through the volume"],a:0,s:0,why:"$q_{vp}=-\\nabla\\cdot\\mathbf P$, and a constant vector has zero divergence."},
+   {q:"Which faces carry surface bound charge?",opts:[`Only the two $\\pm ${a}$ faces, where $\\mathbf P\\parallel\\hat n$`,"All six faces","The four faces parallel to $\\mathbf P$"],a:0,s:2,why:"$\\mathbf P\\cdot\\hat n=0$ wherever $\\mathbf P$ is tangent to the face."},
+   {k:"q_sp",q:`Surface bound charge density on the $+${a}$ face?`,u:"\\text{C/m}^2",v:p.P,s:1},
+   {k:"χ_e",q:"(c) Electric susceptibility?",u:"",v:chi,s:4},
+   {k:"ε_r",q:"(c) Dielectric constant?",u:"",v:er,s:5}]};}});
+
+/* ---- 2.15 V fixed, parallel sets ---- */
+L.push({id:"2.15",like:4,min:6,why:"The easiest capacitor case: source held, so $E=V/d$ and everything scales with $\\varepsilon_r$. A quick quiz, or the warm-up part of one.",
+ orig:{A:0.02,d:4,V:100,er:2.56},
+ gen(){return{A:pick([0.01,0.02,0.05]),d:pick([1,2,4,5]),V:pick([50,100,200]),er:pick([2.56,2.25,4,5])};},
+ st:p=>`Two sets of parallel plates, each of area $${T(p.A)}$ m² and separation ${p.d} cm, are connected in parallel to a ${p.V}-V source. One set has free space between its plates; the other is filled with a dielectric of $\\varepsilon_r=${p.er}$. Find E, D, the charge, capacitance and stored energy of each, and the totals.`,
+ first:{ok:"Source maintained, same $V$ and $d$: $E=V/d$ in both sets. Then $D=\\varepsilon E$, $Q=DA$, $C=\\varepsilon A/d$.",bad:["$E$ in the filled set is $V/(d\\varepsilon_r)$, smaller by $\\varepsilon_r$.","The sets are in series, so they share the same charge."]},
+ solve(p){const d=p.d/100,E=p.V/d,D0=EPS*E,Dp=p.er*D0,Q0=D0*p.A,Qp=Dp*p.A,C0=EPS*p.A/d,Cp=p.er*C0,CT=C0+Cp,W0=0.5*C0*p.V*p.V,Wp=0.5*Cp*p.V*p.V,WT=W0+Wp;
+  const st=[["E",`E=\\frac{${p.V}}{${d}}=${T(E)}\\ \\text{V/m (both)}`,"Fixed $V$ and $d$ fix $E$.","$E=V/d$."],
+   ["D",`D_0=\\varepsilon_0(${T(E)})=${T(D0)},\\qquad D_p=${p.er}D_0=${T(Dp)}\\ \\text{C/m}^2`,"",""],
+   ["Charge",`Q_0=D_0A=${T(Q0*1e9)}\\ \\text{nC},\\qquad Q_p=${T(Qp*1e9)}\\ \\text{nC}`,"The dielectric raises D and Q, not E.","$Q=DA$."],
+   ["Capacitance",`C_0=\\frac{\\varepsilon_0A}{d}=${T(C0*1e12)}\\ \\text{pF},\\quad C_p=${T(Cp*1e12)}\\ \\text{pF},\\quad C_T=\\boxed{${T(CT*1e12)}\\ \\text{pF}}`,"Parallel: capacitances add.","$C_T=C_0+C_p$."],
+   ["Energy",`W_0=\\tfrac12C_0V^2=${T(W0*1e9)}\\ \\text{nJ},\\quad W_p=${T(Wp*1e9)}\\ \\text{nJ},\\quad W_T=\\boxed{${T(WT*1e9)}\\ \\text{nJ}}`,"","$W=\\tfrac12CV^2$."]];
+  return{steps:st,stages:[
+   {q:"How do the fields in the two sets compare?",opts:["Same $E$, larger $D$ in the filled set","Same $D$, smaller $E$ in the filled set","Same $E$ and same $D$"],a:0,s:0,why:"Both sets see the same $V$ across the same $d$. The dielectric shows up in $D=\\varepsilon E$."},
+   {k:"E",q:"$E$ between the plates?",u:"\\text{V/m}",v:E,s:0},
+   {k:"Q_p",q:"Charge on the filled set?",u:"\\text{nC}",v:Qp*1e9,s:2},
+   {k:"C_T",q:"Total capacitance?",u:"\\text{pF}",v:CT*1e12,s:3},
+   {k:"W_T",q:"Total stored energy?",u:"\\text{nJ}",v:WT*1e9,s:4}]};}});
+
+/* ---- 2.11 Q fixed, isolated ---- */
+L.push({id:"2.11",like:4,min:7,why:"One decision (charge is frozen on each capacitor separately), then $E=D/\\varepsilon$ twice. It tests the fixed-$Q$ idea directly.",
+ orig:{A:1,d:1,V0:10,er1:2,er2:6},
+ gen(){const er1=pick([2,2.56,3,4]);let er2=pick([6,9,5,10]);return{A:pick([1,2,5,10]),d:pick([0.5,1,2]),V0:pick([10,20,50,100]),er1,er2};},
+ st:p=>`Two separate parallel-plate capacitors, each with plate area ${p.A} cm² and separation ${p.d} cm, are charged in free space to ${p.V0} V and the supply is removed. The capacitors are not connected to each other. Slabs with $\\varepsilon_r=${p.er1}$ and $\\varepsilon_r=${p.er2}$, each filling its capacitor's gap, are then inserted. Find the charge, D, E, voltage and capacitance of each.`,
+ first:{ok:`Charge is conserved separately on each capacitor: freeze $D=\\varepsilon_0V_0/d$ in both, then $E=D/\\varepsilon$.`,bad:["Treat them as parallel: one common voltage and shared charge.","Keep $V=V_0$ and find the new charge from $C$."]},
+ solve(p){const d=p.d/100,A=p.A*1e-4,E0=p.V0/d,D=EPS*E0,Q=D*A,E1=D/(p.er1*EPS),E2=D/(p.er2*EPS),V1=E1*d,V2=E2*d,C1=p.er1*EPS*A/d,C2=p.er2*EPS*A/d;
+  const st=[["Before",`E_0=\\frac{${p.V0}}{${d}}=${T(E0)}\\ \\text{V/m},\\quad D=\\varepsilon_0E_0=${T(D)}\\ \\text{C/m}^2,\\quad Q=DA=${T(Q*1e12)}\\ \\text{pC}`,"Same in both capacitors, and it stays that way.","Battery gone, no wire between them: each $Q$ is frozen."],
+   ["E after",`E_1=\\frac{D}{${p.er1}\\varepsilon_0}=${T(E1)}\\ \\text{V/m},\\qquad E_2=\\frac{D}{${p.er2}\\varepsilon_0}=${T(E2)}\\ \\text{V/m}`,"","$E=D/(\\varepsilon_r\\varepsilon_0)$ with the frozen $D$."],
+   ["Voltages",`V_1=E_1d=\\boxed{${T(V1)}\\ \\text{V}},\\qquad V_2=\\boxed{${T(V2)}\\ \\text{V}}`,"Different voltages are fine because the capacitors are isolated.","$V=Ed$."],
+   ["Capacitances",`C_1=\\frac{${p.er1}\\varepsilon_0A}{d}=${T(C1*1e12)}\\ \\text{pF},\\qquad C_2=${T(C2*1e12)}\\ \\text{pF}`,"C is geometry and material only.",""]];
+  return{steps:st,stages:[
+   {q:"After the slabs go in, what stays fixed?",opts:["Each capacitor's own charge (so its $D$)","The voltage on each, $V_0$","The total charge, shared at a common voltage"],a:0,s:0,why:"No source and no wire between them, so charge can't go anywhere."},
+   {k:"Q",q:"Charge on each capacitor?",u:"\\text{pC}",v:Q*1e12,s:0},
+   {k:"E_1",q:`$E$ in the $\\varepsilon_r=${p.er1}$ capacitor?`,u:"\\text{V/m}",v:E1,s:1},
+   {k:"V_1",q:`Voltage on the $\\varepsilon_r=${p.er1}$ capacitor?`,u:"\\text{V}",v:V1,s:2},
+   {k:"V_2",q:`Voltage on the $\\varepsilon_r=${p.er2}$ capacitor?`,u:"\\text{V}",v:V2,s:2}]};}});
+
+/* ---- 2.19 uniform M ---- */
+L.push({id:"2.19",like:4,min:7,why:"The magnetic twin of 2.1: $\\nabla\\times\\mathbf M$ and $\\mathbf M\\times\\hat n$. The trap (which faces) is exactly the kind of thing he checks.",
+ orig:{M:1.245e6,H:5e3},
+ gen(){const mur=pick([250,100,500,1000,50,2000]),H=pick([100,500,1e3,2e3,5e3]);return{M:sig((mur-1)*H),H};},
+ st:p=>`A rectangular ferrimagnetic slab, with faces perpendicular to the coordinate axes, is uniformly magnetized: $\\mathbf M=\\hat a_z${T(p.M)}$ A/m when $\\mathbf H=\\hat a_z${T(p.H)}$ A/m inside. Find (a) the volume and surface magnetization current densities, (b) the net magnetization current, (c) the magnetic susceptibility and relative permeability.`,
+ first:{ok:"Uniform $\\mathbf M$ gives $\\mathbf J_{mv}=\\nabla\\times\\mathbf M=0$. Then $\\mathbf J_{ms}=\\mathbf M\\times\\hat n$, face by face.",bad:["Put $\\mathbf J_{ms}=\\mathbf M$ on the $\\pm z$ faces, where $\\mathbf M$ points.","Use $\\mathbf J_{ms}=\\hat n\\times\\mathbf M$ on every face."]},
+ solve(p){const chi=p.M/p.H,mur=1+chi;
+  const st=[["Volume current","\\mathbf J_{mv}=\\nabla\\times\\mathbf M=0","Constant vector.",""],
+   ["$\\pm z$ faces","\\hat a_z\\times(\\pm\\hat a_z)=0\\ \\Rightarrow\\ \\mathbf J_{ms}=0","$\\mathbf M$ is normal there.",""],
+   ["$\\pm x$ faces",`\\mathbf J_{ms}=\\mathbf M\\times(\\pm\\hat a_x)=\\pm\\hat a_y${T(p.M)}\\ \\text{A/m}`,"$\\hat a_z\\times\\hat a_x=\\hat a_y$.","$\\mathbf J_{ms}=\\mathbf M\\times\\hat n$, outward normal."],
+   ["$\\pm y$ faces",`\\mathbf J_{ms}=\\mathbf M\\times(\\pm\\hat a_y)=\\mp\\hat a_x${T(p.M)}\\ \\text{A/m}`,"Together: counterclockwise seen from $+z$, like a solenoid winding.",""],
+   ["Net current","I_{net}=0","A closed loop: every bit going one way comes back the other.",""],
+   ["Susceptibility and permeability",`\\chi_m=\\frac MH=\\frac{${T(p.M)}}{${T(p.H)}}=${T(chi)},\\qquad \\mu_r=1+\\chi_m=\\boxed{${T(mur)}}`,"","$\\mathbf M=\\chi_m\\mathbf H$, $\\mu_r=1+\\chi_m$."]];
+  return{steps:st,stages:[
+   {q:"Which faces carry surface magnetization current?",opts:["The four side faces ($\\pm x$, $\\pm y$), where $\\mathbf M$ is tangent","The $\\pm z$ faces, where $\\mathbf M$ is normal","All six faces"],a:0,s:1,why:"$\\mathbf M\\times\\hat n=0$ when $\\mathbf M\\parallel\\hat n$. Current lives where $\\mathbf M$ is tangent, the opposite of bound charge."},
+   {k:"|J_ms|",q:"Magnitude of $\\mathbf J_{ms}$ on a side face?",u:"\\text{A/m}",v:p.M,s:2},
+   {q:"Direction of $\\mathbf J_{ms}$ on the $+x$ face?",opts:["$+\\hat a_y$","$-\\hat a_y$","$+\\hat a_z$"],a:0,s:2,why:"$\\hat a_z\\times\\hat a_x=+\\hat a_y$."},
+   {k:"χ_m",q:"(c) Magnetic susceptibility?",u:"",v:chi,s:5},
+   {k:"μ_r",q:"(c) Relative permeability?",u:"",v:mur,s:5}]};}});
+
+/* ---- 2.25 mobility chain ---- */
+const METALS=[{n:"Aluminum",s:3.96e7,m:0.0022},{n:"Copper",s:5.8e7,m:0.0032},{n:"Silver",s:6.17e7,m:0.0056}];
+L.push({id:"2.25",like:4,min:7,why:"A five-link chain of one-line formulas ($\\sigma=-\\mu_eq_{ve}$ to $N_e$). Pure plug-and-chug with sign traps, ideal for 10 minutes.",
+ orig:{n:"Aluminum",s:3.96e7,m:0.0022,E:2,A:10},
+ gen(){const X=pick(METALS);return{n:X.n,s:X.s,m:X.m,E:pick([0.5,1,2,5]),A:pick([1,4,10,25])};},
+ st:p=>`${p.n} has conductivity $\\sigma=${T(p.s)}$ S/m and electron mobility $\\mu_e=${p.m}$ m²/(V·s). A field $\\mathbf E=\\hat a_x${p.E}$ V/m is applied to a ${p.n.toLowerCase()} bar of cross section ${p.A} cm². Find (a) the electron charge density $q_{ve}$, (b) the electron drift velocity, (c) the current density, (d) the current, (e) the number of free electrons per m³.`,
+ first:{ok:"Chain in order: $\\sigma=-\\mu_eq_{ve}$ (2-66c), then $\\mathbf v_e=-\\mu_e\\mathbf E$, $\\mathbf J=q_{ve}\\mathbf v_e$, $I=JA$, $N_e=|q_{ve}|/e$.",bad:["$q_{ve}=\\sigma\\mu_e$, then $\\mathbf v_e=+\\mu_e\\mathbf E$.","Start from $N_e$ using copper's density and atomic weight."]},
+ solve(p){const q=-p.s/p.m,v=-p.m*p.E,J=q*v,A=p.A*1e-4,I=J*A,N=Math.abs(q)/QE;
+  const st=[["Charge density (2-66c)",`q_{ve}=-\\frac{\\sigma}{\\mu_e}=-\\frac{${T(p.s)}}{${p.m}}=\\boxed{${T(q)}\\ \\text{C/m}^3}`,"Electrons: the charge density is negative.","$\\sigma=-\\mu_eq_{ve}$."],
+   ["Drift velocity",`\\mathbf v_e=-\\mu_e\\mathbf E=-\\hat a_x(${p.m})(${p.E})=\\hat a_x(${T(v)})\\ \\text{m/s}`,"Against $\\mathbf E$, because electrons are negative. Millimeters per second.","$\\mathbf v_e=-\\mu_e\\mathbf E$."],
+   ["Current density",`\\mathbf J=q_{ve}\\mathbf v_e=(${T(q)})(${T(v)})\\hat a_x=\\hat a_x${T(J)}\\ \\text{A/m}^2`,`Check: $\\sigma E=${T(p.s*p.E)}$.`,"$\\mathbf J=q_{ve}\\mathbf v_e$, which must equal $\\sigma\\mathbf E$."],
+   ["Current",`I=JA=(${T(J)})(${T(A)})=\\boxed{${T(I/1e3)}\\ \\text{kA}}`,`${p.A} cm² = $${T(A)}$ m².`,"Convert cm² to m²."],
+   ["Electron density",`N_e=\\frac{|q_{ve}|}{e}=\\frac{${T(-q)}}{1.602\\times10^{-19}}=\\boxed{${T(N)}\\ \\text{m}^{-3}}`,"About $10^{29}$ per m³: that's why a tiny drift is a huge current.","$N_e=|q_{ve}|/e$."]];
+  return{steps:st,stages:[
+   {k:"q_ve",q:"(a) Electron charge density $q_{ve}$ (with sign)?",u:"\\text{C/m}^3",v:q,s:0},
+   {k:"v_e",q:"(b) $x$-component of the drift velocity (with sign)?",u:"\\text{m/s}",v:v,s:1},
+   {k:"J",q:"(c) Current density $J_x$?",u:"\\text{A/m}^2",v:J,s:2},
+   {k:"I",q:"(d) Current?",u:"\\text{kA}",v:I/1e3,s:3},
+   {k:"N_e",q:"(e) Free electrons per m³?",u:"\\text{m}^{-3}",v:N,s:4}]};}});
+
+/* ---- 2.3 spherical shell ---- */
+L.push({id:"2.3",like:4,min:9,why:"2.1 in spherical coordinates. Two traps he loves: the spherical divergence and the inner normal $-\\hat a_r$.",
+ orig:{a:2,b:4,Pk:31.87,Ek:0.45},
+ gen(){const er=pick([4,9,2.56,6,5]),Ek=pick([0.2,0.3,0.45,0.6,1]),a=pick([1,2,3]);return{a,b:a+pick([1,2,3]),Pk:sig(EPS*1e12*(er-1)*Ek),Ek};},
+ st:p=>`A spherical dielectric shell has inner radius $a=${p.a}$ cm and outer radius $b=${p.b}$ cm. Inside it $\\mathbf P=\\hat a_r\\frac{${p.Pk}}{r^2}\\times10^{-12}$ C/m² and $\\mathbf E=\\hat a_r\\frac{${p.Ek}}{r^2}$ V/m. Find (a) the volume and surface bound charge densities, (b) the total bound charge on each surface and the net, (c) the susceptibility and dielectric constant.`,
+ first:{ok:"Check $\\nabla\\cdot\\mathbf P$ in spherical coordinates: $r^2P_r$ is constant, so $q_{vp}=0$. Then remember the inner normal is $-\\hat a_r$.",bad:["$q_{vp}=-\\frac{\\partial P_r}{\\partial r}=\\frac{2(31.87\\times10^{-12})}{r^3}\\neq0$.","Use $\\hat n=+\\hat a_r$ on both surfaces."]},
+ solve(p){const Pk=p.Pk*1e-12,a=p.a/100,b=p.b/100,qa=-Pk/(a*a),qb=Pk/(b*b),Q=4*PI*Pk,chi=Pk/(EPS*p.Ek),er=1+chi;
+  const st=[["Volume bound charge",`q_{vp}=-\\frac{1}{r^2}\\frac{\\partial}{\\partial r}\\left(r^2P_r\\right)=-\\frac{1}{r^2}\\frac{\\partial}{\\partial r}\\left(${T(Pk)}\\right)=0`,"$1/r^2$ is the divergence-free radial field.","Use the spherical divergence, with the $r^2$."],
+   ["Inner surface, $\\hat n=-\\hat a_r$",`q_{sp}(a)=-\\frac{${T(Pk)}}{(${a})^2}=${T(qa)}\\ \\text{C/m}^2`,"Outward from the dielectric points toward the center.","$q_{sp}=\\mathbf P\\cdot\\hat n$, and $\\hat n$ points out of the dielectric."],
+   ["Outer surface, $\\hat n=+\\hat a_r$",`q_{sp}(b)=+\\frac{${T(Pk)}}{(${b})^2}=${T(qb)}\\ \\text{C/m}^2`,"",""],
+   ["Total on each surface",`Q(a)=q_{sp}(a)\\,4\\pi a^2=-4\\pi(${T(Pk)})=${T(-Q)}\\ \\text{C},\\quad Q(b)=${T(Q)}\\ \\text{C}`,"The $r^2$ cancels: equal and opposite.","Multiply by the sphere's area $4\\pi r^2$."],
+   ["Net","Q_p=0","",""],
+   ["Susceptibility",`\\chi_e=\\frac{P}{\\varepsilon_0E}=\\frac{${T(Pk)}}{(${EPST})(${p.Ek})}=${T(chi)}\\ \\Rightarrow\\ \\varepsilon_r=\\boxed{${T(er)}}`,"The $1/r^2$ cancels between P and E.","$\\chi_e=P/(\\varepsilon_0E)$, $\\varepsilon_r=1+\\chi_e$."]];
+  return{steps:st,stages:[
+   {q:"(a) $q_{vp}$ inside the shell?",opts:["$0$: $r^2P_r$ is constant","$-\\partial P_r/\\partial r\\neq0$","$-P_r/r$"],a:0,s:0,why:"Spherical divergence: $\\frac1{r^2}\\frac{\\partial}{\\partial r}(r^2P_r)$, and $r^2P_r$ doesn't depend on $r$."},
+   {k:"q_sp(a)",q:"Bound surface charge density at $r=a$ (with sign)?",u:"\\text{C/m}^2",v:qa,s:1},
+   {k:"q_sp(b)",q:"Bound surface charge density at $r=b$?",u:"\\text{C/m}^2",v:qb,s:2},
+   {k:"Q(b)",q:"(b) Total bound charge on the outer surface?",u:"\\text{C}",v:Q,s:3},
+   {k:"ε_r",q:"(c) Dielectric constant?",u:"",v:er,s:5}]};}});
+
+/* ---- 2.7 Q fixed, side by side ---- */
+L.push({id:"2.7",like:4,min:10,why:"Fixed $Q$ plus a geometry read (\"half the space\" means half the area, so parallel). One decision, then $V=Q_0/C_T$.",
+ orig:{A:64,d:4,V0:8,er:2.56},
+ gen(){return{A:pick([36,50,64,100]),d:pick([2,4,5]),V0:pick([8,10,12,20]),er:pick([2.56,2.25,4,3])};},
+ st:p=>`A parallel-plate capacitor with plate area ${p.A} cm² and separation ${p.d} cm is charged to ${p.V0} V in free space and the source is removed. A slab with $\\varepsilon_r=${p.er}$, ${p.d} cm thick, is then inserted so that it fills half of the space between the plates (half the area). Find the voltage, E and D in each half, the charge on each half, the capacitances, and the stored energy before and after.`,
+ first:{ok:"Slab thickness equals the gap, so the halves are parallel. $Q_0$ is frozen: $V=Q_0/C_T$ with $C_T=C_{air}+\\varepsilon_rC_{air}$.",bad:["Two series layers, each half the gap thick.","$E=V_0/d$ still, since the plates didn't move."]},
+ solve(p){const d=p.d/100,A=p.A*1e-4,Q0=EPS*A*p.V0/d,W0=0.5*Q0*p.V0,Ca=EPS*(A/2)/d,Cd=p.er*Ca,CT=Ca+Cd,V=Q0/CT,E=V/d,Da=EPS*E,Dd=p.er*Da,Qa=Ca*V,Qd=Cd*V,W=Q0*Q0/(2*CT);
+  const st=[["Before",`Q_0=\\frac{\\varepsilon_0AV_0}{d}=\\frac{(${EPST})(${T(A)})(${p.V0})}{${d}}=${T(Q0*1e12)}\\ \\text{pC},\\quad W_0=\\tfrac12Q_0V_0=${T(W0*1e12)}\\ \\text{pJ}`,"This charge is now frozen.",""],
+   ["Half capacitances",`C_{air}=\\frac{\\varepsilon_0(A/2)}{d}=${T(Ca*1e12)}\\ \\text{pF},\\quad C_d=${p.er}C_{air}=${T(Cd*1e12)}\\ \\text{pF},\\quad C_T=${T(CT*1e12)}\\ \\text{pF}`,"Side by side: parallel, so they add.","Each half has area $A/2$ and the full gap $d$."],
+   ["Voltage",`V=\\frac{Q_0}{C_T}=\\boxed{${T(V)}\\ \\text{V}},\\qquad E=\\frac Vd=${T(E)}\\ \\text{V/m (both halves)}`,"Tangential E is continuous across the slab's side face.","$V=Q_0/C_T$."],
+   ["D in each half",`D_{air}=\\varepsilon_0E=${T(Da)},\\qquad D_d=${p.er}\\varepsilon_0E=${T(Dd)}\\ \\text{C/m}^2`,"",""],
+   ["Charge split",`Q_{air}=C_{air}V=${T(Qa*1e12)}\\ \\text{pC},\\quad Q_d=C_dV=${T(Qd*1e12)}\\ \\text{pC},\\quad \\Sigma=${T((Qa+Qd)*1e12)}\\ \\text{pC}`,"Charge moves toward the dielectric half. Conservation check.","$Q=CV$ per half."],
+   ["Energy",`W=\\frac{Q_0^2}{2C_T}=\\boxed{${T(W*1e12)}\\ \\text{pJ}}\\quad(\\text{down from }${T(W0*1e12)})`,"At fixed Q, energy falls as C rises: the slab is pulled in.","$W=Q^2/2C$."]];
+  return{steps:st,stages:[
+   {q:"How are the two halves connected?",opts:["In parallel: same $V$, the slab spans the whole gap","In series: same $D$, stacked layers","Not connected: each keeps its own charge"],a:0,s:1,why:"The slab is as thick as the gap, so it fills half the area. The interface is parallel to E."},
+   {k:"C_T",q:"Total capacitance with the slab in?",u:"\\text{pF}",v:CT*1e12,s:1},
+   {k:"V",q:"New voltage across the plates?",u:"\\text{V}",v:V,s:2},
+   {k:"Q_d",q:"Charge on the dielectric half?",u:"\\text{pC}",v:Qd*1e12,s:4},
+   {k:"W",q:"Stored energy after insertion?",u:"\\text{pJ}",v:W*1e12,s:5}]};}});
+
+/* ---- 2.5 Q fixed, stacked ---- */
+L.push({id:"2.5",like:4,min:12,why:"Fixed $Q$ with series layers: every capacitor idea in Ch. 2 at once. Many parts, but each is one line. He may trim it to $V$, $C$, $W$.",
+ orig:{A:0.02,d:1.25,V0:100,t:1,er:5},
+ gen(){const d=pick([1.25,1.5,2,2.5,3]);return{A:pick([0.01,0.02,0.05]),d,V0:pick([50,100,200]),t:+(d*pick([0.4,0.6,0.8])).toFixed(2),er:pick([2,2.56,4,5,6])};},
+ st:p=>`A parallel-plate capacitor with plate area $A=${T(p.A)}$ m² and separation $d=${p.d}$ mm is charged to ${p.V0} V in free space; the source is then removed. A dielectric slab ${p.t} mm thick with $\\varepsilon_r=${p.er}$ is then placed on the lower plate, leaving a ${+(p.d-p.t).toFixed(2)} mm air gap. Find the charge and surface charge density on the plates, D and E in each region, the voltage across each region and in total, the capacitance of each region and the total, and the stored energy.`,
+ first:{ok:"Q is fixed: get $D=\\varepsilon_0V_0/d$ from the air state, then $E=D/\\varepsilon$ region by region.",bad:["Keep $V=V_0$ and split it between the two layers.","$D=\\varepsilon_r\\varepsilon_0E$ with the old $E=V_0/d$ in both layers."]},
+ solve(p){const dm=p.d/1000,tm=p.t/1000,g=dm-tm,E1=p.V0/dm,D=EPS*E1,Q=D*p.A,Ed=D/(p.er*EPS),Ea=D/EPS,Vd=Ed*tm,Va=Ea*g,V=Vd+Va,Cd=p.er*EPS*p.A/tm,Ca=EPS*p.A/g,C=Cd*Ca/(Cd+Ca),W=0.5*Q*V,W0=0.5*Q*p.V0;
+  const st=[["Before insertion",`E=\\frac{${p.V0}}{${T(dm)}}=${T(E1)}\\ \\text{V/m},\\quad D=\\varepsilon_0E=${T(D)}\\ \\text{C/m}^2`,"",""],
+   ["Frozen charge",`q_s=D=${T(D)}\\ \\text{C/m}^2,\\qquad Q=DA=${T(Q*1e9)}\\ \\text{nC}`,"Normal D is continuous across the slab face (no free charge there).","Battery removed: $Q$ and so $D$ don't change."],
+   ["E in each region",`E_d=\\frac{D}{${p.er}\\varepsilon_0}=${T(Ed)},\\qquad E_0=\\frac{D}{\\varepsilon_0}=${T(Ea)}\\ \\text{V/m}`,"","$E=D/\\varepsilon$ in each layer."],
+   ["Voltages",`V_d=E_dt=${T(Vd)}\\ \\text{V},\\quad V_0=E_0(d-t)=${T(Va)}\\ \\text{V},\\quad V=\\boxed{${T(V)}\\ \\text{V}}`,"The voltage collapses from its original value.","Add $E\\times$thickness for each layer."],
+   ["Capacitances",`C_d=\\frac{${p.er}\\varepsilon_0A}{t}=${T(Cd*1e12)}\\ \\text{pF},\\quad C_0=\\frac{\\varepsilon_0A}{d-t}=${T(Ca*1e12)}\\ \\text{pF},\\quad C=\\frac{C_dC_0}{C_d+C_0}=\\boxed{${T(C*1e12)}\\ \\text{pF}}`,`Check: $Q/V=${T(Q/V*1e12)}$ pF.`,"Stacked layers are in series."],
+   ["Energy",`W=\\tfrac12QV=\\boxed{${T(W*1e9)}\\ \\text{nJ}}\\quad(\\text{was }${T(W0*1e9)}\\ \\text{nJ})`,"At fixed Q, $W=Q^2/2C$ falls as C rises: the slab is pulled in.","$W=\\tfrac12QV$ with the new $V$."]];
+  return{steps:st,stages:[
+   {q:"The source is removed before the slab goes in. What stays fixed?",opts:["The plate charge $Q$, so $D$","The voltage $V_0$","The field $E$ in the air gap and in the slab"],a:0,s:1,why:"No source, so no path for charge. $D$ follows the free charge."},
+   {k:"Q",q:"Charge on the plates?",u:"\\text{nC}",v:Q*1e9,s:1},
+   {k:"E_d",q:"$E$ inside the slab?",u:"\\text{V/m}",v:Ed,s:2},
+   {k:"V",q:"Total voltage after insertion?",u:"\\text{V}",v:V,s:3},
+   {k:"C",q:"Total capacitance?",u:"\\text{pF}",v:C*1e12,s:4},
+   {k:"W",q:"Stored energy after insertion?",u:"\\text{nJ}",v:W*1e9,s:5}]};}});
+
+/* ---- 2.17 coax, azimuthal halves ---- */
+L.push({id:"2.17",like:3,min:11,why:"Coax version of the parallel case. Needs $V=\\int E\\,d\\rho$ with $\\ln(b/a)$ and the half-surface $\\pi a\\ell$. Fits a quiz, but takes longer.",
+ orig:{a:2,b:4,l:6,V:10,er:2.56},
+ gen(){const a=pick([0.5,1,2]);return{a,b:a*pick([2,3,4]),l:pick([5,6,10]),V:pick([5,10,20]),er:pick([2.56,2.25,4])};},
+ st:p=>`A coaxial capacitor ($a=${p.a}$ cm, $b=${p.b}$ cm, $\\ell=${p.l}$ cm) has a curved slab ($\\varepsilon_r=${p.er}$) filling $\\pi\\le\\phi\\le2\\pi$ across the whole radial gap; the other half is free space. A ${p.V}-V source is connected and maintained. Find E, D, the surface charge on the inner conductor, the charge and capacitance of each half and in total, and the stored energy.`,
+ first:{ok:"The interfaces ($\\phi=\\pi,2\\pi$) are parallel to the radial E, so tangential E matches: $E=V/(\\rho\\ln(b/a))$ in both halves. Then $D$ and $Q$ half by half.",bad:["The two halves are in series, so $E$ is smaller in the dielectric half by $\\varepsilon_r$.","Use the full-coax $C=2\\pi\\varepsilon\\ell/\\ln(b/a)$ for each half."]},
+ solve(p){const a=p.a/100,b=p.b/100,l=p.l/100,ln=Math.log(b/a),k=p.V/ln,Da=EPS*k,Dp=p.er*Da,qa=Da/a,qp=Dp/a,Qa=qa*PI*a*l,Qp=qp*PI*a*l,QT=Qa+Qp,Ca=Qa/p.V,Cp=Qp/p.V,CT=Ca+Cp,W=0.5*CT*p.V*p.V;
+  const st=[["E (both halves)",`E_\\rho=\\frac{V}{\\rho\\ln(b/a)}=\\frac{${p.V}}{\\rho\\ln${T(b/a)}}=\\frac{${T(k)}}{\\rho}\\ \\text{V/m}`,"Same radial path, same voltage, so the same E in both halves.","$V=\\int_a^bE_\\rho d\\rho$ with $E_\\rho=k/\\rho$."],
+   ["D",`D_{air}=\\frac{${T(Da)}}{\\rho},\\qquad D_d=${p.er}D_{air}=\\frac{${T(Dp)}}{\\rho}\\ \\text{C/m}^2`,"",""],
+   ["Surface charge on the inner conductor",`q_s(a)=D(a):\\ ${T(qa)}\\ \\text{(air)},\\quad ${T(qp)}\\ \\text{C/m}^2\\ \\text{(dielectric)}`,"",""],
+   ["Charge per half",`Q=q_s(a)\\,\\pi a\\ell:\\quad Q_{air}=${T(Qa*1e12)}\\ \\text{pC},\\quad Q_d=${T(Qp*1e12)}\\ \\text{pC},\\quad Q_T=${T(QT*1e12)}\\ \\text{pC}`,"Each half covers $\\pi a\\ell$ of the inner surface.","Half the inner conductor's area: $\\pi a\\ell$."],
+   ["Capacitance",`C_{air}=${T(Ca*1e12)}\\ \\text{pF},\\quad C_d=${T(Cp*1e12)}\\ \\text{pF},\\quad C_T=\\boxed{${T(CT*1e12)}\\ \\text{pF}}`,"Half the empty coax, and $\\varepsilon_r$ times that. Parallel, so they add.","$C=Q/V$ per half, then add."],
+   ["Energy",`W=\\tfrac12C_TV^2=\\boxed{${T(W*1e12)}\\ \\text{pJ}}`,"","$W=\\tfrac12CV^2$."]];
+  return{steps:st,stages:[
+   {q:"How do the two halves combine?",opts:["In parallel: same $E$, the interface is parallel to $E$","In series: same $D$ across the interface","They share the charge equally"],a:0,s:0,why:"Radial E is tangent to the $\\phi=\\pi$ planes, so tangential E (and V) match."},
+   {k:"Eρ",q:"$E_\\rho=k/\\rho$ in both halves. What is $k$?",u:"\\text{V}",v:k,s:0},
+   {k:"Q_d",q:"Charge on the dielectric half?",u:"\\text{pC}",v:Qp*1e12,s:3},
+   {k:"C_T",q:"Total capacitance?",u:"\\text{pF}",v:CT*1e12,s:4},
+   {k:"W",q:"Stored energy?",u:"\\text{pJ}",v:W*1e12,s:5}]};}});
+
+/* ---- 2.13 coax, radial layers, Q fixed ---- */
+L.push({id:"2.13",like:3,min:13,why:"Fixed $Q$ plus series radial layers plus two log integrals. Every idea is fair game, but it's near the top of the 15-minute window.",
+ orig:{a:2,b:4,c:3,l:6,V0:10,er:2.56},
+ gen(){const a=pick([1,2]);const b=a*pick([2,2.5,3]);return{a,b,c:+(a+(b-a)*pick([0.25,0.5,0.75])).toFixed(2),l:pick([5,6,10]),V0:pick([5,10,20]),er:pick([2.56,2.25,4])};},
+ st:p=>`A coaxial capacitor with inner radius $a=${p.a}$ cm, outer radius $b=${p.b}$ cm and length $\\ell=${p.l}$ cm is charged to ${p.V0} V in free space and the source is removed. A jacket with $\\varepsilon_r=${p.er}$ is then placed over the inner conductor, filling $${p.a}\\le\\rho\\le${p.c}$ cm; $${p.c}\\le\\rho\\le${p.b}$ cm stays free space. Find D and E in each region, the voltage, the capacitance and the stored energy.`,
+ first:{ok:"Q from the free-space state, $D=Q/2\\pi\\rho\\ell$ unchanged, then integrate E across both layers.",bad:["Keep $V=V_0$ and find the new charge.","Use $C=2\\pi\\varepsilon\\ell/\\ln(b/a)$ with $\\varepsilon=\\varepsilon_r\\varepsilon_0$ for the whole gap."]},
+ solve(p){const a=p.a/100,b=p.b/100,c=p.c/100,l=p.l/100,Q=2*PI*EPS*l*p.V0/Math.log(b/a),Dk=Q/(2*PI*l),Ed=Dk/(p.er*EPS),E0=Dk/EPS,V=Ed*Math.log(c/a)+E0*Math.log(b/c),C=Q/V,W=0.5*Q*V,C0=Q/p.V0;
+  const st=[["Free-space charge",`Q=\\frac{2\\pi\\varepsilon_0\\ell V_0}{\\ln(b/a)}=\\frac{2\\pi(${EPST})(${l})(${p.V0})}{\\ln${T(b/a)}}=${T(Q*1e12)}\\ \\text{pC}`,"This is frozen once the source is removed.","Coax: $C=2\\pi\\varepsilon_0\\ell/\\ln(b/a)$, $Q=CV_0$."],
+   ["D (Gauss)",`D_\\rho=\\frac{Q}{2\\pi\\rho\\ell}=\\frac{${T(Dk)}}{\\rho}\\ \\text{C/m}^2`,"The dielectric is invisible to D.",""],
+   ["E in each layer",`E_d=\\frac{D}{${p.er}\\varepsilon_0}=\\frac{${T(Ed)}}{\\rho},\\qquad E_0=\\frac{D}{\\varepsilon_0}=\\frac{${T(E0)}}{\\rho}\\ \\text{V/m}`,`E jumps by ${p.er} at $\\rho=${p.c}$ cm: it's normal to that interface.`,"$E=D/\\varepsilon$ in each layer."],
+   ["Voltage",`V=${T(Ed)}\\ln\\frac{${p.c}}{${p.a}}+${T(E0)}\\ln\\frac{${p.b}}{${p.c}}=\\boxed{${T(V)}\\ \\text{V}}`,"","$V=\\int_a^bE_\\rho d\\rho$, split at the interface."],
+   ["Capacitance",`C=\\frac QV=\\boxed{${T(C*1e12)}\\ \\text{pF}}`,`Up from ${T(C0*1e12)} pF in free space.`,""],
+   ["Energy",`W=\\tfrac12QV=\\boxed{${T(W*1e12)}\\ \\text{pJ}}`,"","$W=\\tfrac12QV$ with the new $V$."]];
+  return{steps:st,stages:[
+   {q:"Once the jacket goes in, what happens to $D$?",opts:["Unchanged: it comes from the frozen free charge","It rises by $\\varepsilon_r$ in the jacket","It drops by $\\varepsilon_r$ in the jacket"],a:0,s:1,why:"Gauss's law for D sees only free charge. $\\varepsilon$ enters when you convert to E."},
+   {k:"Q",q:"Charge on the conductors?",u:"\\text{pC}",v:Q*1e12,s:0},
+   {k:"E_dρ",q:"$E_\\rho=k/\\rho$ in the jacket. What is $k$?",u:"\\text{V}",v:Ed,s:2},
+   {k:"V",q:"Voltage after the jacket goes on?",u:"\\text{V}",v:V,s:3},
+   {k:"C",q:"Capacitance?",u:"\\text{pF}",v:C*1e12,s:4},
+   {k:"W",q:"Stored energy?",u:"\\text{pJ}",v:W*1e12,s:5}]};}});
+
+/* ---- 2.21 constant azimuthal M ---- */
+L.push({id:"2.21",like:3,min:8,why:"Short but a deliberate trap: constant $M_\\phi$ has nonzero curl, and the surface current cancels it. Good as a concept quiz.",
+ orig:{a:1,M:10},
+ gen(){return{a:pick([0.02,0.1,0.5,1,2]),M:pick([5,10,20,50,100])};},
+ st:p=>`A cylindrical bar of radius $a=${p.a}$ m, with its axis along $z$, is magnetized azimuthally with $\\mathbf M=\\hat a_\\phi${p.M}$ A/m (constant magnitude). Find (a) the surface and volume magnetization current densities, (b) the total magnetization current through a cross section of the bar.`,
+ first:{ok:"$\\mathbf M$ is constant, not $\\propto1/\\rho$, so compute the curl: it does not vanish. Then add the surface current.",bad:["$\\nabla\\times\\mathbf M=0$ because $|\\mathbf M|$ is constant.","Only the volume current matters: $I=\\int\\mathbf J_{mv}\\cdot d\\mathbf s$."]},
+ solve(p){const Iv=2*PI*p.M*p.a,Is=-Iv;
+  const st=[["Surface current at $\\rho=a$",`\\mathbf J_{ms}=\\mathbf M\\times\\hat a_\\rho=${p.M}(\\hat a_\\phi\\times\\hat a_\\rho)=-\\hat a_z${p.M}\\ \\text{A/m}`,"$\\hat a_\\phi\\times\\hat a_\\rho=-\\hat a_z$.","$\\mathbf J_{ms}=\\mathbf M\\times\\hat n$, $\\hat n=\\hat a_\\rho$."],
+   ["Volume current",`\\mathbf J_{mv}=\\nabla\\times\\mathbf M=\\hat a_z\\frac1\\rho\\frac{\\partial}{\\partial\\rho}(\\rho M_\\phi)=\\hat a_z\\frac{${p.M}}{\\rho}\\ \\text{A/m}^2`,`$\\rho M_\\phi=${p.M}\\rho$ is not constant.`,"Cylindrical curl, $z$ part: $\\frac1\\rho\\frac{\\partial(\\rho M_\\phi)}{\\partial\\rho}$."],
+   ["Current through the volume",`I_v=\\int_0^{2\\pi}\\int_0^a\\frac{${p.M}}{\\rho}\\rho\\,d\\rho\\,d\\phi=2\\pi(${p.M})(${p.a})=${T(Iv)}\\ \\text{A}`,"","Keep the $\\rho$ Jacobian: it cancels the $1/\\rho$."],
+   ["Current on the surface",`I_s=-${p.M}(2\\pi a)=${T(Is)}\\ \\text{A}`,"","Surface current density times the rim length $2\\pi a$."],
+   ["Total","I=I_v+I_s=\\boxed{0}","Bound currents always close on themselves.",""]];
+  return{steps:st,stages:[
+   {q:"$\\nabla\\times\\mathbf M$ for constant $M_\\phi$:",opts:["Nonzero: $\\hat a_zM_0/\\rho$","Zero, since the magnitude is constant","Zero, since $\\mathbf M$ has no $z$ part"],a:0,s:1,why:"Only $\\rho M_\\phi=$ const (a $1/\\rho$ field) is curl-free."},
+   {k:"J_ms",q:"(a) $\\mathbf J_{ms}$ at $\\rho=a$: its $z$-component (with sign)?",u:"\\text{A/m}",v:-p.M,s:0},
+   {k:"I_v",q:"Current carried by the volume density?",u:"\\text{A}",v:Iv,s:2},
+   {k:"I",q:"(b) Total magnetization current through a cross section?",u:"\\text{A}",v:0,s:4}]};}});
+
+/* ---- 2.23 ∫J·ds ---- */
+const KS=[{k:1e4,t:"10^4"},{k:5e3,t:"5\\times10^3"},{k:2e4,t:"2\\times10^4"},{k:2e3,t:"2\\times10^3"}];
+L.push({id:"2.23",like:2,min:12,why:"Integration by parts with the $\\rho$ Jacobian. More calculus than physics, and he lectured current density only briefly.",
+ orig:{a:1,I:10,k:1e4,kt:"10^4"},
+ gen(){const K=pick(KS);return{a:pick([0.5,1,2]),I:pick([5,10,20,50]),k:K.k,kt:K.t};},
+ st:p=>`A wire of radius $a=${p.a}$ cm carries a total current of ${p.I} A with current density $\\mathbf J=\\hat a_zJ_0e^{-${p.kt}(a-\\rho)}$ A/m². Find (a) $J_0$, (b) the depth from the surface at which J has decayed to $e^{-1}$ of its surface value.`,
+ first:{ok:"$I=\\int_0^{2\\pi}\\int_0^aJ\\rho\\,d\\rho\\,d\\phi$ with the $\\rho$ Jacobian; integrate by parts.",bad:["$I=J_0\\pi a^2$.","$I=\\int_0^{2\\pi}\\int_0^aJ\\,d\\rho\\,d\\phi$."]},
+ solve(p){const a=p.a/100,k=p.k,ex=Math.exp(-k*a),br=a/k-1/(k*k)+ex/(k*k),fac=2*PI*br,J0=p.I/fac,d=1000/k;
+  const st=[["Set up",`I=2\\pi J_0e^{-ka}\\int_0^a\\rho e^{k\\rho}d\\rho,\\qquad k=${p.kt}\\ \\text{m}^{-1}`,"The area element is $\\rho\\,d\\rho\\,d\\phi$.","Cylindrical $ds=\\rho\\,d\\rho\\,d\\phi$."],
+   ["By parts","\\int_0^a\\rho e^{k\\rho}d\\rho=\\frac{ae^{ka}}{k}-\\frac{e^{ka}-1}{k^2}\\ \\Rightarrow\\ I=2\\pi J_0\\left[\\frac ak-\\frac1{k^2}+\\frac{e^{-ka}}{k^2}\\right]","",""],
+   [`Numbers ($ka=${T(k*a)}$)`,`I=2\\pi J_0\\left(${T(a/k)}-${T(1/(k*k))}+${T(ex/(k*k))}\\right)=${T(fac)}\\,J_0`,"For large $ka$ the $e^{-ka}$ term is negligible.","Evaluate the bracket in meters."],
+   ["Solve",`J_0=\\frac{${p.I}}{${T(fac)}}=\\boxed{${T(J0)}\\ \\text{A/m}^2}`,"",""],
+   ["1/e depth",`e^{-k\\delta}=e^{-1}\\Rightarrow \\delta=\\frac1k=\\boxed{${T(d)}\\ \\text{mm}}`,"Functionally a skin depth.","Set the exponent to $-1$."]];
+  return{steps:st,stages:[
+   {q:"The area element for $\\int\\mathbf J\\cdot d\\mathbf s$ over the cross section:",opts:["$\\rho\\,d\\rho\\,d\\phi$","$d\\rho\\,d\\phi$","$\\pi a^2$ times $J$ at the surface"],a:0,s:0,why:"Cylindrical coordinates: the arc length is $\\rho\\,d\\phi$."},
+   {k:"I/J_0",q:"$I=(\\text{factor})\\times J_0$. What is the factor?",u:"\\text{m}^2",v:fac,s:2},
+   {k:"J_0",q:"(a) $J_0$?",u:"\\text{A/m}^2",v:J0,s:3},
+   {k:"δ",q:"(b) Depth where $J$ falls to $e^{-1}$ of its surface value?",u:"\\text{mm}",v:d,s:4}]};}});
+
+G.hw.ch2=L;
+})(window.MXG);
+
+/* QUIZ ARENA · HW 5 + HW 6 = Balanis Ch. 4 (uniform plane waves, oblique travel, lossy media). Odd problems 4.1–4.23.
+   Every answer is computed from the params (c = 3e8, η0 = 120π, ε0 = 8.854e-12, μ0 = 4πe-7). Convention: e^{+jωt},
+   e^{-jβ·r} travels along +β̂. (Polarization sense, where it comes up, uses Δφ = φx − φy as in content/ch4.js.) */
+(function(G){const U=G.hwU,{C0,ETA0,pick,rnd}=U,f=U.f3,R=String.raw;
+const EPS0=8.854e-12,MU0=4*Math.PI*1e-7,DEG=Math.PI/180;
+const tx=x=>{let t=f(x);const m=t.match(/^(-?[\d.]+)×10\^\+?(-?\d+)$/);if(!m)return t;let a=m[1].replace(/(\.\d*?)0+$/,"$1").replace(/\.$/,"");return (a==="1"?"":a==="-1"?"-":a+"\\times")+"10^{"+m[2]+"}";}; // TeX-safe number
+const ex=x=>Math.floor(Math.log10(Math.abs(x))+1e-9);                          // decade
+const sc=(x,u)=>{const n=ex(x);return{v:x/Math.pow(10,n),u:R`\times10^{${n}}\ `+u};}; // mantissa + TeX unit
+const cxs=(a,b)=>{const jb=b===0?"":(Math.abs(b)===1?"j":"j"+Math.abs(b));if(a===0)return b===0?"0":(b<0?"-":"")+jb;if(b===0)return ""+a;return a+(b<0?"-":"+")+jb;};
+const term=(v,a,b)=>(a<0||(a===0&&b<0))?`-${v}(${cxs(-a,-b)})`:`${v}(${cxs(a,b)})`;
+const join=(...t)=>t.reduce((s,x,i)=>i===0?x:s+(x[0]==="-"?x:"+"+x),"");
+const L=[];
+
+/* ---- 4.11 read β ---- */
+const BET=[[2,3],[1,2],[1,3],[1,1],[4,3],[2,5],[1,5],[3,4]];
+L.push({id:"4.11",like:5,min:6,why:"Read $\\beta_0$ off the exponent, then $\\lambda$, $f$ and $\\mathbf H=\\hat\\beta\\times\\mathbf E/\\eta_0$. Three short answers, the first thing he'd check you can do.",
+ orig:{n:2,d:3,E0:1,s:1},
+ gen(){const[n,d]=pick(BET);return{n,d,E0:pick([1,2,5,10]),s:pick([1,-1])};},
+ st:p=>`The complex electric field of a time-harmonic field in free space is given by $\\mathbf E=\\hat a_z${p.E0===1?"":p.E0+"\\times "}10^{-3}(1+j)e^{${p.s>0?"-":"+"}j${p.n===p.d?"":"("+p.n+"/"+p.d+")"}\\pi x}$. Assuming the distance $x$ is measured in meters, find the (a) wavelength (in meters), (b) frequency, (c) associated magnetic field.`,
+ first:{ok:"Read $\\beta_0$ from the exponent: the number multiplying $x$ (with its $\\pi$) is $\\beta_0$, and the sign gives the direction.",bad:["The coefficient of $x$ is the wavelength, so $\\lambda$ is that number in meters.","Start from $f$: the field is at 100 MHz unless told otherwise, so $\\lambda=3$ m."]},
+ solve(p){const b=p.n/p.d*Math.PI,lam=2*Math.PI/b,F=C0/lam,Hy=-p.s*p.E0*1e-3/ETA0;
+  const dir=p.s>0?"+\\hat a_x":"-\\hat a_x";
+  const st=[["(a) Read $\\beta_0$",R`\beta_0=\frac{${p.n}\pi}{${p.d}}=${f(b)}\ \text{rad/m}\ \Rightarrow\ \lambda=\frac{2\pi}{\beta_0}=${f(lam)}\ \text{m}`,"The coefficient is $\\beta$, never $\\lambda$.","$\\lambda=2\\pi/\\beta_0$."],
+   ["(b) Frequency",R`f=\frac{c}{\lambda}=\frac{3\times10^8}{${f(lam)}}=${f(F/1e6)}\ \text{MHz}`,"Free space, so $v=c$.","$f=c/\\lambda$."],
+   ["Direction",R`e^{${p.s>0?"-":"+"}j\beta_0x}\ \Rightarrow\ \hat\beta=${dir}`,"$e^{-j\\boldsymbol\\beta\\cdot\\mathbf r}$ is the convention: a $+$ in the exponent means $-x$.",""],
+   ["(c) H",R`\mathbf H=\frac{1}{\eta_0}\hat\beta\times\mathbf E=\frac{(${dir})\times\hat a_z}{120\pi}${p.E0}\times10^{-3}(1+j)e^{\cdots}=${p.s>0?"-":"+"}\hat a_y${tx(Math.abs(Hy))}(1+j)e^{\cdots}\ \text{A/m}`,"$\\hat a_x\\times\\hat a_z=-\\hat a_y$.","$\\mathbf H=\\hat\\beta\\times\\mathbf E/\\eta_0$."],
+   ["Maxwell check",R`H_y=-\frac{1}{j\omega\mu_0}\left(-\frac{\partial E_z}{\partial x}\right)=${p.s>0?"-":"+"}\frac{\beta_0}{\omega\mu_0}E_z=${p.s>0?"-":"+"}\frac{E_z}{\eta_0}`,"",""]];
+  return{steps:st,stages:[{k:"(a) λ",q:"(a) Wavelength?",u:"\\text{m}",v:lam,s:0},{k:"(b) f",q:"(b) Frequency?",u:"\\text{MHz}",v:F/1e6,s:1},
+   {q:"(c) $\\mathbf H$ points along:",opts:[`$${p.s>0?"-":"+"}\\hat a_y$`,`$${p.s>0?"+":"-"}\\hat a_y$`,"$\\hat a_x$"],a:0,s:3,why:`$\\hat\\beta=${dir}$ and $\\mathbf H\\propto\\hat\\beta\\times\\hat a_z$. H is never along $\\hat\\beta$.`},
+   {k:"(c) H_y",q:"(c) $H_y$ coefficient multiplying $(1+j)e^{\\cdots}$ (sign included)?",u:"\\mu\\text{A/m}",v:Hy*1e6,s:3}]};}});
+
+/* ---- 4.9 H0, S_av, energy ---- */
+L.push({id:"4.9",like:5,min:7,why:"Ohm's law for waves, $|E|^2/2\\eta$, and the $\\frac12$ vs $\\frac14$ energy trap. Four numbers in under 10 minutes.",
+ orig:{E0:1},
+ gen(){return{E0:pick([0.5,1,2,3,5,10,20])};},
+ st:p=>`A uniform plane wave traveling inside an unbounded free-space medium has peak electric and magnetic fields given by $\\mathbf E=\\hat a_xE_0e^{-j\\beta_0z}$, $\\mathbf H=\\hat a_yH_0e^{-j\\beta_0z}$, where $E_0=${p.E0}$ mV/m. (a) Evaluate $H_0$. (b) Find the corresponding average power density. (c) Determine the volume electric and magnetic energy densities. Evaluate all the constants.`,
+ first:{ok:"$H_0=E_0/\\eta_0$, then $S_{av}=E_0^2/2\\eta_0$, then $w_e=w_m=\\frac12\\varepsilon_0E_0^2\\cos^2(\\omega t-\\beta_0z)$.",bad:["$H_0=E_0\\eta_0$, then $S_{av}=E_0H_0$.","Only E was given, so $w_m=0$ and all the energy is electric."]},
+ solve(p){const E=p.E0*1e-3,H=E/ETA0,S=E*E/(2*ETA0),we=0.5*EPS0*E*E,wa=we/2;const Ss=sc(S,"\\text{W/m}^2"),Ws=sc(we,"\\text{J/m}^3"),Wa=sc(wa,"\\text{J/m}^3");
+  const st=[["(a) $H_0$",R`H_0=\frac{E_0}{\eta_0}=\frac{${tx(E)}}{377}=${tx(H)}\ \text{A/m}`,"Ohm's law for waves.","$H_0=E_0/\\eta_0$."],
+   ["(b) Power",R`\mathbf S_{av}=\hat a_z\frac{E_0^2}{2\eta_0}=\hat a_z\frac{(${tx(E)})^2}{754}=\hat a_z${tx(S)}\ \text{W/m}^2`,"(4-11). Peak amplitudes carry the $\\frac12$.","$S_{av}=E_0^2/(2\\eta_0)$."],
+   ["(c) Electric",R`w_e=\tfrac12\varepsilon_0E_0^2\cos^2(\omega t-\beta_0z)=${tx(we)}\cos^2(\omega t-\beta_0z)\ \text{J/m}^3`,"(4-8a).","$\\frac12\\varepsilon_0E_0^2$ is the peak."],
+   ["Magnetic equals electric",R`w_m=\tfrac12\mu_0H_0^2\cos^2=\tfrac12\mu_0\frac{E_0^2}{\eta_0^2}\cos^2=\tfrac12\varepsilon_0E_0^2\cos^2=w_e`,"$\\mu_0/\\eta_0^2=\\varepsilon_0$.",""],
+   ["Time averages",R`\langle w_e\rangle=\langle w_m\rangle=\tfrac14\varepsilon_0E_0^2=${tx(wa)}\ \text{J/m}^3`,"$\\langle\\cos^2\\rangle=\\frac12$.","Half the peak."],
+   ["Consistency",R`(\langle w_e\rangle+\langle w_m\rangle)c=${tx(2*wa)}(3\times10^8)=${tx(2*wa*C0)}=S_{av}`,"$v_e=S/w=c$ (4-9).",""]];
+  return{steps:st,stages:[{k:"(a) H₀",q:"(a) $H_0$?",u:"\\mu\\text{A/m}",v:H*1e6,s:0},{k:"(b) S_av",q:"(b) Average power density magnitude?",u:Ss.u,v:Ss.v,s:1},
+   {k:"(c) w_e peak",q:"(c) Peak of $w_e$ (the coefficient of $\\cos^2$)?",u:Ws.u,v:Ws.v,s:2},
+   {q:"(c) Compared with $w_e$, the magnetic energy density is:",opts:["Equal, at every instant","Zero, since only E was given","Smaller by $\\eta_0^2$"],a:0,s:3,why:"$\\frac12\\mu_0(E_0/\\eta_0)^2=\\frac12\\varepsilon_0E_0^2$ for a single traveling wave."},
+   {k:"⟨w_e⟩",q:"(c) Time-average $\\langle w_e\\rangle$?",u:Wa.u,v:Wa.v,s:4}]};}});
+
+/* ---- 4.13 isotropic source ---- */
+L.push({id:"4.13",like:5,min:7,why:"$P/4\\pi r^2$ then plane-wave relations, with a frequency distractor and the rms-vs-peak trap. A textbook 10-minute quiz.",
+ orig:{f:11,P:50,r:3},
+ gen(){return{f:pick([2.4,5.8,11,18,24,28]),P:pick([10,20,50,100,200,500]),r:pick([0.5,1,2,3,5,10])};},
+ st:p=>`An ${p.f}-GHz transmitter radiates its power isotropically in a free-space medium. Assuming its total radiated power is ${p.P} mW, at a distance of ${p.r} km, find the (a) time-average power density, (b) RMS electric and magnetic fields, (c) total time-average volume energy densities. In all cases, specify the units.`.replace(/^An (\d)/,(m,d)=>(d==="1"||d==="8"?"An ":"A ")+d),
+ first:{ok:"$S_{av}=P_{rad}/4\\pi r^2$. The frequency is a distractor.",bad:["Start from $\\beta_0=2\\pi f/c$, since the fields need the phase constant.","$S_{av}=P_{rad}/\\pi r^2$, then $E_{rms}=\\sqrt{2\\eta_0S_{av}}$."]},
+ solve(p){const r=p.r*1e3,S=p.P*1e-3/(4*Math.PI*r*r),E=Math.sqrt(ETA0*S),H=E/ETA0,w=S/C0;const Ss=sc(S,"\\text{W/m}^2"),Es=sc(E,"\\text{V/m}"),Hs=sc(H,"\\text{A/m}"),Ws=sc(w,"\\text{J/m}^3");
+  const st=[["(a) Spherical spreading",R`S_{av}=\frac{P_{rad}}{4\pi r^2}=\frac{${tx(p.P*1e-3)}}{4\pi(${tx(r)})^2}=${tx(S)}\ \text{W/m}^2`,`Nothing depends on the ${p.f} GHz.`,"Area of a sphere: $4\\pi r^2$."],
+   ["RMS form",R`S_{av}=\frac{E_{rms}^2}{\eta_0}=\eta_0H_{rms}^2`,"No $\\frac12$ with rms values.",""],
+   ["(b) E",R`E_{rms}=\sqrt{\eta_0S_{av}}=\sqrt{377(${tx(S)})}=${tx(E)}\ \text{V/m}`,`Peak $=\\sqrt2\\times$ rms $=${tx(E*Math.SQRT2)}$ V/m.`,"$E_{rms}=\\sqrt{\\eta_0S_{av}}$."],
+   ["(b) H",R`H_{rms}=\frac{E_{rms}}{\eta_0}=${tx(H)}\ \text{A/m}`,"",""],
+   ["(c) Energy",R`w_{av}=\frac{S_{av}}{v_e}=\frac{${tx(S)}}{3\times10^8}=${tx(w)}\ \text{J/m}^3`,`Equivalently $\\varepsilon_0E_{rms}^2$; split evenly, $w_e=w_m=${tx(w/2)}$ J/m³.`,"$w=S_{av}/c$."]];
+  return{steps:st,stages:[{k:"(a) S_av",q:"(a) Time-average power density?",u:Ss.u,v:Ss.v,s:0},
+   {q:"With rms fields, the plane-wave power density is:",opts:["$S_{av}=E_{rms}^2/\\eta_0$","$S_{av}=E_{rms}^2/2\\eta_0$","$S_{av}=2E_{rms}^2/\\eta_0$"],a:0,s:1,why:"$E_{peak}^2/2\\eta_0=E_{rms}^2/\\eta_0$: the $\\frac12$ is already inside the rms."},
+   {k:"(b) E_rms",q:"(b) RMS electric field?",u:Es.u,v:Es.v,s:2},{k:"(b) H_rms",q:"(b) RMS magnetic field?",u:Hs.u,v:Hs.v,s:3},
+   {k:"(c) w_av",q:"(c) Total time-average energy density?",u:Ws.u,v:Ws.v,s:4}]};}});
+
+/* ---- 4.3 E from H, power ---- */
+L.push({id:"4.3",like:5,min:10,why:"$\\mathbf E=\\eta_0\\mathbf H\\times\\hat\\beta$, one cross product, then instantaneous and average $\\mathbf S$. Exactly his L12 emphasis on getting the order right.",
+ orig:{a:1,b:-2,s:1},
+ gen(){let a,b;do{a=pick([-3,-2,-1,1,2,3]);b=pick([-3,-2,-1,1,2,3]);}while(a===b);return{a,b,s:pick([1,1,-1])};},
+ st:p=>`The complex $\\mathbf H$ field of a uniform plane wave, traveling in an unbounded source-free medium of free space, is given by $\\mathbf H=\\frac{1}{120\\pi}(${join(`${p.a===1?"":p.a===-1?"-":p.a}\\hat a_x`,`${p.b===1?"":p.b===-1?"-":p.b}\\hat a_y`)})e^{${p.s>0?"-":"+"}j\\beta_0z}$. Find the (a) corresponding electric field, (b) instantaneous power density vector, (c) time-average power density.`,
+ first:{ok:`Read $\\hat\\beta$ from the exponent sign, then $\\mathbf E=\\eta_0\\mathbf H\\times\\hat\\beta$.`,bad:["$\\mathbf E=\\eta_0\\hat\\beta\\times\\mathbf H$.","$\\mathbf E=\\mathbf H/\\eta_0$, same direction as H."]},
+ solve(p){const Ex=p.s*p.b,Ey=-p.s*p.a,mag=p.a*p.a+p.b*p.b,Sam=mag/ETA0,Sav=Sam/2;const dz=p.s>0?"+":"-";
+  const st=[["Direction and $\\eta$",R`e^{${p.s>0?"-":"+"}j\beta_0z}\Rightarrow\hat\beta=${dz}\hat a_z,\qquad \eta_0=120\pi`,"",""],
+   ["(a) Shortcut",R`\mathbf E=\eta_0\mathbf H\times\hat\beta=(${p.a}\hat a_x+(${p.b})\hat a_y)\times(${dz}\hat a_z)\,e^{\cdots}=(${Ex}\hat a_x+(${Ey})\hat a_y)e^{\cdots}`,"$\\hat a_x\\times\\hat a_z=-\\hat a_y$, $\\hat a_y\\times\\hat a_z=\\hat a_x$.","$\\mathbf E=\\eta_0\\mathbf H\\times\\hat\\beta$; the $120\\pi$ cancels."],
+   ["Answer (a)",R`\mathbf E=(${Ex}\hat a_x+(${Ey})\hat a_y)e^{${p.s>0?"-":"+"}j\beta_0z}\ \text{V/m}`,`Check $\\mathbf E\\cdot\\mathbf H\\propto(${Ex})(${p.a})+(${Ey})(${p.b})=0$.`,""],
+   ["Real fields",R`\boldsymbol{\mathcal E}=(${Ex}\hat a_x+(${Ey})\hat a_y)\cos(\omega t${p.s>0?"-":"+"}\beta_0z),\quad \boldsymbol{\mathcal H}=\frac{${p.a}\hat a_x+(${p.b})\hat a_y}{120\pi}\cos(\omega t${p.s>0?"-":"+"}\beta_0z)`,"Multiply by $e^{j\\omega t}$, take Re.",""],
+   ["(b) Cross",R`\boldsymbol{\mathcal S}=\boldsymbol{\mathcal E}\times\boldsymbol{\mathcal H}=${dz}\hat a_z\frac{${mag}}{120\pi}\cos^2(\cdot)=${dz}\hat a_z${f(Sam*1e3)}\cos^2(\cdot)\ \text{mW/m}^2`,`$|\\mathbf E||\\mathbf H|=${mag}/120\\pi$.`,"$|\\mathcal S|=|\\mathcal E||\\mathcal H|$ when they're perpendicular."],
+   ["(c) Average",R`\mathbf S_{av}=${dz}\hat a_z\frac{${mag}}{240\pi}=${dz}\hat a_z${f(Sav*1e3)}\ \text{mW/m}^2`,"$\\langle\\cos^2\\rangle=\\frac12$; check $|\\mathbf E|^2/2\\eta_0$.","Half the peak of $\\mathcal S$."]];
+  return{steps:st,stages:[{k:"(a) E_x",q:"(a) $E_x$ amplitude (sign included)?",u:"\\text{V/m}",v:Ex,s:1},{k:"(a) E_y",q:"(a) $E_y$ amplitude (sign included)?",u:"\\text{V/m}",v:Ey,s:1},
+   {k:"(b) 𝒮 peak",q:"(b) Peak of the instantaneous $\\mathcal S_z$ (coefficient of $\\cos^2$, sign included)?",u:"\\text{mW/m}^2",v:p.s*Sam*1e3,s:4},
+   {k:"(c) S_av",q:"(c) Time-average $S_z$ (sign included)?",u:"\\text{mW/m}^2",v:p.s*Sav*1e3,s:5}]};}});
+
+/* ---- 4.23 good conductor ---- */
+L.push({id:"4.23",like:5,min:10,why:"Classify with $\\sigma/\\omega\\varepsilon$, then one $\\alpha$ drives everything. The target field is $1/e$ of the start: one skin depth. He stressed 'classify first' at the end of L13.",
+ orig:{f:1,sig:0.1,er:4,E1:3,E2:1.104},
+ gen(){let F,s,er;do{F=pick([0.1,0.5,1,2]);s=pick([0.05,0.1,0.2,0.5,1]);er=pick([4,9,10,15,20]);}while(s/(2*Math.PI*F*1e6*er*EPS0)<100);
+  const E1=pick([1,2,3,5]),m=pick([1,1,2,0.5,3]);return{f:F,sig:s,er,E1,E2:+(E1*Math.exp(-m)).toPrecision(4)};},
+ st:p=>`The electrical constitutive parameters of moist earth at ${p.f} MHz are $\\sigma=${p.sig}$ S/m, $\\varepsilon_r=${p.er}$, $\\mu_r=1$. The electric field of a uniform plane wave at the interface (earth side) is $${p.E1}\\times10^{-2}$ V/m. Find the (a) distance the wave must travel before the field magnitude reduces to $${p.E2}\\times10^{-2}$ V/m, (b) attenuation in part (a) in decibels, (c) wavelength inside the earth, (d) phase velocity inside the earth, (e) intrinsic impedance of the earth.`,
+ first:{ok:"Loss tangent $\\sigma/\\omega\\varepsilon$ first. Good conductor, so $\\alpha=\\beta=\\sqrt{\\pi f\\mu\\sigma}$.",bad:["Good-dielectric $\\alpha=\\frac\\sigma2\\sqrt{\\mu/\\varepsilon}$, since earth is a dielectric.","Set $e^{-2\\alpha z}$ equal to the field ratio, since attenuation is about power."]},
+ solve(p){const w=2*Math.PI*p.f*1e6,we=w*p.er*EPS0,lt=p.sig/we,a=Math.sqrt(Math.PI*p.f*1e6*MU0*p.sig),z=Math.log(p.E1/p.E2)/a,dB=20*Math.log10(p.E1/p.E2),lam=2*Math.PI/a,vp=w/a,Re=Math.sqrt(w*MU0/(2*p.sig));const Vs=sc(vp,"\\text{m/s}");
+  const st=[["Classify",R`\omega\varepsilon=2\pi(${tx(p.f*1e6)})(${p.er})(8.854\times10^{-12})=${tx(we)},\qquad \frac{\sigma}{\omega\varepsilon}=${f(lt)}\gg1`,"Good conductor.","Compare $\\sigma$ with $\\omega\\varepsilon$."],
+   ["$\\alpha$",R`\alpha=\sqrt{\pi f\mu_0\sigma}=\sqrt{\pi(${tx(p.f*1e6)})(4\pi\times10^{-7})(${p.sig})}=${f(a)}\ \text{Np/m}`,"(4-40a). $\\beta\\simeq\\alpha$.",""],
+   ["(a) Distance",R`${p.E1}e^{-\alpha z}=${p.E2}\Rightarrow z=\frac{1}{\alpha}\ln\frac{${p.E1}}{${p.E2}}=\frac{${f(Math.log(p.E1/p.E2))}}{${f(a)}}=${f(z)}\ \text{m}`,`That's ${f(z*a)} skin depths ($\\delta=${f(1/a)}$ m).`,"Field decays as $e^{-\\alpha z}$, not $e^{-2\\alpha z}$."],
+   ["(b) dB",R`20\log_{10}\frac{${p.E1}}{${p.E2}}=${f(dB)}\ \text{dB}`,"Same as $8.686\\,\\alpha z$: 1 Np = 8.686 dB.","$20\\log_{10}$ for a field ratio."],
+   ["(c) $\\lambda$",R`\lambda=\frac{2\pi}{\beta}=2\pi\delta=${f(lam)}\ \text{m}`,`vs ${f(C0/Math.sqrt(p.er)/(p.f*1e6))} m in a lossless $\\varepsilon_r=${p.er}$ at ${p.f} MHz.`,"$\\beta\\simeq\\alpha$ in a good conductor."],
+   ["(d) $v_p$",R`v_p=\frac{\omega}{\beta}=\frac{2\pi(${tx(p.f*1e6)})}{${f(a)}}=${tx(vp)}\ \text{m/s}`,"$=\\omega\\delta$.",""],
+   ["(e) $\\eta$",R`\eta\simeq(1+j)\sqrt{\frac{\omega\mu_0}{2\sigma}}=(1+j)${f(Re)}\ \Omega`,`$|\\eta|=${f(Re*Math.SQRT2)}\\ \\Omega$ at 45°.`,"$\\eta=(1+j)\\sqrt{\\omega\\mu/2\\sigma}$."]];
+  return{steps:st,stages:[{q:`$\\sigma/\\omega\\varepsilon=${f(lt)}$. Which regime?`,opts:["Good conductor: $\\alpha=\\beta=\\sqrt{\\pi f\\mu\\sigma}$","Good dielectric: $\\alpha=\\frac\\sigma2\\sqrt{\\mu/\\varepsilon}$","Lossless: $\\alpha=0$"],a:0,s:0,why:"$\\sigma\\gg\\omega\\varepsilon$: conduction current dominates."},
+   {k:"(a) z",q:"(a) Distance?",u:"\\text{m}",v:z,s:2},{k:"(b) dB",q:"(b) Attenuation over that distance?",u:"\\text{dB}",v:dB,s:3},
+   {k:"(c) λ",q:"(c) Wavelength in the earth?",u:"\\text{m}",v:lam,s:4},{k:"(d) v_p",q:"(d) Phase velocity?",u:Vs.u,v:Vs.v,s:5},
+   {k:"(e) Re η",q:"(e) Real part of $\\eta$ (equal to the imaginary part)?",u:"\\Omega",v:Re,s:6}]};}});
+
+/* ---- 4.5 −y travel, complex amplitudes ---- */
+const CX=[[2,1],[1,3],[1,2],[3,1],[1,1],[2,3],[1,-1],[2,-1],[0,1],[3,0]];
+L.push({id:"4.5",like:4,min:10,why:"Same cross product as 4.3, but $e^{+j\\beta y}$ flips the direction and the amplitudes are complex. A one-trap problem, so a fair quiz.",
+ orig:{A:[-2,-1],B:[1,3],d:-1,H0:1},
+ gen(){const sg=()=>pick([1,-1]);const a=pick(CX),b=pick(CX);const s1=sg(),s2=sg();return{A:[s1*a[0],s1*a[1]],B:[s2*b[0],s2*b[1]],d:pick([-1,1]),H0:pick([1,2,5])};},
+ st:p=>`The magnetic field of a uniform plane wave in a source-free region is given by $\\mathbf H=${p.H0===1?"":p.H0+"\\times "}10^{-6}\\left[${join(term("\\hat a_x",p.A[0],p.A[1]),term("\\hat a_z",p.B[0],p.B[1]))}\\right]e^{${p.d<0?"+":"-"}j\\beta y}$. Assuming that the medium is free space, determine the (a) corresponding electric field, (b) time-average power density.`,
+ first:{ok:"Read the direction first: $e^{\\pm j\\beta y}$ gives $\\hat\\beta=\\mp\\hat a_y$. Then $\\mathbf E=\\eta_0\\mathbf H\\times\\hat\\beta$.",bad:["$\\hat\\beta=+\\hat a_y$ because $y$ appears in the exponent.","Complex amplitudes mean S_av = 0, so only E needs work."]},
+ solve(p){const H0=p.H0*1e-6,d=p.d,dy=d>0?"+":"-";const Ex=[-d*p.B[0],-d*p.B[1]],Ez=[d*p.A[0],d*p.A[1]];const K=ETA0*H0;
+  const m2=p.A[0]**2+p.A[1]**2+p.B[0]**2+p.B[1]**2,H2=m2*H0*H0,Sav=d*ETA0/2*H2;const Ks=sc(K,"\\text{V/m}"),Hs=sc(H2,"\\text{A}^2\\text{/m}^2"),Ss=sc(Math.abs(Sav),"\\text{W/m}^2");
+  const good=join(term("\\hat a_x",Ex[0],Ex[1]),term("\\hat a_z",Ez[0],Ez[1])),flip=join(term("\\hat a_x",-Ex[0],-Ex[1]),term("\\hat a_z",-Ez[0],-Ez[1])),half=join(term("\\hat a_x",-Ex[0],-Ex[1]),term("\\hat a_z",Ez[0],Ez[1]));
+  const st=[["Direction",R`e^{${d<0?"+":"-"}j\beta y}=e^{-j(${dy}\beta)y}\Rightarrow\hat\beta=${dy}\hat a_y`,"The trap in this problem.","$e^{-j\\boldsymbol\\beta\\cdot\\mathbf r}$."],
+   ["Cross term by term",R`\hat a_x\times(${dy}\hat a_y)=${dy}\hat a_z,\qquad \hat a_z\times(${dy}\hat a_y)=${d>0?"-":"+"}\hat a_x`,"",""],
+   ["(a) E",R`\mathbf E=\eta_0\mathbf H\times\hat\beta=${tx(K)}\left[${good}\right]e^{${d<0?"+":"-"}j\beta_0y}\ \text{V/m}`,"Maxwell check: $E_x=\\frac{\\partial H_z/\\partial y}{j\\omega\\varepsilon_0}$, $E_z=\\frac{-\\partial H_x/\\partial y}{j\\omega\\varepsilon_0}$.","$\\eta_0\\times$ the H prefactor."],
+   ["Perpendicular check",R`\mathbf E\cdot\hat a_y=0`,"No y-component.",""],
+   ["$|\\mathbf H|^2$",R`|\mathbf H|^2=(${tx(H0)})^2\left(|${cxs(p.A[0],p.A[1])}|^2+|${cxs(p.B[0],p.B[1])}|^2\right)=${tx(H2)}`,"$|a+jb|^2=a^2+b^2$.","Magnitude squared of each complex component, then add."],
+   ["(b) Power",R`\mathbf S_{av}=\hat\beta\frac{\eta_0}{2}|\mathbf H|^2=${dy}\hat a_y(60\pi)(${tx(H2)})=${dy}\hat a_y${tx(Math.abs(Sav))}\ \text{W/m}^2`,`Flows toward ${dy}y, as it must.`,"$\\frac{\\eta_0}{2}|\\mathbf H|^2$ along $\\hat\\beta$."]];
+  return{steps:st,stages:[{q:"Which way does the wave travel?",opts:[`$${dy}\\hat a_y$`,`$${d>0?"-":"+"}\\hat a_y$`,"Standing, no single direction"],a:0,s:0,why:"$e^{-j\\beta y}$ travels $+y$; $e^{+j\\beta y}$ travels $-y$."},
+   {q:`(a) $\\mathbf E=${tx(K)}[\\ \\cdots\\ ]e^{\\cdots}$. The bracket is:`,opts:[`$${good}$`,`$${flip}$`,`$${half}$`],a:0,s:2,why:"$\\mathbf H\\times\\hat\\beta$, term by term. The flipped one used the wrong $\\hat\\beta$."},
+   {k:"(a) η₀H₀",q:"(a) Prefactor $\\eta_0\\times$(H prefactor)?",u:Ks.u,v:Ks.v,s:2},
+   {k:"|H|²",q:"$|\\mathbf H|^2$?",u:Hs.u,v:Hs.v,s:4},
+   {k:"(b) S_av,y",q:"(b) $S_{av}$ magnitude?",u:Ss.u,v:Ss.v,s:5}]};}});
+
+/* ---- 4.7 standing wave ---- */
+L.push({id:"4.7",like:4,min:12,why:"Spot a standing wave from a real $\\cos\\beta_0x$, get E from the curl, show $S_{av}=0$. Conceptual and quick if you don't reach for $\\eta_0\\mathbf H\\times\\hat\\beta$.",
+ orig:{k:1,H0:1},
+ gen(){return{k:pick([1,2,3,-1,-2]),H0:pick([1,2,5])};},
+ st:p=>`The magnetic field of a uniform plane wave traveling in a source-free, free-space region is given by $\\mathbf H=${p.H0===1?"":p.H0+"\\times "}10^{-6}(\\hat a_y${p.k<0?"-":"+"}${cxs(0,Math.abs(p.k))}\\hat a_z)\\cos(\\beta_0x)$. (a) Is this a traveling or a standing wave? (b) Identify the traveling wave(s) of the magnetic field and the direction(s) of travel. (c) Find the corresponding electric field. (d) Determine the time-average power density of the wave.`,
+ first:{ok:"Split $\\cos\\beta_0x=\\frac12(e^{-j\\beta_0x}+e^{+j\\beta_0x})$, and get E from $\\mathbf E=\\frac{\\nabla\\times\\mathbf H}{j\\omega\\varepsilon_0}$.",bad:["$\\hat\\beta=+\\hat a_x$, so $\\mathbf E=\\eta_0\\mathbf H\\times\\hat a_x$.","It's traveling along $x$ because $x$ appears, so $S_{av}=\\frac{\\eta_0}{2}|\\mathbf H|^2$."]},
+ solve(p){const H0=p.H0*1e-6,K=ETA0*H0,kz=cxs(0,p.k);const pol=R`\hat a_y${p.k<0?"":"+"}${kz}\hat a_z`;
+  const st=[["(a)",R`\cos(\beta_0x)\ \text{has no}\ e^{\mp j\beta_0 x}\Rightarrow\text{standing wave}`,"",""],
+   ["(b) Euler",R`\mathbf H=\underbrace{\tfrac12 ${tx(H0)}(${pol})e^{-j\beta_0x}}_{+x}+\underbrace{\tfrac12 ${tx(H0)}(${pol})e^{+j\beta_0x}}_{-x}`,"Equal amplitudes: $|\\Gamma|=1$.",""],
+   ["Curl (only x-derivatives)",R`(\nabla\times\mathbf H)_y=-\frac{\partial H_z}{\partial x}=${kz}\beta_0${tx(H0)}\sin\beta_0x,\qquad (\nabla\times\mathbf H)_z=\frac{\partial H_y}{\partial x}=-\beta_0${tx(H0)}\sin\beta_0x`,"","$\\frac{d}{dx}\\cos\\beta_0x=-\\beta_0\\sin\\beta_0x$."],
+   ["(c) Divide by $j\\omega\\varepsilon_0$",R`\mathbf E=\eta_0${tx(H0)}\left[${p.k}\hat a_y-\frac1j\hat a_z\right]\sin\beta_0x=${tx(K)}(${p.k===1?"":p.k===-1?"-":p.k}\hat a_y+j\hat a_z)\sin(\beta_0x)\ \text{V/m}`,"$-1/j=j$, $\\beta_0/\\omega\\varepsilon_0=\\eta_0$. E is $\\sin$ where H is $\\cos$: shifted $\\lambda/4$.","Each component: curl, then divide by $j\\omega\\varepsilon_0$."],
+   ["Check with traveling waves",R`\mathbf E^\pm=\eta_0\mathbf H^\pm\times(\pm\hat a_x)\ \Rightarrow\ \mathbf E^++\mathbf E^-=${tx(K)}(${p.k===1?"":p.k===-1?"-":p.k}\hat a_y+j\hat a_z)\sin\beta_0x`,"$\\hat a_y\\times\\hat a_x=-\\hat a_z$, $\\hat a_z\\times\\hat a_x=\\hat a_y$.",""],
+   ["(d) Power",R`\tfrac12\mathbf E\times\mathbf H^*\propto\sin\beta_0x\cos\beta_0x\times(\text{purely imaginary})\ \Rightarrow\ \mathbf S_{av}=\tfrac12\text{Re}(\mathbf E\times\mathbf H^*)=0`,"Reactive energy sloshing, no net flow.","E and H are 90° out of phase in time at every x."]];
+  return{steps:st,stages:[{q:"(a), (b) This wave is:",opts:["Standing: two equal waves, one toward $+x$, one toward $-x$","Traveling toward $+x$","Traveling toward $-x$ only"],a:0,s:1,why:"A real $\\cos\\beta_0x$ is the sum of $e^{\\mp j\\beta_0x}$ with equal weights."},
+   {k:"(c) E_y",q:"(c) $E_y$ coefficient of $\\sin\\beta_0x$ (sign included)?",u:"\\times10^{-4}\\ \\text{V/m}",v:p.k*K/1e-4,s:3},
+   {k:"(c) E_z",q:"(c) $E_z=jC\\sin\\beta_0x$. What is $C$?",u:"\\times10^{-4}\\ \\text{V/m}",v:K/1e-4,s:3},
+   {k:"(d) S_av",q:"(d) Time-average power density magnitude?",u:"\\text{W/m}^2",v:0,s:5}]};}});
+
+/* ---- 4.21 good dielectric ---- */
+L.push({id:"4.21",like:4,min:15,why:"The good-dielectric partner of 4.23: classify, then $\\eta$, $\\alpha$, $\\beta$. Seven parts make it long, so expect a trimmed version.",
+ orig:{f:1,sig:1e-4,er:9,k:2,H0:1},
+ gen(){let F,s,er;do{F=pick([0.5,1,2,3]);s=pick([1e-5,5e-5,1e-4,5e-4,1e-3]);er=pick([4,9,16,25]);}while(s/(2*Math.PI*F*1e9*er*EPS0)>0.01);return{f:F,sig:s,er,k:pick([1,2,3,-2]),H0:pick([1,2,5])};},
+ st:p=>`The magnetic field intensity of a plane wave traveling in a lossy earth is $\\mathbf H=(\\hat a_y${p.k<0?"-":"+"}${cxs(0,Math.abs(p.k))}\\hat a_z)H_0e^{-\\alpha x}e^{-j\\beta x}$, with $H_0=${p.H0}\\ \\mu$A/m. The earth has $\\sigma=${tx(p.sig)}$ S/m, dielectric constant ${p.er}, and $f=${p.f}$ GHz. Find inside the earth the (a) electric field vector, (b) average power density vector, (c) phase constant, (d) phase velocity, (e) wavelength, (f) attenuation constant, (g) skin depth.`,
+ first:{ok:"Compute $\\sigma/\\omega\\varepsilon$ first to pick the approximation.",bad:["Good-conductor $\\alpha=\\sqrt{\\pi f\\mu\\sigma}$, since the earth conducts.","Lossy, so start with $\\eta=(1+j)\\sqrt{\\omega\\mu/2\\sigma}$."]},
+ solve(p){const w=2*Math.PI*p.f*1e9,we=w*p.er*EPS0,lt=p.sig/we,eta=ETA0/Math.sqrt(p.er),H0=p.H0*1e-6,Ea=eta*H0,H2=(1+p.k*p.k)*H0*H0,S=eta/2*H2,b=w*Math.sqrt(p.er)/C0,vp=w/b,lam=2*Math.PI/b,a=p.sig/2*eta,dl=1/a;
+  const Es=sc(Ea,"\\text{V/m}"),Ss=sc(S,"\\text{W/m}^2"),As=sc(a,"\\text{Np/m}");const kj=cxs(0,p.k);
+  const st=[["Classify",R`\omega\varepsilon=2\pi(${tx(p.f*1e9)})(${p.er})(8.854\times10^{-12})=${f(we)},\qquad \frac{\sigma}{\omega\varepsilon}=${tx(lt)}\ll1`,"Good dielectric.","Compare $\\sigma$ with $\\omega\\varepsilon$."],
+   ["Impedance",R`\eta\simeq\sqrt{\frac{\mu_0}{${p.er}\varepsilon_0}}=\frac{377}{${f(Math.sqrt(p.er))}}=${f(eta)}\ \Omega`,"Essentially real.","$\\eta_0/\\sqrt{\\varepsilon_r}$."],
+   ["(a) E (travels +x)",R`\mathbf E=\eta\mathbf H\times\hat a_x:\ \hat a_y\times\hat a_x=-\hat a_z,\ ${kj}\hat a_z\times\hat a_x=${kj}\hat a_y`,"",""],
+   ["Answer (a)",R`\mathbf E=${tx(Ea)}(${kj}\hat a_y-\hat a_z)e^{-\alpha x}e^{-j\beta x}\ \text{V/m}`,"Maxwell route: divide $\\nabla\\times\\mathbf H$ by $(\\sigma+j\\omega\\varepsilon)$; same $\\eta$.","$\\eta H_0$."],
+   ["(b) Power",R`\mathbf S_{av}=\hat a_x\frac{\eta}{2}|\mathbf H|^2e^{-2\alpha x}=\hat a_x\frac{${f(eta)}}{2}(${tx(H2)})e^{-2\alpha x}=\hat a_x${tx(S)}e^{-2\alpha x}\ \text{W/m}^2`,`$|\\hat a_y+${kj}\\hat a_z|^2=1+${p.k*p.k}=${1+p.k*p.k}$.`,"$\\frac\\eta2|\\mathbf H|^2$."],
+   ["(c)–(e)",R`\beta\simeq\omega\sqrt{\mu\varepsilon}=\frac{2\pi(${tx(p.f*1e9)})(${f(Math.sqrt(p.er))})}{3\times10^8}=${f(b)}\ \text{rad/m},\quad v_p=\frac\omega\beta=${tx(vp)}\ \text{m/s},\quad \lambda=\frac{2\pi}\beta=${f(lam)}\ \text{m}`,"","$\\beta=\\omega\\sqrt{\\mu\\varepsilon}=2\\pi f\\sqrt{\\varepsilon_r}/c$."],
+   ["(f), (g)",R`\alpha\simeq\frac\sigma2\eta=\frac{${tx(p.sig)}}{2}(${f(eta)})=${tx(a)}\ \text{Np/m},\qquad \delta=\frac1\alpha=${f(dl)}\ \text{m}`,"(4-38), (4-39). The exact (4-28c, d) agree to 4 digits here.","$\\alpha=\\frac\\sigma2\\sqrt{\\mu/\\varepsilon}$."]];
+  return{steps:st,stages:[{q:`$\\sigma/\\omega\\varepsilon=${tx(lt)}$. Which regime?`,opts:["Good dielectric: $\\alpha\\simeq\\frac\\sigma2\\eta$, $\\beta\\simeq\\omega\\sqrt{\\mu\\varepsilon}$","Good conductor: $\\alpha=\\beta=\\sqrt{\\pi f\\mu\\sigma}$","Lossless: $\\alpha=0$, $\\delta=\\infty$"],a:0,s:0,why:"Conduction current is tiny next to displacement current. Small loss, not zero."},
+   {k:"(a) |E| scale",q:"(a) Prefactor $\\eta H_0$ of $\\mathbf E$?",u:Es.u,v:Es.v,s:3},
+   {k:"(b) S_av",q:"(b) $S_{av}$ at $x=0$?",u:Ss.u,v:Ss.v,s:4},
+   {k:"(c) β",q:"(c) Phase constant?",u:"\\text{rad/m}",v:b,s:5},
+   {k:"(f) α",q:"(f) Attenuation constant?",u:As.u,v:As.v,s:6},
+   {k:"(g) δ",q:"(g) Skin depth?",u:"\\text{m}",v:dl,s:6}]};}});
+
+/* ---- 4.15 oblique wave ---- */
+const TRI=[[6,8],[3,4],[8,6],[4,3],[5,12],[12,5],[9,12],[12,9]];
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+L.push({id:"4.15",like:3,min:15,why:"Read $\\boldsymbol\\beta$ with the sign convention, then per-axis $\\lambda$, $v_p$, $v_e$. Seven parts is long for 15 minutes, but any slice of it is a quiz.",
+ orig:{by:-6,bz:8,A:5,sg:1},
+ gen(){const[u,w]=pick(TRI);return{by:pick([1,-1])*u,bz:pick([1,-1])*w,A:pick([1,2,5,10]),sg:pick([1,-1])};},
+ st:p=>{const g=gcd(Math.abs(p.by),Math.abs(p.bz)),ey=p.sg*p.bz/g,ez=-p.sg*p.by/g;const ph=join(`${-p.by}y`,`${-p.bz}z`);
+  return `The complex electric field of a time-harmonic wave traveling in a source-free, free-space region is $\\mathbf E=${p.A}\\times10^{-3}(${join(`${ey}\\hat a_y`,`${ez}\\hat a_z`)})e^{j(${ph})}$, with $y,z$ in meters. Determine the (a) angle of wave travel (relative to the $z$ axis); (b) three phase constants along the oblique direction, $y$ and $z$; (c) three wavelengths; (d) three phase velocities; (e) three energy velocities; (f) frequency; (g) associated magnetic field.`;},
+ first:{ok:"Rewrite $e^{j(\\cdots)}$ as $e^{-j\\boldsymbol\\beta\\cdot\\mathbf r}$: flip both signs to read $\\boldsymbol\\beta=\\beta_y\\hat a_y+\\beta_z\\hat a_z$.",bad:["Read $\\boldsymbol\\beta$ straight from $e^{+j(\\cdots)}$ with the signs as written.","$\\beta=|\\beta_y|+|\\beta_z|$, then $\\lambda=2\\pi/\\beta$."]},
+ solve(p){const g=gcd(Math.abs(p.by),Math.abs(p.bz)),ey=p.sg*p.bz/g,ez=-p.sg*p.by/g,A=p.A*1e-3;const b=Math.hypot(p.by,p.bz),ay=Math.abs(p.by),az=Math.abs(p.bz);
+  const th=Math.acos(p.bz/b)/DEG,F=C0*b/(2*Math.PI),Hx=A*(p.by*ez-p.bz*ey)/b/ETA0,Hs=sc(Hx,"\\text{A/m}");const c8=x=>f(x/1e8);
+  const st=[["Wave vector",R`\boldsymbol\beta=${p.by}\hat a_y+${p.bz}\hat a_z\ (\text{flip both signs}),\qquad \boldsymbol\beta\cdot\mathbf E\propto(${p.by})(${ey})+(${p.bz})(${ez})=0`,`E ⊥ β. Travels toward ${p.by<0?"−":"+"}y and ${p.bz<0?"−":"+"}z.`,"$e^{j(\\cdots)}=e^{-j(-\\cdots)}$."],
+   ["(a) Angle",R`\beta=\sqrt{${p.by*p.by}+${p.bz*p.bz}}=${b},\quad \cos\theta=\frac{${p.bz}}{${b}}\Rightarrow\theta=${f(th)}^\circ`,`From $+z$, tilted toward ${p.by<0?"$-y$":"$+y$"}.`,"$\\cos\\theta=\\beta_z/\\beta$."],
+   ["(b), (c)",R`\beta,|\beta_y|,|\beta_z|=${b},\ ${ay},\ ${az}\ \text{rad/m};\qquad \lambda=\frac{2\pi}{\beta_i}=${f(2*Math.PI/b)},\ ${f(2*Math.PI/ay)},\ ${f(2*Math.PI/az)}\ \text{m}`,"Axis wavelengths are longer.",""],
+   ["(d) Phase velocities",R`v_{pi}=\frac{\omega}{\beta_i}=c\frac{\beta}{\beta_i}=3,\ ${c8(C0*b/ay)},\ ${c8(C0*b/az)}\ (\times10^8\ \text{m/s})`,"(4-22), (4-23): at least $c$.","$v_{pi}=c\\beta/\\beta_i$."],
+   ["(e) Energy velocities",R`v_{ei}=c\frac{\beta_i}{\beta}=3,\ ${c8(C0*ay/b)},\ ${c8(C0*az/b)}\ (\times10^8\ \text{m/s})`,R`Check $v_{py}v_{ey}=c^2$.`,"$v_{ei}=c\\beta_i/\\beta$."],
+   ["(f) Frequency",R`f=\frac{c\beta}{2\pi}=\frac{3\times10^8(${b})}{2\pi}=${f(F/1e6)}\ \text{MHz}`,"","$\\omega=c\\beta$."],
+   ["(g) H",R`\mathbf H=\frac1{\eta_0}\hat\beta\times\mathbf E,\quad (\hat\beta\times\mathbf E)_x=\frac{\beta_yE_z-\beta_zE_y}{\beta}=\frac{(${p.by})(${ez})-(${p.bz})(${ey})}{${b}}${tx(A)}`,"Only an x-component survives.","Cross a $yz$-vector with a $yz$-vector: pure $\\hat a_x$."],
+   ["Answer (g)",R`\mathbf H=\hat a_x${tx(Hx)}\,e^{j(\cdots)}\ \text{A/m}`,R`$|\mathbf H|=|\mathbf E|/\eta_0$ ✓.`,""]];
+  return{steps:st,stages:[{q:"The wave vector is:",opts:[`$\\boldsymbol\\beta=${p.by}\\hat a_y+${p.bz}\\hat a_z$`,`$\\boldsymbol\\beta=${-p.by}\\hat a_y+${-p.bz}\\hat a_z$`,`$\\boldsymbol\\beta=${p.bz}\\hat a_y+${p.by}\\hat a_z$`],a:0,s:0,why:"The convention is $e^{-j\\boldsymbol\\beta\\cdot\\mathbf r}$, so a $+j$ exponent flips the signs."},
+   {k:"(a) θ",q:"(a) Angle of travel from the $+z$ axis?",u:"^\\circ",v:th,s:1},
+   {k:"(d) v_py",q:"(d) Phase velocity along $y$?",u:"\\times10^8\\ \\text{m/s}",v:C0*b/ay/1e8,s:3},
+   {k:"(e) v_ey",q:"(e) Energy velocity along $y$?",u:"\\times10^8\\ \\text{m/s}",v:C0*ay/b/1e8,s:4},
+   {k:"(f) f",q:"(f) Frequency?",u:"\\text{MHz}",v:F/1e6,s:5},
+   {k:"(g) H_x",q:"(g) $H_x$ amplitude (sign included)?",u:Hs.u,v:Hs.v,s:7}]};}});
+
+/* ---- 4.1 derive the uniform plane wave ---- */
+L.push({id:"4.1",like:3,min:10,why:"The L12 derivation: curl-curl → Helmholtz → keep $e^{-j\\beta z}$ → Faraday → $\\eta$. Short, and he said a quiz can be part of a derivation.",
+ orig:{E0:1,er:4,f:300},
+ gen(){return{E0:pick([1,2,5,10]),er:pick([1,2.25,4,9]),f:pick([100,300,500,1000])};},
+ st:p=>`A uniform plane wave having only an $x$ component of the electric field is traveling in the $+z$ direction in an unbounded lossless, source-free region. Using Maxwell's equations write expressions for the electric and corresponding magnetic field intensities. Compare your answers to those of (4-2b) and (4-3c). <i>(MAXWELL adds: with $E_0^+=${p.E0}$ V/m, $\\varepsilon_r=${p.er}$, $\\mu_r=1$, $f=${p.f}$ MHz, give $\\beta$ and $H_0$.)</i>`,
+ first:{ok:"Curl Faraday into Ampère to get the Helmholtz equation for $E_x(z)$, keep only $e^{-j\\beta z}$, then $\\mathbf H=-\\frac{1}{j\\omega\\mu}\\nabla\\times\\mathbf E$.",bad:["Write $\\mathbf H=\\hat a_yE_0/\\eta$ and stop.","Solve a second, independent wave equation for $H_y$."]},
+ solve(p){const s=Math.sqrt(p.er),b=2*Math.PI*p.f*1e6*s/C0,eta=ETA0/s,H=p.E0/eta;
+  const st=[["Wave equation",R`\nabla\times\nabla\times\mathbf E=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E=-j\omega\mu(j\omega\varepsilon\mathbf E)\ \Rightarrow\ \nabla^2\mathbf E+\beta^2\mathbf E=0`,"Source-free: $\\nabla\\cdot\\mathbf E=0$, $\\beta=\\omega\\sqrt{\\mu\\varepsilon}$.",""],
+   ["Uniform plane wave",R`\frac{\partial}{\partial x}=\frac{\partial}{\partial y}=0\ \Rightarrow\ \frac{d^2E_x}{dz^2}+\beta^2E_x=0`,"",""],
+   ["Solve, keep +z",R`E_x=E_0^+e^{-j\beta z}+E_0^-e^{+j\beta z}\ \xrightarrow{+z\ \text{only}}\ \mathbf E=\hat a_xE_0^+e^{-j\beta z}`,"(4-2b).",""],
+   ["Curl",R`\nabla\times\mathbf E=\hat a_y\frac{\partial E_x}{\partial z}=-j\beta E_0^+e^{-j\beta z}\hat a_y`,"",""],
+   ["Faraday, identify $\\eta$",R`\mathbf H=-\frac{1}{j\omega\mu}(-j\beta)E_0^+e^{-j\beta z}\hat a_y=\hat a_y\frac{\beta}{\omega\mu}E_0^+e^{-j\beta z}=\hat a_y\frac{E_0^+}{\eta}e^{-j\beta z}`,"$\\beta/\\omega\\mu=\\sqrt{\\varepsilon/\\mu}=1/\\eta$. Matches (4-3c).",""],
+   ["Numbers",R`\beta=\frac{2\pi f\sqrt{\varepsilon_r}}{c}=\frac{2\pi(${tx(p.f*1e6)})(${f(s)})}{3\times10^8}=${f(b)}\ \text{rad/m},\quad H_0=\frac{E_0^+\sqrt{\varepsilon_r}}{120\pi}=${f(H*1e3)}\ \text{mA/m}`,`$\\eta=${f(eta)}\\ \\Omega$.`,"$\\eta=\\eta_0/\\sqrt{\\varepsilon_r}$."]];
+  return{steps:st,stages:[{q:"Curl Faraday and substitute Ampère. Which term drops, and why?",opts:["$\\nabla(\\nabla\\cdot\\mathbf E)$, since the region is source-free","$\\nabla^2\\mathbf E$, since the wave is uniform","$j\\omega\\mu\\mathbf J$, since $\\mathbf J=\\sigma\\mathbf E$"],a:0,s:0,why:"No charge, so $\\nabla\\cdot\\mathbf E=0$."},
+   {q:"Of $E_0^+e^{-j\\beta z}+E_0^-e^{+j\\beta z}$, which survives?",opts:["$E_0^+e^{-j\\beta z}$: travels $+z$","$E_0^-e^{+j\\beta z}$: travels $+z$","Both, as a standing wave"],a:0,s:2,why:"With $e^{+j\\omega t}$, $e^{-j\\beta z}$ moves toward $+z$."},
+   {q:"Faraday gives $\\mathbf H=\\hat a_y\\frac{\\beta}{\\omega\\mu}E_0^+e^{-j\\beta z}$. That ratio is:",opts:["$1/\\eta$","$\\eta$","$1/(\\eta\\beta)$"],a:0,s:4,why:"$\\omega\\sqrt{\\mu\\varepsilon}/\\omega\\mu=\\sqrt{\\varepsilon/\\mu}$."},
+   {k:"β",q:"$\\beta$ for the MAXWELL numbers?",u:"\\text{rad/m}",v:b,s:5},
+   {k:"H₀",q:"$H_0$ for the MAXWELL numbers?",u:"\\text{mA/m}",v:H*1e3,s:5}]};}});
+
+/* ---- 4.19 derive v_ez ---- */
+L.push({id:"4.19",like:3,min:10,why:"A one-page derivation ($\\mathcal S_z/w$) with a single trap ($w_e+w_m$, not $w_e$). Fits 10 minutes, but he leans toward numbers.",
+ orig:{th:30,er:1},
+ gen(){return{th:pick([15,20,30,45,60,70]),er:pick([1,2.25,4,9])};},
+ st:p=>`Derive the energy velocity of (4-24) using the definition of (4-9), (4-18a), and (4-18b). <i>(MAXWELL adds: for $\\theta_i=${p.th}^\\circ$ in a medium with $\\varepsilon_r=${p.er}$, give $v_{ez}$ and $v_{pz}$.)</i>`,
+ first:{ok:"Write the real forward TE$^y$ fields, form $\\mathcal S_z$ and $w=w_e+w_m$, divide.",bad:["$v_{ez}=\\omega/\\beta_z=v/\\cos\\theta_i$.","Divide $\\mathcal S_z$ by $w_e$ alone, since $w_e$ holds the energy."]},
+ solve(p){const v=C0/Math.sqrt(p.er),c=Math.cos(p.th*DEG),ve=v*c,vp=v/c;
+  const st=[["Real fields",R`\boldsymbol{\mathcal E}=E_0(\hat a_x\cos\theta_i-\hat a_z\sin\theta_i)\cos\Phi,\quad \boldsymbol{\mathcal H}=\hat a_y\frac{E_0}{\eta}\cos\Phi,\quad \Phi=\omega t-\beta(x\sin\theta_i+z\cos\theta_i)`,"From (4-18a, b), forward wave.",""],
+   ["Poynting",R`\boldsymbol{\mathcal S}=\frac{E_0^2}{\eta}\cos^2\Phi\left[\cos\theta_i(\hat a_x\times\hat a_y)-\sin\theta_i(\hat a_z\times\hat a_y)\right]=\frac{E_0^2}{\eta}\cos^2\Phi(\hat a_z\cos\theta_i+\hat a_x\sin\theta_i)`,"",""],
+   ["Energy density",R`w=\tfrac12\varepsilon E_0^2\cos^2\Phi+\tfrac12\mu\frac{E_0^2}{\eta^2}\cos^2\Phi=\varepsilon E_0^2\cos^2\Phi`,"$\\mu/\\eta^2=\\varepsilon$.",""],
+   ["(4-9) along z",R`v_{ez}=\frac{\mathcal S_z}{w}=\frac{E_0^2\cos\theta_i/\eta}{\varepsilon E_0^2}=\frac{\cos\theta_i}{\sqrt{\mu\varepsilon}}=v\cos\theta_i`,"$\\cos^2\\Phi$ cancels: holds at every instant. (4-24).",""],
+   ["Numbers",R`v=\frac{3\times10^8}{\sqrt{${p.er}}}=${f(v/1e8)}\times10^8,\quad v_{ez}=v\cos${p.th}^\circ=${f(ve/1e8)}\times10^8,\quad v_{pz}=\frac{v}{\cos${p.th}^\circ}=${f(vp/1e8)}\times10^8\ \text{m/s}`,"Check $v_{pz}v_{ez}=v^2$ (4-25).","$v_{ez}=v\\cos\\theta_i$, $v_{pz}=v/\\cos\\theta_i$."]];
+  return{steps:st,stages:[{q:"The energy density in (4-9) is:",opts:["$w_e+w_m=\\varepsilon E_0^2\\cos^2\\Phi$","$w_e=\\frac12\\varepsilon E_0^2\\cos^2\\Phi$ only","$\\frac14\\varepsilon E_0^2$, the time average"],a:0,s:2,why:"Using only $w_e$ gives $2v\\cos\\theta_i$, faster than the wave itself."},
+   {q:"$\\mathcal S_z$ picks up which factor?",opts:["$\\cos\\theta_i$","$\\sin\\theta_i$","$1/\\cos\\theta_i$"],a:0,s:1,why:"$\\hat a_x\\times\\hat a_y=\\hat a_z$ carries the $\\cos\\theta_i$ term."},
+   {k:"v_ez",q:"$v_{ez}$ for the MAXWELL numbers?",u:"\\times10^8\\ \\text{m/s}",v:ve/1e8,s:4},
+   {k:"v_pz",q:"$v_{pz}$ for the same wave?",u:"\\times10^8\\ \\text{m/s}",v:vp/1e8,s:4}]};}});
+
+/* ---- 4.17 TM^y H from Maxwell ---- */
+L.push({id:"4.17",like:2,min:12,why:"Re-deriving Example 4-2's H by curl, sign bookkeeping on two waves. Already worked in the book, so a lower quiz pick.",
+ orig:{th:30,E0:1,er:1},
+ gen(){return{th:pick([20,30,45,60]),E0:pick([1,2,5]),er:pick([1,2.25,4])};},
+ st:p=>`Given the electric field of Example 4-2 and using Maxwell's equations, determine the magnetic field. Compare it with that found in the solution of Example 4-2. [$\\mathbf E=\\hat a_y\\left[E_0^+e^{-j\\beta(x\\sin\\theta_i+z\\cos\\theta_i)}+E_0^-e^{+j\\beta(x\\sin\\theta_i+z\\cos\\theta_i)}\\right]$] <i>(MAXWELL adds: with $E_0^+=${p.E0}$ V/m, $\\theta_i=${p.th}^\\circ$, $\\varepsilon_r=${p.er}$, give the forward $H_x^+$ amplitude and $Z_z$.)</i>`,
+ first:{ok:"Curl of a pure-$y$ field $E_y(x,z)$: only $-\\frac{\\partial E_y}{\\partial z}\\hat a_x$ and $\\frac{\\partial E_y}{\\partial x}\\hat a_z$ survive.",bad:["$\\mathbf H=\\hat a_yE_y/\\eta$, same direction as E.","Use the TE$^y$ result with $x$ and $z$ swapped."]},
+ solve(p){const eta=ETA0/Math.sqrt(p.er),c=Math.cos(p.th*DEG),s=Math.sin(p.th*DEG),Hx=-p.E0*c/eta,Zz=eta/c;
+  const st=[["Curl",R`\nabla\times\mathbf E=-\hat a_x\frac{\partial E_y}{\partial z}+\hat a_z\frac{\partial E_y}{\partial x}`,"No $y$-dependence, so no $y$-component.",""],
+   ["Derivatives",R`E_0^+\ \text{term}:\ \frac{\partial}{\partial z}\to-j\beta\cos\theta_i,\ \frac{\partial}{\partial x}\to-j\beta\sin\theta_i;\qquad E_0^-\ \text{term}:\ \text{signs flip}`,"",""],
+   ["x-component",R`H_x=-\frac{1}{j\omega\mu}\left(-\frac{\partial E_y}{\partial z}\right)=\frac{\beta}{\omega\mu}\cos\theta_i\left(-E_0^+e^{-j\beta(\cdot)}+E_0^-e^{+j\beta(\cdot)}\right)`,"",""],
+   ["z-component",R`H_z=-\frac{1}{j\omega\mu}\frac{\partial E_y}{\partial x}=\frac{\beta}{\omega\mu}\sin\theta_i\left(E_0^+e^{-j\beta(\cdot)}-E_0^-e^{+j\beta(\cdot)}\right)`,"",""],
+   ["Collect with $\\beta/\\omega\\mu=1/\\eta$",R`\mathbf H=\frac{E_0^+}{\eta}(-\hat a_x\cos\theta_i+\hat a_z\sin\theta_i)e^{-j\beta(\cdot)}+\frac{E_0^-}{\eta}(\hat a_x\cos\theta_i-\hat a_z\sin\theta_i)e^{+j\beta(\cdot)}`,"Identical to Example 4-2.",""],
+   ["Numbers",R`H_x^+=-\frac{E_0^+\cos\theta_i}{\eta}=-\frac{${p.E0}\cos${p.th}^\circ}{${f(eta)}}=${f(Hx*1e3)}\ \text{mA/m},\qquad Z_z=-\frac{E_y^+}{H_x^+}=\frac{\eta}{\cos\theta_i}=${f(Zz)}\ \Omega`,`$H_z^+=${f(p.E0*s/eta*1e3)}$ mA/m.`,"$\\eta=\\eta_0/\\sqrt{\\varepsilon_r}$."]];
+  return{steps:st,stages:[{q:"$\\nabla\\times(\\hat a_yE_y(x,z))$ has which components?",opts:["$\\hat a_x$ and $\\hat a_z$","$\\hat a_y$ only","$\\hat a_x$ only"],a:0,s:0,why:"$-\\partial_zE_y\\,\\hat a_x+\\partial_xE_y\\,\\hat a_z$."},
+   {q:"For the $E_0^-$ term, $\\frac{\\partial}{\\partial z}$ brings down:",opts:["$+j\\beta\\cos\\theta_i$","$-j\\beta\\cos\\theta_i$","$+j\\beta\\sin\\theta_i$"],a:0,s:1,why:"$e^{+j\\beta(\\cdot)}$: the backward wave's derivatives flip sign."},
+   {k:"H_x⁺",q:"Forward $H_x^+$ amplitude (sign included)?",u:"\\text{mA/m}",v:Hx*1e3,s:5},
+   {k:"Z_z",q:"$Z_z$ for the forward wave?",u:"\\Omega",v:Zz,s:5}]};}});
+
+G.hw.ch4=L;
+})(window.MXG);
+
+/* QUIZ ARENA · HW 7 = Balanis Ch. 5 #1–5 (normal incidence, power, SWR). All five are normal incidence, so the
+   ⊥/∥ (Prather: TM^y / TE^y) naming never enters; η = η0/√ε_r for nonmagnetic media, η0 = 120π.
+   Ordering = estimated quiz likelihood. */
+(function(G){const U=G.hwU,{ETA0,C0,pick}=U,f=U.f3;
+const eta=er=>ETA0/Math.sqrt(er);
+const gam=(e1,e2)=>(e2-e1)/(e2+e1);
+const L=[];
+
+/* ---- 5.3 two dielectrics ---- */
+L.push({id:"5.3",like:5,min:5,why:"Two impedances, $\\Gamma$, $T$, and the power split with the $\\eta_1/\\eta_2$ factor. Five minutes, and the 4% + 64% ≠ 100% trap is exactly what he grades.",
+ orig:{e1:4,e2:9},
+ gen(){const P=[1,2.25,2.56,4,6.25,9,16];let a=pick(P),b=pick(P);while(b===a)b=pick(P);return{e1:a,e2:b};},
+ st:p=>`A uniform plane wave traveling in a medium with relative permittivity of ${p.e1} is normally incident upon a dielectric medium with a dielectric constant of ${p.e2}. Assuming both media are nonferromagnetic and lossless, determine (a) the reflection and transmission coefficients and (b) the percentages of the incident power that are reflected and transmitted.`,
+ first:{ok:"$\\eta=\\eta_0/\\sqrt{\\varepsilon_r}$ on each side, then $\\Gamma^b=\\frac{\\eta_2-\\eta_1}{\\eta_2+\\eta_1}$, $T^b=1+\\Gamma^b$, and power via $|\\Gamma^b|^2$ and $|T^b|^2\\eta_1/\\eta_2$.",
+   bad:["$\\Gamma^b=\\frac{\\varepsilon_2-\\varepsilon_1}{\\varepsilon_2+\\varepsilon_1}$, straight from the dielectric constants.","Find $T^b$ from power first: $|T^b|^2=1-|\\Gamma^b|^2$."]},
+ solve(p){const n1=eta(p.e1),n2=eta(p.e2),G_=gam(n1,n2),T=1+G_,R=G_*G_*100,Tt=T*T*n1/n2*100;
+  const st=[["Impedances",`\\eta_1=\\frac{120\\pi}{\\sqrt{${p.e1}}}=${f(n1)}\\ \\Omega,\\qquad \\eta_2=\\frac{120\\pi}{\\sqrt{${p.e2}}}=${f(n2)}\\ \\Omega`,"Nonmagnetic: only ε changes η.","$\\eta=\\eta_0/\\sqrt{\\varepsilon_r}$."],
+   ["(a) Γ",`\\Gamma^b=\\frac{\\eta_2-\\eta_1}{\\eta_2+\\eta_1}=\\frac{${f(n2)}-${f(n1)}}{${f(n2)}+${f(n1)}}=${f(G_)}`,"Where it goes minus where it came from.","$\\eta_2-\\eta_1$ on top."],
+   ["(a) T",`T^b=\\frac{2\\eta_2}{\\eta_2+\\eta_1}=${f(T)}`,"Check $1+\\Gamma^b=T^b$.","$T^b=1+\\Gamma^b$."],
+   ["(b) Reflected power",`\\frac{S^r}{S^i}=|\\Gamma^b|^2=${f(G_*G_)}=${f(R)}\\%`,"",""],
+   ["(b) Transmitted power",`\\frac{S^t}{S^i}=|T^b|^2\\frac{\\eta_1}{\\eta_2}=${f(T*T)}\\times${f(n1/n2)}=${f(Tt)}\\%`,"Equals $1-|\\Gamma^b|^2$.","Don't forget $\\eta_1/\\eta_2$."]];
+  return{steps:st,stages:[
+   {k:"Γᵇ",q:"(a) Reflection coefficient $\\Gamma^b$?",u:"",v:G_,s:1},
+   {k:"Tᵇ",q:"(a) Transmission coefficient $T^b$?",u:"",v:T,s:2},
+   {k:"% reflected",q:"(b) Percent of the incident power reflected?",u:"\\%",v:R,s:3,tol:0.03},
+   {q:"The transmitted power fraction is:",opts:["$|T^b|^2\\,\\eta_1/\\eta_2$","$|T^b|^2$","$|T^b|$"],a:0,s:4,why:"$S=|E|^2/2\\eta$, and the two sides have different η."},
+   {k:"% transmitted",q:"(b) Percent transmitted?",u:"\\%",v:Tt,s:4}]};}});
+
+/* ---- 5.2 lake ---- */
+const MATS=[{n:"pure water",w:"a calm lake",er:81},{n:"glass",w:"a thick glass plate",er:4},{n:"ethanol",w:"a tank of ethanol",er:25},{n:"alumina",w:"a thick alumina block",er:9},{n:"silicon",w:"a silicon wafer stack",er:11.7},{n:"polyethylene",w:"a polyethylene block",er:2.25}];
+L.push({id:"5.2",like:5,min:4,why:"One $\\Gamma$, then square it. The fastest problem in the set, and the 'field ratio vs power ratio' trap is quiz bait.",
+ orig:{n:"pure water",w:"a calm lake",er:81},
+ gen(){return Object.assign({},pick(MATS));},
+ st:p=>`The dielectric constant of ${p.n} is ${p.er}. Calculate the percentage of the incident power density that is reflected and transmitted when a uniform plane wave traveling in air is normally incident upon ${p.w}. Assume the material is lossless.`,
+ first:{ok:`$\\eta_2=\\eta_0/\\sqrt{\\varepsilon_r}$, get $\\Gamma^b$, then reflected power is $|\\Gamma^b|^2$.`,
+   bad:["Reflected fraction is $|\\Gamma^b|$.","Transmitted fraction is $|T^b|^2$."]},
+ solve(p){const s=Math.sqrt(p.er),G_=(1/s-1)/(1/s+1),R=G_*G_*100,T=1+G_;
+  const st=[["Impedances",`\\eta_1=120\\pi,\\qquad \\eta_2=\\frac{120\\pi}{\\sqrt{${p.er}}}=\\frac{120\\pi}{${f(s)}}`,"Lossless, nonmagnetic.",""],
+   ["Reflection coefficient",`\\Gamma^b=\\frac{\\frac{1}{${f(s)}}-1}{\\frac{1}{${f(s)}}+1}=\\frac{1-${f(s)}}{1+${f(s)}}=${f(G_)}`,"Divide top and bottom by $\\eta_0$.","$\\Gamma^b=\\frac{\\eta_2-\\eta_1}{\\eta_2+\\eta_1}$."],
+   ["Reflected power",`\\frac{S^r}{S^i}=|\\Gamma^b|^2=${f(G_*G_)}=${f(R)}\\%`,"Power goes as $|\\Gamma|^2$.",""],
+   ["Transmitted power",`1-|\\Gamma^b|^2=${f(100-R)}\\%\\qquad\\text{check: }|T^b|^2\\frac{\\eta_1}{\\eta_2}=${f(T*T)}\\times${f(s)}=${f(T*T*s)}`,"",""]];
+  return{steps:st,stages:[
+   {k:"Γᵇ",q:"Reflection coefficient $\\Gamma^b$?",u:"",v:G_,s:1},
+   {q:"The reflected <b>power</b> fraction is:",opts:["$|\\Gamma^b|^2$","$|\\Gamma^b|$","$1-|\\Gamma^b|$"],a:0,s:2,why:"$|\\Gamma|$ is a field ratio; power goes as field squared."},
+   {k:"% reflected",q:"Percent reflected?",u:"\\%",v:R,s:2,tol:0.03},
+   {k:"% transmitted",q:"Percent transmitted?",u:"\\%",v:100-R,s:3,tol:0.03}]};}});
+
+/* ---- 5.4 SWR and positions ---- */
+L.push({id:"5.4",like:5,min:10,why:"Γ, SWR, and where the maxima and minima sit. The phase-condition step is the skill he wanted you to own from L14.",
+ orig:{er:4,E0:2,f:3},
+ gen(){return{er:pick([2.25,4,6.25,9,16]),E0:pick([1,2,3,5]),f:pick([1,1.5,2,3,5,6,10])};},
+ st:p=>`A uniform plane wave traveling in free space ($z<0$) is incident normally upon a flat, semi-infinite lossless medium with $\\varepsilon=${p.er}\\varepsilon_0$, $\\mu=\\mu_0$ ($z>0$). The incident electric field amplitude is $${p.E0}\\times10^{-3}$ V/m and $f=${p.f}$ GHz. Find (a) the reflection coefficient, (b) the standing wave ratio in free space, (c) the positions (in front of the interface) of the maxima and minima of the total electric field, and (d) the maximum and minimum values of the total electric field.`,
+ first:{ok:"Write $\\Gamma^b=|\\Gamma^b|e^{j\\psi_b}$ (here $\\psi_b=\\pi$), then use the max/min phase conditions $\\psi_b+2\\beta_0z=2m\\pi$ / $(2m+1)\\pi$ with $z\\le0$.",
+   bad:["Put the first maximum at the interface and step back every $\\lambda/4$.","Use the wavelength in the dielectric, since that's where $\\varepsilon$ is given."]},
+ solve(p){const s=Math.sqrt(p.er),G_=(1-s)/(1+s),g=Math.abs(G_),SWR=(1+g)/(1-g),lam=C0/(p.f*1e9),Em=p.E0*(1+g),En=p.E0*(1-g);
+  const st=[["(a) Γ",`\\eta_2=\\frac{120\\pi}{${f(s)}}:\\quad \\Gamma^b=\\frac{1-${f(s)}}{1+${f(s)}}=${f(G_)}=${f(g)}e^{j\\pi}`,"Into lower η: negative Γ, $\\psi_b=\\pi$.",""],
+   ["(b) SWR",`\\text{SWR}=\\frac{1+${f(g)}}{1-${f(g)}}=${f(SWR)}`,"","$\\frac{1+|\\Gamma|}{1-|\\Gamma|}$."],
+   ["Wavelength",`\\lambda_0=\\frac{3\\times10^8}{${p.f}\\times10^9}=${f(lam)}\\ \\text{m},\\qquad \\beta_0=\\frac{2\\pi}{\\lambda_0}`,"The pattern lives in free space, so $\\lambda_0$.",""],
+   ["(c) Minima",`\\pi+2\\beta_0z=(2m+1)\\pi\\ \\Rightarrow\\ z=m\\frac{\\lambda_0}{2}:\\quad z=0,\\ -${f(lam/2)},\\ -${f(lam)},\\dots\\ \\text{m}`,"A minimum sits on the interface.",""],
+   ["(c) Maxima",`\\pi+2\\beta_0z=2m\\pi\\ \\Rightarrow\\ z=\\frac{(2m-1)\\lambda_0}{4}:\\quad z=-${f(lam/4)},\\ -${f(3*lam/4)},\\dots\\ \\text{m}`,"$\\lambda_0/4$ in front, then every $\\lambda_0/2$.","First max is a quarter wavelength back."],
+   ["(d) Values",`|E|_{max}=E_0(1+|\\Gamma^b|)=${f(Em)}\\ \\text{mV/m},\\qquad |E|_{min}=E_0(1-|\\Gamma^b|)=${f(En)}\\ \\text{mV/m}`,"Ratio = SWR.",""]];
+  return{steps:st,stages:[
+   {k:"Γᵇ",q:"(a) Reflection coefficient?",u:"",v:G_,s:0},
+   {k:"SWR",q:"(b) SWR in free space?",u:"",v:SWR,s:1},
+   {q:"(c) At the interface ($z=0$) the total field has a:",opts:["Minimum, because $\\Gamma^b<0$","Maximum, because the wave reflects there","Neither; the pattern starts $\\lambda/4$ away"],a:0,s:3,why:"$\\psi_b=\\pi$: the reflected wave arrives out of phase at $z=0$."},
+   {k:"z of first max",q:"(c) Position $z$ of the first maximum in front of the interface?",u:"\\text{m}",v:-lam/4,alt:[lam/4],s:4},
+   {k:"|E|max",q:"(d) Maximum total field?",u:"\\text{mV/m}",v:Em,s:5},
+   {k:"|E|min",q:"(d) Minimum total field?",u:"\\text{mV/m}",v:En,s:5}]};}});
+
+/* ---- 5.1 dielectric → free space, all fields ---- */
+L.push({id:"5.1",like:4,min:13,why:"All the bookkeeping: H from E, Γ, T, four fields, three powers. A full quiz if he wants it, and $T^b>1$ is the twist.",
+ orig:{er:4,E0:2},
+ gen(){return{er:pick([2.25,4,6.25,9,16]),E0:pick([1,2,3,5])};},
+ st:p=>`A uniform plane wave traveling in a dielectric medium with dielectric constant ${p.er} ($\\varepsilon_r=${p.er}$, $\\mu_r=1$) is normally incident upon free space (dielectric for $z<0$, free space for $z>0$). The incident electric field is $\\mathbf E^i=\\hat a_y${p.E0}\\times10^{-3}e^{-j\\beta z}$ V/m. Find (a) the incident magnetic field, (b) the reflection and transmission coefficients, (c) the reflected and transmitted electric and magnetic fields, (d) the incident, reflected and transmitted average power densities.`,
+ first:{ok:"Medium first: $\\eta_1=\\eta_0/\\sqrt{\\varepsilon_r}$, $\\eta_2=\\eta_0$. Then $\\mathbf H=\\hat\\beta\\times\\mathbf E/\\eta$, then the two boundary equations.",
+   bad:["Use $\\eta_0$ for the incident side: the wave is 'in free space units'.","$\\Gamma^b=\\frac{\\eta_1-\\eta_2}{\\eta_1+\\eta_2}$, incident minus transmitted."]},
+ solve(p){const n1=eta(p.er),n2=ETA0,G_=gam(n1,n2),T=1+G_,E0=p.E0*1e-3,Hi=E0/n1,Ht=T*E0/n2,Si=E0*E0/(2*n1),Sr=G_*G_*Si,St=(T*E0)*(T*E0)/(2*n2);
+  const st=[["Media",`\\eta_1=\\frac{120\\pi}{\\sqrt{${p.er}}}=${f(n1)}\\ \\Omega,\\qquad \\eta_2=120\\pi=${f(n2)}\\ \\Omega`,"Don't use 377 Ω for the incident side.",""],
+   ["(a) Incident H",`\\mathbf H^i=\\frac{1}{\\eta_1}\\hat a_z\\times\\mathbf E^i=-\\hat a_x\\frac{${p.E0}\\times10^{-3}}{${f(n1)}}e^{-j\\beta_1z}=-\\hat a_x\\,${f(Hi*1e6)}\\ \\mu\\text{A/m}\\ e^{-j\\beta_1z}`,"$\\hat a_z\\times\\hat a_y=-\\hat a_x$.","$H=E/\\eta_1$; direction by the right-hand rule."],
+   ["(b) Coefficients",`\\Gamma^b=\\frac{\\eta_2-\\eta_1}{\\eta_2+\\eta_1}=${f(G_)},\\qquad T^b=1+\\Gamma^b=${f(T)}`,"Into a higher η: Γ > 0 and $T>1$. E is not power.",""],
+   ["(c) Reflected and transmitted",`E^r=${f(G_*p.E0)}\\ \\text{mV/m},\\ \\ H^r=${f(G_*Hi*1e6)}\\ \\mu\\text{A/m}\\ (+\\hat a_x),\\qquad E^t=${f(T*p.E0)}\\ \\text{mV/m},\\ \\ H^t=\\frac{E^t}{120\\pi}=${f(Ht*1e6)}\\ \\mu\\text{A/m}\\ (-\\hat a_x)`,"Reflected H flips relative to $\\mathbf H^i$.","$H^t=T^bE_0/\\eta_2$."],
+   ["(d) Incident power",`S^i_{av}=\\frac{|E_0|^2}{2\\eta_1}=${f(Si*1e9)}\\ \\text{nW/m}^2\\ (+\\hat a_z)`,"(5-6a)","$|E_0|^2/2\\eta_1$."],
+   ["(d) Reflected, transmitted",`S^r_{av}=|\\Gamma^b|^2S^i_{av}=${f(Sr*1e9)}\\ (-\\hat a_z),\\qquad S^t_{av}=\\frac{|T^bE_0|^2}{2\\eta_2}=${f(St*1e9)}\\ \\text{nW/m}^2\\ (+\\hat a_z)`,"Check: $S^i-S^r=S^t$.","$|T^bE_0|^2/2\\eta_2$."]];
+  return{steps:st,stages:[
+   {q:"(a) Direction of $\\mathbf H^i$ for $\\mathbf E^i=\\hat a_yE_0e^{-j\\beta z}$:",opts:["$-\\hat a_x$","$+\\hat a_x$","$+\\hat a_z$"],a:0,s:1,why:"$\\mathbf H=\\frac1\\eta\\hat a_z\\times\\mathbf E$ and $\\hat a_z\\times\\hat a_y=-\\hat a_x$."},
+   {k:"|H^i|",q:"(a) Amplitude of $\\mathbf H^i$?",u:"\\mu\\text{A/m}",v:Hi*1e6,s:1},
+   {k:"Γᵇ",q:"(b) Reflection coefficient?",u:"",v:G_,s:2},
+   {k:"|H^t|",q:"(c) Amplitude of the transmitted H?",u:"\\mu\\text{A/m}",v:Ht*1e6,s:3},
+   {k:"S^i",q:"(d) Incident average power density?",u:"\\text{nW/m}^2",v:Si*1e9,s:4},
+   {k:"S^t",q:"(d) Transmitted average power density?",u:"\\text{nW/m}^2",v:St*1e9,s:5}]};}});
+
+/* ---- 5.5 standing wave as a line ---- */
+L.push({id:"5.5",like:4,min:12,why:"Same interface as 5.4 read as a transmission line: $Z=\\eta_0\\cdot$SWR at the max, $\\eta_0/$SWR at the min. Six short parts.",
+ orig:{er:4},
+ gen(){return{er:pick([2.25,4,6.25,9,16])};},
+ st:p=>`A uniform plane wave in air is normally incident on a lossless dielectric medium with a dielectric constant of ${p.er}. Normalizing the incident electric field to unity ($E_0=1$), find (a) the maximum value of the standing-wave pattern in air, (b) the shortest distance $\\ell$ (in wavelengths) from the interface to the first maximum, (c) the minimum value, (d) the shortest distance to the first minimum, (e) the SWR, and (f) the input (wave) impedance at the first maximum and at the first minimum.`,
+ first:{ok:"$\\Gamma^b<0$; then $Z(-\\ell)=\\eta_0\\frac{1+\\Gamma(-\\ell)}{1-\\Gamma(-\\ell)}$ with $\\Gamma(-\\ell)=\\Gamma^be^{-j2\\beta_0\\ell}$.",
+   bad:["$Z=\\eta_0$ everywhere in the air, since that's the medium's impedance.","At the field maximum $Z=\\eta_0/\\text{SWR}$."]},
+ solve(p){const s=Math.sqrt(p.er),G_=(1-s)/(1+s),g=-G_,SWR=(1+g)/(1-g),Zx=ETA0*SWR,Zn=ETA0/SWR;
+  const st=[["Γ",`\\Gamma^b=\\frac{1-${f(s)}}{1+${f(s)}}=${f(G_)}`,"",""],
+   ["(a), (b) Maximum",`|E|_{max}=1+${f(g)}=${f(1+g)}\\ \\text{at}\\ \\ell=\\lambda_0/4`,"$\\psi_b=\\pi$: need $2\\beta_0\\ell=\\pi$.","$1+|\\Gamma^b|$."],
+   ["(c), (d) Minimum",`|E|_{min}=1-${f(g)}=${f(1-g)}\\ \\text{at}\\ \\ell=0`,"On the interface.","$1-|\\Gamma^b|$."],
+   ["(e) SWR",`\\text{SWR}=\\frac{${f(1+g)}}{${f(1-g)}}=${f(SWR)}`,"",""],
+   ["Γ at the first max",`\\Gamma(-\\lambda_0/4)=\\Gamma^be^{-j\\pi}=+${f(g)}`,"Round trip: $2\\beta_0\\ell$.",""],
+   ["(f) Z at the max and min",`Z_{max}=\\eta_0\\frac{1+${f(g)}}{1-${f(g)}}=\\eta_0\\,\\text{SWR}=${f(Zx)}\\ \\Omega,\\qquad Z_{min}=\\frac{\\eta_0}{\\text{SWR}}=${f(Zn)}\\ \\Omega`,"At the min (the interface) Z is exactly $\\eta_2$.","Big E, small H at the max: large Z."]];
+  return{steps:st,stages:[
+   {q:"(b), (d) Where are the first maximum and first minimum?",opts:["Max at $\\lambda_0/4$, min at the interface","Max at the interface, min at $\\lambda_0/4$","Max at $\\lambda_0/2$, min at $\\lambda_0/4$"],a:0,s:1,why:"$\\Gamma^b<0$: out of phase at $z=0$, so a minimum there."},
+   {k:"|E|max",q:"(a) Maximum of the pattern ($E_0=1$)?",u:"",v:1+g,s:1},
+   {k:"|E|min",q:"(c) Minimum of the pattern?",u:"",v:1-g,s:2},
+   {k:"SWR",q:"(e) SWR?",u:"",v:SWR,s:3},
+   {k:"Z max",q:"(f) Wave impedance at the first maximum?",u:"\\Omega",v:Zx,s:5},
+   {k:"Z min",q:"(f) Wave impedance at the first minimum?",u:"\\Omega",v:Zn,s:5}]};}});
+
+G.hw.ch5=L;
+})(window.MXG);
+
 /* QUIZ ARENA · HW 9 = Balanis Ch. 8 (rectangular waveguides). Each problem: assigned numbers + remix generator,
    graded with the real formulas (c = 3e8, η0 = 120π, TE10 dominant). Ordering = estimated quiz likelihood. */
 (function(G){const U=G.hwU,{C0,ETA0,pick,rnd}=U,f=U.f3;

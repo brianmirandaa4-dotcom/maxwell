@@ -1098,7 +1098,7 @@ function startRun(chId,k){const ch=A.chOf(chId),W=WORLDS[chId];const rounds=[];c
   if(!boss&&k<=3){const key=(W.alt&&W.alt[k])||W.mini;const force=W.force&&W.force[k]&&key===W.mini?W.force[k]:undefined;for(let r=0;r<RPL;r++)rounds.push(miniR(key,k-1+(r>=3?1:0),k===3&&r>=3,force));}
   else if(k===4){const fm=pool("fm");for(let r=0;r<RPL;r++)rounds.push(r%2===1&&derivLs.length?dR(derivLs[(r>>1)%derivLs.length]):qR(fm[r%Math.max(1,fm.length)]));}
   else{time=boss?30:45;const fm=pool("fm"),cd=pool("card");const keys=[...new Set([W.mini,...Object.values(W.alt||{})])];
-    const n=boss?8:RPL;for(let r=0;r<n;r++){const t=r%4;rounds.push(t===0?miniR(keys[r%keys.length],2,true):t===1&&fm.length?qR(fm[r%fm.length]):t===2&&derivLs.length&&boss?dR(derivLs[r%derivLs.length]):qR((cd.length?cd:fm)[r%(cd.length||fm.length)]));}
+    const n=boss?8:RPL;for(let r=0;r<n;r++){const t=r%4;rounds.push(t===0?miniR(keys[Math.floor(r/4)%keys.length],2,true):t===1&&fm.length?qR(fm[r%fm.length]):t===2&&derivLs.length&&boss?dR(derivLs[r%derivLs.length]):qR((cd.length?cd:fm)[r%(cd.length||fm.length)]));}
     if(!boss)rounds.forEach(x=>{if(x.name===G.mini[W.mini]?.title)x.time=90;});else rounds.forEach(x=>{if(x.name.length&&!x.id&&x.name!=="Derivation")x.time=90;});}
   RUN={ch:chId,k,boss,rounds,i:0,hearts:3,combo:0,best:0,score:0,wins:0,time,over:null};
   const g=gq();g.qWorlds=g.qWorlds||[];if(!g.qWorlds.includes(chId)){g.qWorlds.push(chId);bumpQuest("world2");}
@@ -1556,6 +1556,147 @@ G.API=A;
       traps:[R`Rebuilding Friis by reasoning under 30 s: it's four steps, so memorize them in order.`,
        R`On f rounds, trying to move gains: they're fixed, and only λ moves.`],
       prather:R`L6, after the 1 kW/1 km example: "That's why, again, we are signal-to-noise engineers. You just spend a lot of time boosting up S and pushing down the noise." He ran it for comms (data rate), radar (probability of identification) and sensing: all of them ride on the link budget.` }
+ } };
+})(window.MXG);
+
+/* Playbook (coach) for World 3 · Wave Builder (waveform.js). Ch. 3, L9–L11.
+   Sources: transcripts 64f16bb1 (L9), 36240b33 (L10), and Prather's L11 recap at the start of 41244705 (L12).
+   There is NO L11 transcript: spherical material comes from that recap + the L9/L10 slide decks (content/ch3.js 3.14–3.16).
+   Button labels and grading follow src/minis/waveform.js (rows x/y/z, ρ/φ/z, r/θ/φ; every row must be right to pass). */
+(function(G){ const R=String.raw; G.coach=G.coach||{}; G.coach.ch3={
+ voice:R`Chapter 3 is where he turns Maxwell into a recipe: decouple with the curl-curl ("our famous poem"), go time-harmonic, separate variables, and let the <b>boundaries</b> decide which functions survive. His L9 rule of thumb is the whole game: "if things are unbounded, I tend to use exponentials; if they're bounded, I tend to use sines and cosines." In L10 the cylinder adds that φ's constant "is not β<sub>φ</sub>, it's m, an integer," and Bessel $J/Y$ as the cylindrical cos/sin, with Hankel as the exponential. Spheres were L11, which has <b>no transcript</b>: what's here comes from his L12 recap and the slides.`,
+ levels:{
+  1:{ goal:R`Boxes: assemble a field component in a PEC rectangular guide or cavity as $f(x)\,g(y)\,h(z)$, picking cos, sin or an exponential for each coordinate.`,
+      look:[
+       R`A wireframe <b>box</b> with labels x=0, x=a and y=b. An <b>open guide</b> has an orange <b>+z</b> arrow at its end. A <b>cavity</b> has shaded end faces labeled z=0 and z=c: walls on every side.`,
+       R`Before you build, <b>gray dots</b> fill the region. The strip under the canvas shows your equation filling in, e.g. $E_x=\square\;\square\;\square$.`,
+       R`Three rows of buttons, labeled <b>x, y, z</b> in orange: <b>cos β<sub>x</sub>x</b>, <b>sin β<sub>x</sub>x</b>, <b>e<sup>−jβ<sub>x</sub>x</sup></b>; the z row adds <b>e<sup>+jβ<sub>z</sub>z</sup></b>. Buttons are shuffled every round, so read them; don't tap by position.`,
+       R`<b>BUILD ▸</b> (it shakes any row you left empty). Then the dots light up with $\mathrm{Re}\{\psi e^{j\omega t}\}$: <b>cyan +, lavender −</b>, with dot size showing magnitude. A traveling wave slides along z; a standing one just breathes in place.`,
+       R`A wrong wall pick makes that pair of walls glow pink with "x: nonzero on the walls"; the top-right reads PHYSICAL ✓ or UNPHYSICAL. Each row is a third of the score and passing needs 0.7, so <b>all three rows must be right</b>.`],
+      rule:{t:"His L9 rule: bounded → sin/cos, unbounded → exponential",tex:R`\text{wall pair, }E_{\tan}=0\ \Rightarrow\ \sin\frac{m\pi x}{a}\qquad \text{wall pair, }E\ \text{normal}\ \Rightarrow\ \cos\frac{m\pi x}{a}\qquad \text{open toward }+z\ \Rightarrow\ e^{-j\beta_z z}`},
+      steps:[
+       R`For each coordinate ask: walls on both sides (bounded) or open? An open guide has x and y bounded and z open; a cavity has all three bounded.`,
+       R`Open direction → exponential. With $e^{j\omega t}$, $e^{-j\beta_z z}$ travels toward +z and $e^{+j\beta_z z}$ toward −z: "minus means it's going forward ... kind of counterintuitive."`,
+       R`Bounded direction → sin or cos, chosen at the walls. Is your component <b>tangential</b> to that wall pair (it lies along them)? Then it must vanish there: <b>sin</b>, because sin 0 = 0 while cos 0 = 1 forces its coefficient to zero.`,
+       R`Is it <b>normal</b> to that wall pair (it points into them)? It ends on surface charge and needn't vanish: <b>cos</b>, the partner in his board result $E_x\propto\cos\frac{m\pi x}{a}\sin\frac{n\pi y}{b}$.`,
+       R`Patterns: $E_z$ (TM) is tangential to all four side walls, giving sin·sin·$e^{-j\beta_z z}$. $E_x$ gives cos x · sin y; $E_y$ gives sin x · cos y. In a cavity, a component tangential to the end walls gets $\sin\frac{p\pi z}{c}$.`,
+       R`The last two rounds of this level jump to cylinders and spheres; the rules are in levels 2–3.`],
+      example:{q:R`$E_x$ of the TE<sub>11</sub> mode in a PEC guide ($0\le x\le a$, $0\le y\le b$), traveling toward +z.`,
+       a:[R`y row: the walls y = 0, b are horizontal, and $E_x$ lies along them, so it's tangential and must vanish: $\sin(\beta_y y)$, $\beta_y=n\pi/b$ (his L9 board: $C_2=0$, then $\sin\beta_yb=0$).`,
+          R`x row: $E_x$ points straight into the walls x = 0, a, so it's normal: $\cos(\beta_x x)$, $\beta_x=m\pi/a$.`,
+          R`z row: open toward +z, so $e^{-j\beta_z z}$, with $\beta_z^2=\beta^2-\beta_x^2-\beta_y^2$.`,
+          R`Build: $E_x=\cos(\beta_x x)\sin(\beta_y y)\,e^{-j\beta_z z}$.`]},
+      traps:[R`An exponential in a bounded direction: "you can't force a complex exponential to zero" on both walls.`,
+       R`cos for a tangential component (cos 0 = 1 ≠ 0 at the wall).`,
+       R`$e^{+j\beta_z z}$ for a +z wave, or cos βz in an open guide (that's a standing wave; the guide is "like a garden hose," and the water flows).`,
+       R`In a cavity, keeping $e^{-j\beta_z z}$: once the end walls are there, z is bounded too.`],
+      prather:R`L9: "If I look at things that are unbounded, I tend to use exponentials. If I look at things that are bounded, I tend to use sines and cosines. Why? ... sine of 0 goes to 0, so this one actually satisfies the boundary condition, and the cosine of zero is not equal to zero, it's equal to one ... That cannot be true unless C₁ itself is equal to zero."` },
+  2:{ goal:R`Cylinders: build $\psi=f(\rho)\,g(\phi)\,h(z)$ inside a circular guide or outside a radiating cylinder: J, Y, or H⁽²⁾ in ρ, integer m in φ, an exponential in z.`,
+      look:[
+       R`<b>Inside</b> round: a cylinder with a dashed orange line labeled <b>"axis ρ = 0"</b> down its middle, so the axis is in your region and the dots fill the core. <b>Outside</b> round: a solid cylinder, dots outside it, and a dashed ring labeled <b>"→ ∞"</b>, so the region runs to infinity.`,
+       R`Rows: <b>ρ</b>: J<sub>m</sub>, Y<sub>m</sub>, H<sub>m</sub><sup>(1)</sup>, H<sub>m</sub><sup>(2)</sup> · <b>φ</b>: cos mφ, e<sup>−jmφ</sup>, cos(m+½)φ · <b>z</b>: cos β<sub>z</sub>z, e<sup>−jβ<sub>z</sub>z</sup>, e<sup>+jβ<sub>z</sub>z</sup>.`,
+       R`After BUILD, wrong picks flag themselves: a pulsing pink <b>"∞ at ρ = 0"</b> on the axis (Y or a Hankel inside), a pink seam <b>"φ: jump at 2π"</b> (non-integer order), or text such as "ρ: standing = in + out" or "H⁽¹⁾ converges (comes IN)".`,
+       R`Sphere rounds also appear in this level's pool: see level 3.`],
+      rule:{t:"Axis in → J; outgoing → H⁽²⁾; φ → integer m",tex:R`\rho=0\ \text{in region}:\ J_m(\beta_\rho\rho)\qquad \rho\to\infty\ \text{outgoing}:\ H^{(2)}_m=J_m-jY_m\qquad g(\phi+2\pi)=g(\phi)\Rightarrow m\in\mathbb Z\qquad \beta_\rho^2+\beta_z^2=\beta^2`},
+      steps:[
+       R`z first (it separates first, L10): open toward +z, so $e^{-j\beta_z z}$.`,
+       R`φ: going once around must bring you back to the same value, so the order is an integer m. Either cos mφ or $e^{-jm\phi}$ is right; cos(m+½)φ never is.`,
+       R`ρ: is the axis inside your region? Then <b>J<sub>m</sub></b> only. $Y_m\to-\infty$ at ρ = 0, and $H^{(1,2)}_m=J_m\pm jY_m$ inherit it (3-70a, $B_1=0$).`,
+       R`ρ running out to infinity with the source inside: outgoing only, <b>H<sub>m</sub><sup>(2)</sup></b> $=J_m-jY_m$ for $e^{j\omega t}$ (3-70b, $C_1=0$). J or Y alone is standing (in + out); H<sup>(1)</sup> comes in.`,
+       R`Inside a PEC guide, the wall then sets $\beta_\rho$: for TM, $E_z(a)=0$ gives $\beta_\rho a=\chi_{mn}$ (2.4048 for m = 0, n = 1).`],
+      example:{q:R`$E_z$ of TM<sub>01</sub> inside a PEC circular guide of radius a, traveling toward +z.`,
+       a:[R`z: open, so $e^{-j\beta_z z}$.`,
+          R`φ: m = 0, so cos 0φ = 1 (either φ button is fine at m = 0).`,
+          R`ρ: the axis is in the region, so $J_0$ ($Y_0$ blows up on the axis); $E_z(a)=0$ gives $\beta_\rho a=2.4048$.`,
+          R`Build: $E_z=J_0(\beta_\rho\rho)\,e^{-j\beta_z z}$.`]},
+      traps:[R`$Y_m$ or a Hankel inside: infinite on the axis.`,
+       R`$H^{(1)}$ outside: that's the converging wave, the video "played in reverse."`,
+       R`$J_m$ alone outside: a standing wave, half of it coming in from infinity.`,
+       R`Treating φ like z with a continuous $\beta_\phi$, or picking cos(m+½)φ.`],
+      prather:R`L10: "It's not β<sub>φ</sub>, it's m, an integer, and it's telling you how many times you've gone around this circle." And on Hankel: "Drop a rock in a lake, use your phone as a video camera, and you're watching these things go out. Then you do a reverse play and you watch them come back in ... one's diverging and one's converging."` },
+  3:{ goal:R`Spheres & coax: pick $j_n$ or $h_n^{(2)}$ in r and $P_n^m$ in θ for a sphere; $AJ_m+BY_m$ between coax conductors; and handle closed cavities.`,
+      look:[
+       R`<b>Sphere</b>: an equator ring plus two meridians, and a dashed orange vertical line marked <b>θ = 0</b> (top) and <b>θ = π</b> (bottom): the poles. An orange dot at the center reads <b>"r = 0"</b> (inside round: the origin is in your region) or <b>"source"</b> (outside round, with dots running out to "→ ∞").`,
+       R`Sphere rows: <b>r</b>: j<sub>n</sub>, y<sub>n</sub>, h<sub>n</sub><sup>(1)</sup>, h<sub>n</sub><sup>(2)</sup> · <b>θ</b>: P<sub>n</sub><sup>m</sup>(cos θ), Q<sub>n</sub><sup>m</sup>(cos θ) · <b>φ</b>: the same three as the cylinder. A wrong θ pick lights both poles pink: "∞ at θ = 0, π".`,
+       R`<b>Coax</b> (hard rounds): two concentric cylinders, a shaded inner one labeled a and an outer one labeled b, with dots only in between. Its ρ row offers J<sub>m</sub>, Y<sub>m</sub>, H<sub>m</sub><sup>(2)</sup>, <b>AJ<sub>m</sub>+BY<sub>m</sub></b>.`,
+       R`Hard rounds also bring back the <b>closed box cavity</b> (shaded end walls) and outside-cylinder and E<sub>x</sub>-guide builds.`],
+      rule:{t:"Origin → j; radiating → h⁽²⁾; poles → P; two walls → AJ + BY",tex:R`\psi_{\text{in}}=j_n(\beta r)\,P_n^m(\cos\theta)\,e^{-jm\phi}\qquad \psi_{\text{out}}=h^{(2)}_n(\beta r)\,P_n^m(\cos\theta)\,e^{-jm\phi}\qquad a\le\rho\le b:\ AJ_m+BY_m`},
+      steps:[
+       R`φ: same as the cylinder: integer m, so cos mφ or $e^{-jm\phi}$.`,
+       R`θ: if your region runs pole to pole (θ = 0 to π), it's <b>$P_n^m(\cos\theta)$</b>. $Q_n^m$ blows up at θ = 0 and π: "non-physical, discard" (3-88b).`,
+       R`r: is the origin in the region? Then <b>$j_n$</b> ($y_n$ and both $h_n$ blow up at r = 0). If it's radiating to r → ∞ with $e^{j\omega t}$, use <b>$h^{(2)}_n=j_n-jy_n$</b>; $h^{(2)}_0=je^{-j\beta r}/\beta r$ is his outgoing point-source wave $e^{-j\beta r}/r$.`,
+       R`Coax, a ≤ ρ ≤ b: the axis is excluded (so Y is allowed) and both ends are walls, which means a standing wave with two constants, <b>$AJ_m+BY_m$</b>, just like cos and sin between two plates. H⁽²⁾ is wrong because the region is closed by b.`,
+       R`Cavity: z is now bounded, so a component tangential to the end walls gets $\sin\frac{p\pi z}{c}$. For example, $E_y$ in TE<sub>111</sub> is $\sin(\beta_xx)\cos(\beta_yy)\sin(\beta_zz)$.`],
+      example:{q:R`ψ outside a sphere (r ≥ a) radiating to r → ∞ with $e^{j\omega t}$, all θ from 0 to π, n = 1, m = 1.`,
+       a:[R`φ: m = 1, so $e^{-j\phi}$ (or $\cos\phi$).`,
+          R`θ: both poles are in the region, so $P_1^1(\cos\theta)$, because $Q_1^1$ is infinite at θ = 0, π.`,
+          R`r: the origin is excluded and the wave is outgoing, so $h^{(2)}_1(\beta r)$.`,
+          R`Build: $\psi=h^{(2)}_1(\beta r)\,P_1^1(\cos\theta)\,e^{-j\phi}$. Inside the same sphere, swap in $j_1(\beta r)$.`]},
+      traps:[R`$y_n$ (or any $h_n$) inside a sphere: infinite at r = 0.`,
+       R`$h^{(1)}_n$ outside: an incoming wave.`,
+       R`$Q_n^m$ when the poles are in the region.`,
+       R`Coax with J alone or Y alone: one function "can't vanish at both a and b"; it takes two constants.`],
+      prather:R`L12, recapping L11: the second-kind Legendre function "blows up at θ equal to 0 and θ equal to π, so we just discard it because it's a non-physical solution." Combine P with the cylindrical harmonics and "we get this funny thing called Y," the spherical harmonics, which he tied to electron orbitals and to why carbon is "the Swiss army knife" of organic chemistry.` },
+  4:{ goal:R`Prather's moves: name the first move on Ch. 3 problems and rebuild his derivations: wave equation, Helmholtz, separation, waveguide walls, phase velocity, α and β, cylindrical separation.`,
+      look:[
+       R`<b>First-move rounds</b>: source tag (Derivation (L9), Concept (L10), Lecture example (L9), In-class quiz), the problem, then "First move?" with four options (keys 1–4). His reason appears after you pick.`,
+       R`<b>Derivation rounds</b>: shuffled step cards with Balanis equation numbers (3-1) … (3-27); tap them 1 → N. One slip is the limit (−0.25 each).`,
+       R`No timer here.`],
+      rule:{t:"Decouple: curl-curl, the poem",tex:R`\nabla\times\nabla\times\mathbf E=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E\ \Rightarrow\ \nabla^2\mathbf E=\mu\sigma\frac{\partial\mathbf E}{\partial t}+\mu\varepsilon\frac{\partial^2\mathbf E}{\partial t^2}\ \xrightarrow{\ e^{j\omega t}\ }\ \nabla^2\mathbf E=\gamma^2\mathbf E,\quad \gamma^2=j\omega\mu(\sigma+j\omega\varepsilon)`},
+      steps:[
+       R`"Derive the wave equation" → curl of Faraday, swap $\nabla\times$ and $\frac{\partial}{\partial t}$ (both linear), substitute Ampère, use the curl-curl identity, then Gauss for $\nabla\cdot\mathbf E$. For H: curl of Ampère, then Faraday.`,
+       R`"Time-harmonic form" → $\frac{\partial}{\partial t}\to j\omega$, $\frac{\partial^2}{\partial t^2}\to-\omega^2$, divide out $e^{j\omega t}$.`,
+       R`"Solve by separation" → in Cartesian only, split into three scalar equations (constant unit vectors); set $E_x=fgh$, divide by fgh; each term depends on one variable, so each is a constant.`,
+       R`See the sign before solving: a negative separation constant means a sinusoid "right away"; a positive one means hyperbolic. "Find β<sub>y</sub>" → $E_x(y=0)=0$ kills $C_2$, then $\sin\beta_yb=0$.`,
+       R`"Show it travels and find the speed" → set the phase constant and differentiate in time: $v_p=\frac{dz}{dt}=\frac{\omega}{\beta_z}$ (the surfer). "α and β" → $(\alpha+j\beta)^2=\alpha^2-\beta^2+j2\alpha\beta$, then real = real and imaginary = imaginary: "two equations, two unknowns."`,
+       R`Cylindrical → the unit vectors $\hat a_\rho$ and $\hat a_\phi$ change with φ, so the components don't decouple; solve the scalar $E_z$ (or ψ): z first, multiply by ρ² to free φ, then Bessel.`],
+      example:{q:R`"Solve $\nabla^2E_x+\beta^2E_x=0$ by separation of variables." Lay out his steps.`,
+       a:[R`Assume $E_x=f(x)g(y)h(z)$, substitute, and divide by fgh: $\frac{1}{f}\frac{d^2f}{dx^2}+\frac{1}{g}\frac{d^2g}{dy^2}+\frac{1}{h}\frac{d^2h}{dz^2}=-\beta^2$.`,
+          R`Vary x from 1 to 15 to 100 and nothing else changes, so the first term is a constant, $-\beta_x^2$; likewise $-\beta_y^2$ and $-\beta_z^2$.`,
+          R`Constraint: $\beta_x^2+\beta_y^2+\beta_z^2=\beta^2=\omega^2\mu\varepsilon$.`,
+          R`General solution: $f=C_1\cos\beta_xx+D_1\sin\beta_xx$ (or $A e^{-j\beta_xx}+Be^{+j\beta_xx}$); the boundaries pick which terms survive.`]},
+      traps:[R`Separating the vector equation directly in cylindrical or spherical coordinates: only Cartesian unit vectors are constant.`,
+       R`Keeping one solution of a second-order equation: "the order tells you how many solutions you have" (two).`,
+       R`Calling the separation constant (eigenvalue) a transfer function. He asked, and the answer was no: it's a projection onto an eigenfunction.`],
+      prather:R`L4/L9, on decoupling: "curl the curl, that's our famous poem." In L4 he told the class to find a tree on a hill, take your best friend, and recite it. L10, on the sign: "The minus signs are important ... if this was a negative separation constant ... it just pops out automatically [that it] is a sinusoid."` },
+  5:{ goal:R`Exam rounds: timed hard Wave Builder rounds (cavity, coax, sphere outside, cylinder outside, guide E<sub>x</sub>) mixed with first moves and concept cards.`,
+      look:[
+       R`Timer: 90 s on Wave Builder rounds, 45 s on cards; it turns red at 20%. Round order: build, first move, card, card, build.`,
+       R`Hard builds draw from: closed box cavity E<sub>y</sub>, coax E<sub>z</sub>, outside sphere, outside cylinder, guide E<sub>x</sub>. Every row must be right to pass.`],
+      rule:{t:"The full rule set he gave (L9, L10, L11 recap)",tex:R`\begin{array}{ll}\text{bounded, }E_{\tan}=0\text{ at the walls} & \sin\beta x\\ \text{bounded, }E\text{ normal to the walls} & \cos\beta x\\ \text{unbounded, toward }+z & e^{-j\beta_z z}\\ \phi\ \text{periodic} & \cos m\phi,\ e^{-jm\phi},\ m\in\mathbb Z\\ \rho=0\ \text{in region} & J_m\\ \rho\to\infty,\ \text{outgoing} & H^{(2)}_m=J_m-jY_m\\ a\le\rho\le b\ (\text{axis excluded}) & AJ_m+BY_m\\ r=0\ \text{in region} & j_n\\ r\to\infty,\ \text{outgoing} & h^{(2)}_n=j_n-jy_n\\ \theta\in[0,\pi]\ (\text{both poles}) & P_n^m(\cos\theta)\end{array}`},
+      steps:[
+       R`Classify the region in one look: box or cavity, inside or outside, coax, sphere in or out.`,
+       R`Do the free rows first. φ is always integer m (cos mφ or $e^{-jm\phi}$); θ with both poles is always $P_n^m$.`,
+       R`Then the radial row: what's at the endpoints? An axis or origin inside means J or j; infinity means H⁽²⁾ or h⁽²⁾; two walls means AJ + BY.`,
+       R`Rectangular rows: tangential to the wall pair means sin, normal means cos, open means $e^{-j\beta_z z}$; a cavity's z is bounded.`,
+       R`On cards: a negative separation constant gives a sinusoid; $e^{j\omega t}$ with $e^{-j\beta z}$ goes forward; $v_p=\omega/\beta$.`],
+      example:{q:R`$E_y$ of the TE<sub>111</sub> field in a closed PEC box cavity ($0\le x\le a$, $0\le y\le b$, $0\le z\le c$).`,
+       a:[R`x walls: $E_y$ lies along them (tangential), so $\sin\beta_xx$.`,
+          R`y walls: $E_y$ points into them (normal), so $\cos\beta_yy$.`,
+          R`z end walls: closed now, so z is bounded; $E_y$ is tangential to them, giving $\sin\frac{p\pi z}{c}$.`,
+          R`Build: $E_y=\sin(\beta_xx)\cos(\beta_yy)\sin(\beta_zz)$.`]},
+      traps:[R`Reflexively tapping $e^{-j\beta_z z}$ in a cavity.`,
+       R`H⁽²⁾ in a coax: the outer wall at b closes the region, so the wave is standing.`,
+       R`The $e^{+j\beta_z z}$ and cos(m+½)φ distractors are there every round.`],
+      prather:R`L10, on the sign of the exponent he asked the room, "How do I know that ωt − βz is my forward-going wave?" The answer he took: set the phase equal to a constant and take the time derivative, and it's a positive velocity ("Exactly, right?"). Then the surfer: you want to stay at that point on the wave "because it's pushing me forward."` },
+  boss:{ goal:R`The boss: 8 rounds at 30 s (90 s on builds) with two hard Wave Builder builds, two first moves, two derivations and two concept cards.`,
+      look:[
+       R`Order: build, first move, derivation, card, build, first move, derivation, card. Derivations get only 30 s, so the step order must be reflex.`,
+       R`Builds are hard mode (cavity, coax, sphere out, cylinder out, guide E<sub>x</sub>).`],
+      rule:{t:"Same rule set: the boundaries choose",tex:R`\text{bounded}\to\sin,\cos\qquad \text{unbounded}\to e^{-j\beta z},\ H^{(2)}_m,\ h^{(2)}_n\qquad \text{axis/origin}\to J_m,\ j_n\qquad \text{poles}\to P_n^m\qquad \phi\to m\in\mathbb Z`},
+      steps:[
+       R`Wave equation (3.2): start (3-1), (3-2) with conduction current → curl of (3-1) → identity and Ampère → Gauss → inhomogeneous wave equation for E → same steps for H.`,
+       R`Separation (3.4): components → scalar equation → assume separable and substitute → divide by fgh → separation equations → constraint.`,
+       R`Waveguide walls (3.6): general separable solution → bottom wall $E_x(y=0)=0$ → top wall $E_x(y=b)=0$ → side walls via $E_y$ at x = 0, a → eigenvalues and the constraint.`,
+       R`Phase velocity (3.7): instantaneous form → constant phase → differentiate in time → wavelength. Lossy (3.8): source-free lossy equation → separation with positive constants → four roots → two equations, two unknowns → result.`,
+       R`Cylindrical (3.11): separate → z first → multiply by ρ² and set the φ term → multiply by f and define β<sub>ρ</sub> → the three ODEs → solutions in φ and z.`],
+      example:{q:R`Boss build: $E_z$ of a TM mode between the conductors of a coax (a ≤ ρ ≤ b), toward +z.`,
+       a:[R`z: $e^{-j\beta_z z}$; φ: cos mφ or $e^{-jm\phi}$.`,
+          R`ρ: the axis is excluded and walls sit at both a and b, so $AJ_m+BY_m$ ($E_z$ must vanish on both conductors: two conditions, two constants).`,
+          R`Build: $E_z=[AJ_m+BY_m](\beta_\rho\rho)\,\cos(m\phi)\,e^{-j\beta_z z}$.`]},
+      traps:[R`In the wave-equation derivation, putting Gauss before the identity: the identity is what creates the $\nabla(\nabla\cdot\mathbf E)$ term that Gauss then fills.`,
+       R`In cylindrical separation, trying to set the φ term before multiplying by ρ².`],
+      prather:R`L9, on why the general solution keeps every term: "I don't know if I want the sine solution or a cosine solution, so I keep the general solution ... What's gonna make one survive and the other not survive? ... boundary conditions."` }
  } };
 })(window.MXG);
 

@@ -2570,6 +2570,75 @@ L.push({id:"1.2",like:2,min:12,why:"Six laws to convert. The ideas are quick (St
 G.hw.ch1=L;
 })(window.MXG);
 
+/* QUIZ ARENA coaching for HW 1–2 (Ch. 1): Prather-voiced notes, a tip per stage, the equation per stage (eqs[i], aligned with
+   stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
+   Quotes are from L2–L5 as already sourced in content/ch1.js and src/coach/ch1.js; everything else is his method, paraphrased. */
+(function(G){G.hwCoach=G.hwCoach||{};const R=String.raw;
+const GAUSS=R`\oint\!\!\oint_S\mathbf D\cdot d\mathbf s=Q_e`,DIVT=R`\oint\!\!\oint_S\mathbf D\cdot d\mathbf s=\iiint_V\nabla\cdot\mathbf D\,dv`;
+const BCE=R`\hat n\times(\mathbf E_2-\mathbf E_1)=0,\qquad \hat n\cdot(\mathbf D_2-\mathbf D_1)=q_{es}`,BCH=R`\hat n\times(\mathbf H_2-\mathbf H_1)=0,\qquad \hat n\cdot(\mathbf B_2-\mathbf B_1)=0`;
+const AMP=R`\nabla\times\mathbf H=\mathbf J_{ic}+\frac{\partial\mathbf D}{\partial t}`,CONT=R`\nabla\cdot\mathbf J_{ic}=-\frac{\partial q_{ev}}{\partial t}`;
+G.hwCoach.ch1={
+"1.3":{notes:[R`His porcupine story: every porcupine has exactly 5 needles, so count the needles poking out of the bag and you know how many porcupines are inside. Count only through the top and you miss the ones lying upside down. “The only way you can tell accurately what that charge is is to add them all up.”`,R`Each $\mathbf D$ here has one component that depends only on its own coordinate, so only two faces carry flux. Do it both ways: divergence inside, flux through the faces. They must agree.`],
+ tips:[R`Gauss counts net flux out of a <b>closed</b> surface. Go through the divergence: $\nabla\cdot\mathbf D$ is the charge density, so integrate it over the cube. Integrating $\mathbf D$ itself is the trap.`,
+  R`Porcupine in the bag: every face of the cube counts, including the ones where nothing gets through.`,
+  R`Only $D_x$ exists, so only the faces at $x=0$ and $x=\ell$ see flux. Out of $x=\ell$ it's $D_x(\ell)$ times the face area $\ell^2$.`,
+  R`Differentiate $D_x$ in $x$, then integrate over the cube. A constant divergence is just times $\ell^3$. Check: flux out at $x=\ell$ minus flux in at $x=0$ (outward normal $-\hat a_x$).`,
+  R`Now $D_y$ depends on $y$, so the divergence isn't constant: integrate it in $y$ and multiply by the face area. Same face check: top minus bottom.`],
+ eqs:[R`Q_e=\iiint_V\nabla\cdot\mathbf D\,dv`,null,R`\Psi_{x=\ell}=D_x(\ell)\,\ell^2`,R`Q_e=\iiint_V\frac{\partial D_x}{\partial x}\,dv=\ell^2\left[D_x(\ell)-D_x(0)\right]`,R`Q_e=\ell^2\int_0^\ell\frac{\partial D_y}{\partial y}\,dy=\ell^2\left[D_y(\ell)-D_y(0)\right]`],
+ card:[["Gauss",GAUSS],["Divergence theorem",DIVT],["Face flux",R`\Psi=D_n\,\ell^2`]]},
+"1.6":{notes:[R`“The orientation of the field to the boundary is super duper important.” Split the field against the interface first; the two pieces obey different rules.`,R`With no surface charge, tangential E and normal D both carry across. “Does that mean the field just lives forever because it doesn't see anything?” No: “D is not E.” Normal E shrinks by $\varepsilon_r$, tangential E doesn't, so the field leans <b>away</b> from the normal inside the slab.`],
+ tips:[R`Decompose first. θ is measured from the normal ($z$), so sine goes with the tangential part and cosine with the normal part.`,
+  R`No surface sources: the collapsing loop gives tangential E, the crushed can gives normal D.`,
+  R`Tangential E copies straight across. Don't scale it by $\varepsilon_r$.`,
+  R`Normal D matches, so normal E <b>divides</b> by $\varepsilon_r$. Multiplying is the upside-down ratio.`,
+  R`Inside the slab $\mathbf D=\varepsilon_r\varepsilon_0\mathbf E$, component by component. Tangential D is the one that jumps.`,
+  R`$\tan\theta$ is tangential over normal, and $\varepsilon_r$ multiplies it. If your angle came out smaller than the incident one, you bent it the wrong way.`],
+ eqs:[R`E_{0t}=E_0\sin\theta_0,\qquad E_{0n}=E_0\cos\theta_0`,BCE.replace("q_{es}","0"),R`E_{1x}=E_0\sin\theta_0`,R`\varepsilon_0E_{0n}=\varepsilon_r\varepsilon_0E_{1z}`,R`D_{1x}=\varepsilon_r\varepsilon_0E_{1x}`,R`\tan\theta_1=\frac{E_{1x}}{E_{1z}}=\varepsilon_r\tan\theta_0`],
+ card:[["Components",R`E_{0t}=E_0\sin\theta_0,\quad E_{0n}=E_0\cos\theta_0`],["Boundary conditions",BCE.replace("q_{es}","0")],["Bending",R`\tan\theta_1=\varepsilon_r\tan\theta_0`]]},
+"1.4":{notes:[R`Constitutive relations work <b>inside</b> each medium; boundary conditions carry you <b>across</b>. So: find E and P in the dielectric first, then cross with tangential E continuous and normal D jumping by $q_{es}$.`,R`The surface charge is the only source here, and it only touches the normal part. $\hat n$ points from medium 1 (air) into medium 2. Flip $\hat n$ and you must carry the sign everywhere.`],
+ tips:[R`Split $\mathbf D_2$ against the interface: $z$ is normal, $x$ is tangential (the figure draws $\hat a_x$ vertical; don't let that make it the normal). Get $\mathbf E_2$ inside first, then cross.`,
+  R`$\hat n$ points from 1 into 2, so $D_{2z}-D_{1z}=q_{es}$: the air side is the dielectric value <b>minus</b> $q_{es}$.`,
+  R`Divide the given D by $\varepsilon_r$. Leave $\varepsilon_0$ symbolic, as the book asks.`,
+  R`P is what's left of D after the vacuum part: $\mathbf D-\varepsilon_0\mathbf E$, which is $\mathbf D(1-1/\varepsilon_r)$.`,
+  R`Tangential <b>E</b> is continuous, not tangential D. In the air $D_{1x}=\varepsilon_0E_{2x}$.`,
+  R`Normal D jumps by $q_{es}$. Getting $D_{2z}+q_{es}$ means you flipped $\hat n$.`],
+ eqs:[R`\mathbf E_2=\frac{\mathbf D_2}{\varepsilon_r\varepsilon_0}`,R`\hat n\cdot(\mathbf D_2-\mathbf D_1)=q_{es}`,R`\varepsilon_0E_{2x}=\frac{D_{2x}}{\varepsilon_r}`,R`\mathbf P_2=\mathbf D_2-\varepsilon_0\mathbf E_2=\left(1-\frac{1}{\varepsilon_r}\right)\mathbf D_2`,R`D_{1x}=\varepsilon_0E_{1x}=\varepsilon_0E_{2x}`,R`D_{1z}=D_{2z}-q_{es}`],
+ card:[["Constitutive",R`\mathbf D=\varepsilon_0\mathbf E+\mathbf P=\varepsilon_r\varepsilon_0\mathbf E`],["Boundary conditions",BCE]]},
+"1.1":{notes:[R`Charge is conserved: if current spreads out of a point, the charge there must drain at the same rate. People call it the 5th equation, but it isn't independent. It's already inside Ampère's law plus Gauss's law.`,R`His slide once had the source labeled wrong, and he laughed: “I did that on my quiz, so we both made that mistake.” It's Ampère, with Gauss substituted.`],
+ tips:[R`Take the <b>divergence of Ampère's law</b>, with all the currents in it. Gauss only gets substituted at the end.`,
+  R`The divergence of a curl is identically zero: the curl is orthogonal to what it acts on, like $\mathbf A\cdot(\mathbf A\times\mathbf B)=0$. “Things that are spinning don't diverge.”`,
+  R`Swap $\nabla\cdot$ and $\frac{\partial}{\partial t}$ (space and time derivatives commute). What's left in the bracket is $\nabla\cdot\mathbf D$, and Gauss hands you that.`,
+  R`Move everything to one side. The minus sign is the physics: current diverging out of a point drains the charge there.`,
+  R`Divergence of the given $\mathbf J_{ic}$ term by term, evaluate at the point, then flip the sign.`],
+ eqs:[AMP,R`\nabla\cdot(\nabla\times\mathbf H)\equiv0`,R`\nabla\cdot\mathbf D=q_{ev}`,CONT,R`\frac{\partial q_{ev}}{\partial t}=-\left(\frac{\partial J_x}{\partial x}+\frac{\partial J_y}{\partial y}+\frac{\partial J_z}{\partial z}\right)`],
+ card:[["Ampère (1-2)",AMP],["Identity",R`\nabla\cdot(\nabla\times\mathbf A)\equiv0`],["Gauss (1-3)",R`\nabla\cdot\mathbf D=q_{ev}`],["Continuity (1-6)",CONT]]},
+"1.7":{notes:[R`The exact dual of 1.6: H plays E, B plays D, μ plays ε. Tangential H continuous (no surface current), normal B continuous (no magnetic charge).`,R`In statics E and H decouple. The $\varepsilon_r$ they hand you is a distractor: H and B only care about μ.`],
+ tips:[R`Same split as 1.6: θ from the normal, sine for tangential, cosine for normal. Then tangential H and normal B carry across.`,
+  R`No. Cross $\varepsilon_r$ out of the problem before you start.`,
+  R`Normal B matches, so normal H divides by $\mu_r$.`,
+  R`$\mathbf B=\mu_r\mu_0\mathbf H$ inside the slab. Tangential B is the one that jumps.`,
+  R`Same bending law with $\mu_r$ in place of $\varepsilon_r$: the field leans away from the normal.`],
+ eqs:[R`H_{0t}=H_0\sin\theta_0,\qquad H_{0n}=H_0\cos\theta_0`,null,R`\mu_0H_{0n}=\mu_r\mu_0H_{1z}`,R`B_{1x}=\mu_r\mu_0H_{1x}`,R`\tan\theta_1=\frac{H_{1x}}{H_{1z}}=\mu_r\tan\theta_0`],
+ card:[["Boundary conditions",BCH],["Constitutive",R`\mathbf B=\mu_r\mu_0\mathbf H`],["Bending",R`\tan\theta_1=\mu_r\tan\theta_0`]]},
+"1.5":{notes:[R`The magnetic twin of 1.4, without the surface source: tangential H and normal B both carry across. “So yes, it does matter if I have an E or an H”: here it's H that's tangential-continuous and B that's normal-continuous.`,R`Magnetization is “just like the P we just saw,” but $\mu_0$ sits outside: $\mathbf B=\mu_0(\mathbf H+\mathbf M)$.`],
+ tips:[R`Start in the air: $\mathbf B_1=\mu_0\mathbf H_1$ and nothing to magnetize, so $\mathbf M_1=0$. Then cross with $H_t$ and $B_n$.`,
+  R`No surface current, no magnetic charge: tangential H and normal B. The $\varepsilon_r$ is a distractor.`,
+  R`Normal B continuous, so $H_z$ divides by $\mu_r$. Keeping $H_n$ continuous is the trap.`,
+  R`Tangential H copies across; B in the material is $\mu_r\mu_0$ times it.`,
+  R`$\mathbf M=\mathbf B/\mu_0-\mathbf H=(\mu_r-1)\mathbf H$. Use the field <b>in the material</b>.`,
+  R`Same factor on the normal part, with $H_{2z}$, not $H_{1z}$.`],
+ eqs:[R`\mathbf B_1=\mu_0\mathbf H_1`,BCH,R`\mu_r\mu_0H_{2z}=\mu_0H_{1z}`,R`B_{2x}=\mu_r\mu_0H_{1x}`,R`\mathbf M_2=\frac{\mathbf B_2}{\mu_0}-\mathbf H_2=(\mu_r-1)\mathbf H_2`,R`M_{2z}=(\mu_r-1)H_{2z}`],
+ card:[["Boundary conditions",BCH],["Constitutive",R`\mathbf B=\mu_0(\mathbf H+\mathbf M)=\mu_r\mu_0\mathbf H`],["Magnetization",R`\mathbf M=(\mu_r-1)\mathbf H`]]},
+"1.2":{notes:[R`Two theorems, two kinds of equations. Stokes pairs a closed contour with the open surface it bounds: that's for the curls, Faraday and Ampère. The divergence theorem pairs a closed surface with the volume inside: that's for the two Gauss laws.`,R`Why bother? “One can integrate over a discontinuity, i.e., a source, but cannot differentiate over one.” Every boundary condition you'll ever derive starts from these integral forms.`],
+ tips:[R`Match each equation to its theorem: curls over an open surface, then Stokes; divergences over a volume, then the divergence theorem.`,
+  R`Integrate over an open S bounded by C; Stokes turns the curl into a circulation around C. Ampère goes the same way.`,
+  R`Integrate over V; the divergence theorem moves you to the closed surface. It must be closed: porcupine in the bag.`,
+  R`S is fixed in space, so the time derivative comes outside. A moving surface would drag in motional EMF.`,
+  R`Integral continuity: net current out equals how fast the enclosed charge drops. Differentiate, and watch the unit prefixes.`],
+ eqs:[R`\iint_S(\nabla\times\mathbf E)\cdot d\mathbf s=\oint_C\mathbf E\cdot d\boldsymbol\ell`,R`\oint_C\mathbf E\cdot d\boldsymbol\ell=-\iint_S\mathbf M_i\cdot d\mathbf s-\frac{\partial}{\partial t}\iint_S\mathbf B\cdot d\mathbf s`,DIVT,R`\iint_S\frac{\partial\mathbf B}{\partial t}\cdot d\mathbf s=\frac{\partial}{\partial t}\iint_S\mathbf B\cdot d\mathbf s`,R`I_{out}=\oint\!\!\oint_S\mathbf J_{ic}\cdot d\mathbf s=-\frac{dQ_e}{dt}`],
+ card:[["Stokes",R`\iint_S(\nabla\times\mathbf A)\cdot d\mathbf s=\oint_C\mathbf A\cdot d\boldsymbol\ell`],["Divergence theorem",R`\iiint_V\nabla\cdot\mathbf A\,dv=\oint\!\!\oint_S\mathbf A\cdot d\mathbf s`],["Integral continuity",R`\oint\!\!\oint_S\mathbf J_{ic}\cdot d\mathbf s=-\frac{\partial Q_e}{\partial t}`]]}
+};})(window.MXG);
+
 /* QUIZ ARENA · HW 3 = Balanis Ch. 2 (electrical properties of matter), odd problems 2.1–2.25. Each problem: assigned
    numbers + remix generator, graded with the real formulas (ε0 = 8.854e-12, e = 1.602e-19). Ordering = estimated quiz
    likelihood. No 3D scene kind exists for this chapter, so scenes are omitted. */
@@ -2839,6 +2908,134 @@ L.push({id:"2.23",like:2,min:12,why:"Integration by parts with the $\\rho$ Jacob
 G.hw.ch2=L;
 })(window.MXG);
 
+/* QUIZ ARENA coaching for HW 3–4 (Ch. 2): Prather-voiced notes, a tip per stage, the equation per stage (eqs[i], aligned with
+   stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
+   Bound charge, capacitors and conductors were taught in L7/L8 by a SUBSTITUTE; quotes are Prather's own (L4 boundary conditions,
+   L9 recap) or marked as the substitute's, all as already sourced in content/ch1.js, content/ch2.js and src/coach/. */
+(function(G){G.hwCoach=G.hwCoach||{};const R=String.raw;
+const BOUNDQ=R`q_{vp}=-\nabla\cdot\mathbf P,\qquad q_{sp}=\mathbf P\cdot\hat n`,BOUNDJ=R`\mathbf J_{mv}=\nabla\times\mathbf M,\qquad \mathbf J_{ms}=\mathbf M\times\hat n`;
+const CPP=R`C=\frac{\varepsilon_r\varepsilon_0A}{d}`,SER=R`C_T=\frac{C_1C_2}{C_1+C_2}`,PAR=R`C_T=C_1+C_2`,WQ=R`W=\tfrac12QV=\frac{Q^2}{2C}`,WV=R`W=\tfrac12CV^2`;
+const COAXE=R`E_\rho=\frac{V}{\rho\ln(b/a)}`,COAXD=R`D_\rho=\frac{Q}{2\pi\rho\ell}`;
+G.hwCoach.ch2={
+"2.9":{notes:[R`Stacked layers: E is <b>normal</b> to the slab interface, so this is the crushed soda can. No free charge sits between two dielectrics, so D is the same in both. “D is not E”: E splits inversely to $\varepsilon_r$, and the low-ε slab takes the bigger field.`,R`Stacked layers are capacitors in series. The source is held, so the two drops have to add up to V.`],
+ tips:[R`Name the orientation first: E crosses the interface, so normal D is continuous. Then the drops add to the source voltage.`,
+  R`Dielectric to dielectric, no surface charge: normal D matches. Tangential E doesn't help, because E has no tangential part here.`,
+  R`Write $E_2$ in terms of $E_1$ from the D condition, put it into the voltage sum, and solve. Thicknesses in meters.`,
+  R`Get it from the ratio. Sanity check: the slab with the <b>smaller</b> $\varepsilon_r$ carries the larger field.`,
+  R`D is the same everywhere in the stack, so $Q=DA$ from either slab. Area in m².`,
+  R`Each slab is its own parallel-plate capacitor; combine in series. Check against $Q/V$.`],
+ eqs:[R`\varepsilon_{r1}E_1=\varepsilon_{r2}E_2`,null,R`E_1t_1+E_2t_2=V`,R`E_2=\frac{\varepsilon_{r1}}{\varepsilon_{r2}}E_1`,R`Q=DA=\varepsilon_{r1}\varepsilon_0E_1A`,R`C_T=\frac{C_1C_2}{C_1+C_2},\qquad C_i=\frac{\varepsilon_{ri}\varepsilon_0A}{t_i}`],
+ card:[["Normal D",R`\varepsilon_{r1}E_1=\varepsilon_{r2}E_2`],["Voltage sum",R`V=E_1t_1+E_2t_2`],["Charge",R`Q=DA`],["Series",SER]]},
+"2.1":{notes:[R`Every atom is stretched the same way. Inside the slab each dipole's + end sits next to its neighbor's − end and they cancel. Only the two faces the dipoles point into or out of are left with uncanceled charge.`,R`That displaced charge “induces its own field in response to the applied field” (his L9 recap). The bound charge is where that response shows up.`],
+ tips:[R`Uniform $\mathbf P$ means zero divergence before you write a thing. Then dot $\mathbf P$ with each face's <b>outward</b> normal.`,
+  R`A constant vector has no divergence: the + and − ends cancel all through the inside.`,
+  R`$\mathbf P\cdot\hat n=0$ wherever $\mathbf P$ is tangent to the face. Only the two faces $\mathbf P$ pierces get charge, with opposite signs.`,
+  R`On the face $\mathbf P$ points out of, $\hat n\parallel\mathbf P$, so $q_{sp}=|\mathbf P|$, positive. The opposite face gets the minus.`,
+  R`Linear response: $\mathbf P=\varepsilon_0\chi_e\mathbf E$. Divide, and don't forget the $\varepsilon_0$.`,
+  R`Add one. Free space is the floor ($\chi_e=0$), so a real dielectric lands above 1.`],
+ eqs:[BOUNDQ,R`q_{vp}=-\nabla\cdot\mathbf P=0\quad(\mathbf P\ \text{uniform})`,null,R`q_{sp}=\mathbf P\cdot\hat n`,R`\chi_e=\frac{P}{\varepsilon_0E}`,R`\varepsilon_r=1+\chi_e`],
+ card:[["Bound charge",BOUNDQ],["Susceptibility",R`\mathbf P=\varepsilon_0\chi_e\mathbf E`],["Dielectric constant",R`\varepsilon_r=1+\chi_e`]]},
+"2.15":{notes:[R`Side by side, source maintained: both sets see the same V across the same gap, so E is identical. The dielectric doesn't touch E. It shows up in D, and through D in the charge, the capacitance and the energy, all larger by $\varepsilon_r$.`],
+ tips:[R`Source held, same d: $E=V/d$ in both sets. Then $D=\varepsilon E$, $Q=DA$, $C=\varepsilon A/d$.`,
+  R`Same E, larger D in the filled set. Dividing E by $\varepsilon_r$ is the trap: that only happens when Q is frozen.`,
+  R`V over d, with d in meters.`,
+  R`$D=\varepsilon_r\varepsilon_0E$ in the filled set, then $Q=DA$.`,
+  R`Parallel capacitors add. Check: total charge over V.`,
+  R`Source held, so use the common V: $\tfrac12CV^2$ for the total.`],
+ eqs:[R`E=\frac Vd`,null,R`E=\frac Vd`,R`Q_p=\varepsilon_r\varepsilon_0EA`,R`C_T=\frac{\varepsilon_0A}{d}(1+\varepsilon_r)`,R`W_T=\tfrac12C_TV^2`],
+ card:[["Field",R`E=\frac Vd`],["Charge",R`Q=\varepsilon_r\varepsilon_0EA`],["Parallel",PAR],["Energy",WV]]},
+"2.11":{notes:[R`No source and no wire between them, so charge has nowhere to go: each capacitor keeps exactly what it had in free space. D follows the free charge, so D is frozen. The slab only lowers E, and with it the voltage, each by its own $\varepsilon_r$.`],
+ tips:[R`Freeze each capacitor's own charge, hence its D, at the free-space value. Then $E=D/\varepsilon$ capacitor by capacitor.`,
+  R`Each one's own Q. Treating them as connected (one common V, charge sharing) is the trap.`,
+  R`Free-space state: $Q=\varepsilon_0AV_0/d$. Both were charged the same way, so both carry the same Q.`,
+  R`D unchanged, so E drops by $\varepsilon_{r1}$.`,
+  R`$V=Ed$: the voltage drops by $\varepsilon_{r1}$ too.`,
+  R`Same move with $\varepsilon_{r2}$. The bigger $\varepsilon_r$ ends at the lower voltage.`],
+ eqs:[R`D=\frac{\varepsilon_0V_0}{d}`,null,R`Q=\frac{\varepsilon_0AV_0}{d}`,R`E_1=\frac{D}{\varepsilon_{r1}\varepsilon_0}`,R`V_1=E_1d=\frac{V_0}{\varepsilon_{r1}}`,R`V_2=\frac{V_0}{\varepsilon_{r2}}`],
+ card:[["Frozen D",R`D=\frac{Q}{A}=\frac{\varepsilon_0V_0}{d}`],["Field",R`E=\frac{D}{\varepsilon_r\varepsilon_0}`],["Voltage",R`V=Ed=\frac{V_0}{\varepsilon_r}`],["Capacitance",CPP]]},
+"2.19":{notes:[R`Magnetization is “just like the P we just saw”: every atomic current loop circulates the same way around the axis. Inside, neighboring loops cancel. Only on the side faces is there an uncanceled sheet of current, wrapping the slab like a solenoid winding.`,R`It's the opposite of the bound-charge rule: charge lives where $\mathbf P\parallel\hat n$, current lives where $\mathbf M\perp\hat n$.`],
+ tips:[R`Uniform $\mathbf M$: zero curl, no volume current. Then $\mathbf M\times\hat n$ face by face, with outward normals.`,
+  R`The cross product kills the parallel case. No current on the faces $\mathbf M$ points through; it all lives on the four side faces.`,
+  R`On a side face $\mathbf M\perp\hat n$, so $|\mathbf M\times\hat n|=|\mathbf M|$. The sheet current density equals M, in A/m.`,
+  R`Right-hand rule, <b>M first, then n̂</b>. Writing $\hat n\times\mathbf M$ flips the answer.`,
+  R`The magnetic copy of $\chi_e$: M over H. No $\mu_0$ in this one.`,
+  R`Add one. A ferrimagnet lands in the hundreds or more.`],
+ eqs:[BOUNDJ,null,R`|\mathbf J_{ms}|=|\mathbf M|\quad(\mathbf M\perp\hat n)`,R`\mathbf J_{ms}=\mathbf M\times\hat n,\qquad \hat a_z\times\hat a_x=\hat a_y`,R`\chi_m=\frac MH`,R`\mu_r=1+\chi_m`],
+ card:[["Bound current",BOUNDJ],["Susceptibility",R`\mathbf M=\chi_m\mathbf H`],["Permeability",R`\mu_r=1+\chi_m`]]},
+"2.25":{notes:[R`An applied field coordinates the free electrons, “like a conductor in front of a choir making sure everyone sings the same note” (the substitute, L7). They drift against E at only millimeters per second, yet the current is enormous because there are so many of them.`,R`Signs are the whole problem. Negative charge moving backward is current going forward.`],
+ tips:[R`Chain it in order from σ and $\mu_e$: the charge density first, and everything else hangs off it.`,
+  R`Electrons, so $q_{ve}$ is negative. Divide σ by $\mu_e$ and keep the minus.`,
+  R`Electrons drift <b>against</b> E: minus sign. Expect something slow.`,
+  R`Negative charge times negative velocity: J points along E. Cross-check with $\sigma E$ every time.`,
+  R`Convert the cross section to m² before you multiply.`,
+  R`Divide the magnitude of the charge density by the electron charge.`],
+ eqs:[R`\sigma=-\mu_eq_{ve}`,R`q_{ve}=-\frac{\sigma}{\mu_e}`,R`\mathbf v_e=-\mu_e\mathbf E`,R`\mathbf J=q_{ve}\mathbf v_e=\sigma\mathbf E`,R`I=JA`,R`N_e=\frac{|q_{ve}|}{e},\qquad e=1.602\times10^{-19}\ \text{C}`],
+ card:[["Conductivity (2-66c)",R`\sigma=-\mu_eq_{ve}`],["Drift",R`\mathbf v_e=-\mu_e\mathbf E`],["Current density",R`\mathbf J=q_{ve}\mathbf v_e=\sigma\mathbf E`],["Electron count",R`N_e=\frac{|q_{ve}|}{e}`]]},
+"2.3":{notes:[R`Radial dipoles: the inner surface sees their − ends, the outer surface their + ends. A $1/r^2$ field in spherical coordinates is exactly the divergence-free one, so nothing is left over in the volume.`,R`Equal and opposite totals on the two surfaces: bound charge never adds up to anything net.`],
+ tips:[R`Spherical divergence, not a plain $\frac{\partial}{\partial r}$: look at $r^2P_r$ first. Then remember the inner surface's outward normal is $-\hat a_r$.`,
+  R`$r^2P_r$ is a constant, so its derivative is zero. Using $\frac{\partial P_r}{\partial r}$ alone is the trap.`,
+  R`The shell's inner surface faces the center, so $\hat n=-\hat a_r$ and $q_{sp}=-P_r(a)$: negative.`,
+  R`Outer surface, $\hat n=+\hat a_r$: positive, and smaller than the inner one by $(a/b)^2$.`,
+  R`Multiply by the sphere's area $4\pi b^2$. The $r^2$ cancels, so both surfaces carry the same size total.`,
+  R`P over $\varepsilon_0E$, then add one. The $1/r^2$ cancels in the ratio.`],
+ eqs:[R`q_{vp}=-\frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2P_r\right)`,null,R`q_{sp}(a)=\mathbf P\cdot(-\hat a_r)=-P_r(a)`,R`q_{sp}(b)=+P_r(b)`,R`Q(b)=q_{sp}(b)\,4\pi b^2`,R`\varepsilon_r=1+\frac{P}{\varepsilon_0E}`],
+ card:[["Bound charge",BOUNDQ],["Spherical divergence",R`\nabla\cdot\mathbf P=\frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2P_r\right)`],["Surface total",R`Q=q_{sp}\,4\pi r^2`],["Dielectric constant",R`\varepsilon_r=1+\chi_e,\quad \chi_e=\frac{P}{\varepsilon_0E}`]]},
+"2.7":{notes:[R`“The orientation of the field to the boundary is super duper important.” The slab is as thick as the gap, so it fills half the <b>area</b>: the interface runs parallel to E, and the two halves are capacitors in parallel sharing one voltage.`,R`The battery is gone, so the total charge is frozen. It redistributes toward the dielectric half, and the voltage and the energy both drop.`],
+ tips:[R`Read the geometry before anything: half the area, so parallel; battery removed, so $Q_0$ is frozen. Then $V=Q_0/C_T$.`,
+  R`The interface is parallel to E, so tangential E (and V) match across it: parallel. Reading <i>half the space</i> as half the thickness is the trap.`,
+  R`Each half has half the plate area. Parallel capacitors add: the air half times $(1+\varepsilon_r)$.`,
+  R`$Q_0$ from the free-space state, then divide by the new $C_T$. The voltage drops.`,
+  R`Charge moves toward the dielectric half: $Q_d=C_dV$. Check the two halves add back to $Q_0$.`,
+  R`Q is fixed, so use $Q^2/2C$. The energy drops: the field pulls the slab in.`],
+ eqs:[R`V=\frac{Q_0}{C_T}`,null,R`C_T=\frac{\varepsilon_0(A/2)}{d}(1+\varepsilon_r)`,R`V=\frac{Q_0}{C_T},\qquad Q_0=\frac{\varepsilon_0AV_0}{d}`,R`Q_d=\varepsilon_rC_{air}V`,R`W=\frac{Q_0^2}{2C_T}`],
+ card:[["Capacitance",CPP],["Parallel",PAR],["Frozen charge",R`Q_0=\frac{\varepsilon_0AV_0}{d}=C_TV`],["Energy",WQ]]},
+"2.5":{notes:[R`Battery gone means the plate charge is frozen. D lines start on the free charge and are blind to the dielectric, so D stays put. “D is not E”: inside the slab E drops by $\varepsilon_r$, while the air gap keeps the old field.`,R`The slab and the air gap are stacked, so they are capacitors in series. The voltage collapses; the capacitance doesn't care whether the battery is on.`],
+ tips:[R`Q, and so D, is frozen at its free-space value. Then go region by region with $E=D/\varepsilon$.`,
+  R`No source, so no path for charge. Keeping $V=V_0$ is the battery-held case, not this one.`,
+  R`$Q=DA$ from the free-space state. The gap is in mm: convert to meters.`,
+  R`Same D in the slab, divided by $\varepsilon_r$. The air gap still has $D/\varepsilon_0$.`,
+  R`Add the two drops: slab thickness times its field, plus the air gap times its field.`,
+  R`Series layers, or just Q over the new V. Both must agree.`,
+  R`Q is fixed: $\tfrac12QV$ with the <b>new</b> V. It comes out lower than before.`],
+ eqs:[R`D=\frac{\varepsilon_0V_0}{d}`,null,R`Q=DA=\frac{\varepsilon_0AV_0}{d}`,R`E_d=\frac{D}{\varepsilon_r\varepsilon_0}`,R`V=E_dt+E_0(d-t)`,R`C=\frac QV=\left(\frac{t}{\varepsilon_r\varepsilon_0A}+\frac{d-t}{\varepsilon_0A}\right)^{-1}`,R`W=\tfrac12QV`],
+ card:[["Frozen D",R`D=\frac QA=\frac{\varepsilon_0V_0}{d}`],["Field by region",R`E=\frac{D}{\varepsilon_r\varepsilon_0}`],["Voltage sum",R`V=E_dt+E_0(d-t)`],["Series",SER],["Energy",WQ]]},
+"2.17":{notes:[R`Radial E is <b>tangent</b> to the $\phi=\pi$ and $\phi=2\pi$ planes, so tangential E matches across them: both halves have the same E, set by the source. Two half-coaxes in parallel.`,R`The dielectric half then carries more D, more surface charge and more capacitance, by $\varepsilon_r$.`],
+ tips:[R`Same V on the same radial path in both halves, so $E=V/(\rho\ln(b/a))$ everywhere. Then D and Q half by half.`,
+  R`An interface parallel to E is a parallel connection. Series would need E to cross it.`,
+  R`$E=k/\rho$ with $k=V/\ln(b/a)$. Integrate from a to b to check you get V back.`,
+  R`$D=\varepsilon_r\varepsilon_0E$; the surface charge on the inner conductor is $D(a)$. Multiply by <b>half</b> the circumference times the length.`,
+  R`Each half is half a coax; add them. The full-coax formula for each half is the trap.`,
+  R`Source held, so use V: $\tfrac12CV^2$.`],
+ eqs:[COAXE,null,R`k=\frac{V}{\ln(b/a)}`,R`Q_d=\varepsilon_r\varepsilon_0\frac{k}{a}\,(\pi a\ell)=\pi\varepsilon_r\varepsilon_0k\ell`,R`C_T=\frac{\pi\varepsilon_0\ell}{\ln(b/a)}(1+\varepsilon_r)`,R`W=\tfrac12C_TV^2`],
+ card:[["Coax field",COAXE],["Half-coax",R`C_{half}=\frac{\pi\varepsilon\ell}{\ln(b/a)}`],["Parallel",PAR],["Energy",WV]]},
+"2.13":{notes:[R`The charge on the conductors is frozen, so Gauss gives the same D as before. Gauss for D sees only free charge; ε enters only when you convert to E. The jacket just lowers E inside it.`,R`Radial layers are capacitors in series: integrate E across each layer and add.`],
+ tips:[R`Q from the free-space coax, frozen. D from Gauss with that Q, unchanged; then E layer by layer.`,
+  R`Unchanged. Recomputing D with $\varepsilon$ in it is the trap.`,
+  R`Free-space coax capacitance times $V_0$. Radii and length in meters.`,
+  R`Divide D by $\varepsilon_r\varepsilon_0$ in the jacket. Still a $1/\rho$ field, just a smaller k.`,
+  R`Each layer gives its own k times $\ln(\text{outer}/\text{inner})$. Add them. Using $\ln(b/a)$ for both is the trap.`,
+  R`$C=Q/V$ with the new V.`,
+  R`Q fixed: $\tfrac12QV$.`],
+ eqs:[COAXD,null,R`Q=\frac{2\pi\varepsilon_0\ell V_0}{\ln(b/a)}`,R`E_\rho=\frac{Q}{2\pi\varepsilon_r\varepsilon_0\ell\rho}`,R`V=k_d\ln\frac ca+k_0\ln\frac bc`,R`C=\frac QV`,R`W=\tfrac12QV`],
+ card:[["Coax charge",R`Q=\frac{2\pi\varepsilon_0\ell V_0}{\ln(b/a)}`],["Gauss",COAXD],["Voltage",R`V=\int_a^bE_\rho\,d\rho=k_d\ln\frac ca+k_0\ln\frac bc`],["Energy",WQ]]},
+"2.21":{notes:[R`Concentric rings of equal-strength current loops. Because the strength doesn't fall off as $1/\rho$, neighboring rings don't cancel: a net axial current flows up through the volume and comes back down the outer skin.`,R`Magnetization current always closes on itself, so the total through a cross section is zero.`],
+ tips:[R`Constant <b>magnitude</b> isn't a constant <b>vector</b>: $\hat a_\phi$ turns. Compute the curl in cylindrical coordinates, then add the surface sheet.`,
+  R`$\rho M_\phi$ grows with ρ, so the curl survives. Only a $1/\rho$ field is curl-free.`,
+  R`$\mathbf M\times\hat n$ with $\hat n=\hat a_\rho$: $\hat a_\phi\times\hat a_\rho=-\hat a_z$. Mind the order.`,
+  R`Integrate $J_{mv}$ over the cross section with $\rho\,d\rho\,d\phi$. The ρ cancels the $1/\rho$.`,
+  R`The surface sheet times the circumference flows back the other way. Forgetting it is the trap.`],
+ eqs:[R`\nabla\times\mathbf M=\hat a_z\frac{1}{\rho}\frac{\partial}{\partial\rho}\left(\rho M_\phi\right)`,null,R`\mathbf J_{ms}=\mathbf M\times\hat a_\rho`,R`I_v=\int_0^{2\pi}\!\!\int_0^aJ_{mv}\,\rho\,d\rho\,d\phi`,R`I=I_v+J_{ms}(2\pi a)`],
+ card:[["Bound current",BOUNDJ],["Cylindrical curl",R`(\nabla\times\mathbf M)_z=\frac{1}{\rho}\frac{\partial}{\partial\rho}\left(\rho M_\phi\right)`],["Total",R`I=\iint\mathbf J_{mv}\cdot d\mathbf s+\oint\mathbf J_{ms}\,d\ell`]]},
+"2.23":{notes:[R`The current hugs the surface and dies off exponentially inward: a DC preview of skin effect. In a round wire the area element grows with ρ, so the integral needs the Jacobian.`],
+ tips:[R`Total current is the flux of J through the cross section, with the ρ Jacobian. The ρ times an exponential means integration by parts.`,
+  R`Arc length is $\rho\,d\phi$. Dropping the ρ is about a factor-of-a-hundred trap here.`,
+  R`By parts on $\rho e^{k\rho}$. Since $ka$ is huge, the $e^{-ka}$ term is nothing.`,
+  R`Divide the total current by that factor.`,
+  R`The exponent hits −1 when $a-\rho=1/k$. Convert to mm.`],
+ eqs:[R`I=\int_0^{2\pi}\!\!\int_0^aJ\,\rho\,d\rho\,d\phi`,R`ds=\rho\,d\rho\,d\phi`,R`\int_0^a\rho e^{k\rho}\,d\rho=\frac{ae^{ka}}{k}-\frac{e^{ka}-1}{k^2}`,R`J_0=\frac{I}{2\pi\left(\frac ak-\frac{1}{k^2}\right)}`,R`\delta=\frac1k`],
+ card:[["Current",R`I=\iint_S\mathbf J\cdot d\mathbf s`],["Area element",R`ds=\rho\,d\rho\,d\phi`],["By parts",R`\int\rho e^{k\rho}d\rho=\frac{\rho e^{k\rho}}{k}-\frac{e^{k\rho}}{k^2}`],["Decay depth",R`\delta=\frac1k`]]}
+};})(window.MXG);
+
 /* QUIZ ARENA · HW 5 + HW 6 = Balanis Ch. 4 (uniform plane waves, oblique travel, lossy media). Odd problems 4.1–4.23.
    Every answer is computed from the params (c = 3e8, η0 = 120π, ε0 = 8.854e-12, μ0 = 4πe-7). Convention: e^{+jωt},
    e^{-jβ·r} travels along +β̂. (Polarization sense, where it comes up, uses Δφ = φx − φy as in content/ch4.js.) */
@@ -3087,6 +3284,63 @@ L.push({id:"4.17",like:2,min:12,why:"Re-deriving Example 4-2's H by curl, sign b
 G.hw.ch4=L;
 })(window.MXG);
 
+/* QUIZ ARENA coaching for Ch. 4 HW: Prather-voiced notes, a tip per stage, the equation per stage (eqs[i], aligned with
+   stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
+   Quotes are from L12/L13/L14 as already sourced in content/ch4.js and src/coach/ch4.js; everything else is his method, paraphrased. */
+(function(G){G.hwCoach=G.hwCoach||{};const R=String.raw;
+const DIR=R`e^{-j\boldsymbol\beta\cdot\mathbf r}\ \Rightarrow\ \text{travels along }+\hat\beta`,EH=R`\mathbf E=\eta_0\mathbf H\times\hat\beta`;
+const CLS=R`\frac{\sigma}{\omega\varepsilon}=\frac{\sigma}{2\pi f\varepsilon_r\varepsilon_0}`;
+G.hwCoach.ch4={
+"4.11":{notes:[R`Every Ch. 4 problem starts at the exponent. The number multiplying $x$ is $\beta_0$, the propagation term in rad/m, and its sign tells you which way the wave is going.`,R`Then don't solve the wave equation twice: $\mathbf H$ comes straight from $\mathbf E$ through $\eta_0$ and the direction of travel. Free space, so $v=c$ and $\eta_0=120\pi$.`],
+ tips:[R`Pull $\beta_0$ out of the exponent, keeping its $\pi$. That number is a phase constant, never a wavelength.`,R`$\lambda=2\pi/\beta_0$. With $x$ in meters, $\beta_0$ is in rad/m and $\lambda$ comes out in meters.`,R`Free space, so the wave moves at $c$: $f=c/\lambda$.`,R`Minus sign in the exponent with $e^{+j\omega t}$ means travel toward $+x$. Then the right-hand rule $\hat\beta\times\hat{\mathbf E}$ points H. Here $\hat a_x\times\hat a_z=-\hat a_y$ is the trap.`,R`Magnitude is $E/\eta_0$. Let the complex factor $(1+j)$ and the exponential ride along untouched; the sign comes from the cross product.`],
+ eqs:[DIR,R`\lambda=\frac{2\pi}{\beta_0}`,R`f=\frac{c}{\lambda}`,R`\mathbf H=\frac{1}{\eta_0}\hat\beta\times\mathbf E`,R`H_y=-\frac{E_z}{\eta_0}`],
+ card:[["Direction",DIR],["Wavelength, frequency",R`\lambda=\frac{2\pi}{\beta_0},\qquad f=\frac{c}{\lambda}`],["H from E",R`\mathbf H=\frac{1}{\eta_0}\hat\beta\times\mathbf E,\quad \eta_0=120\pi`]]},
+"4.9":{notes:[R`One traveling plane wave in free space: $E/H=\eta_0$, and that's all you need for H. Power with peak amplitudes carries the $\frac12$.`,R`Energy is where he catches people. Only E was written down, but a plane wave always carries H, and for one traveling wave the electric and magnetic energies are equal at every instant. The time average pulls a second $\frac12$ out of $\langle\cos^2\rangle$: “I hold you accountable for everything you've ever learned, going back to first grade.”`],
+ tips:[R`Plan it as a chain: $H_0$, then $S_{av}$, then $w_e$ and $w_m$. One formula each. Inverting $\eta_0$ is the first trap.`,R`$H_0=E_0/\eta_0$. Sanity: in free space H is about 377 times smaller than E, numerically.`,R`Peak amplitudes, so the $\frac12$ is in. With rms values it would not be.`,R`Instantaneous $w_e$ has a $\cos^2(\omega t-\beta_0z)$. The question wants the coefficient in front of it, $\frac12\varepsilon_0E_0^2$.`,R`Substitute $H_0=E_0/\eta_0$ into $\frac12\mu_0H_0^2$ and use $\mu_0/\eta_0^2=\varepsilon_0$. Equal, at every instant.`,R`$\langle\cos^2\rangle=\frac12$, so the average is $\frac14\varepsilon_0E_0^2$, not $\frac12$. Check: total average energy times $c$ gives back $S_{av}$.`],
+ eqs:[null,R`H_0=\frac{E_0}{\eta_0}`,R`S_{av}=\frac{E_0^2}{2\eta_0}`,R`w_e=\tfrac12\varepsilon_0E_0^2\cos^2(\omega t-\beta_0z)`,R`w_m=\tfrac12\mu_0H_0^2\cos^2(\cdot)=\tfrac12\frac{\mu_0}{\eta_0^2}E_0^2\cos^2(\cdot)=w_e`,R`\langle w_e\rangle=\langle w_m\rangle=\tfrac14\varepsilon_0E_0^2`],
+ card:[["Impedance",R`H_0=\frac{E_0}{\eta_0}`],["Power (peak)",R`S_{av}=\frac{E_0^2}{2\eta_0}`],["Energy",R`w_e=w_m=\tfrac12\varepsilon_0E_0^2\cos^2(\omega t-\beta_0z),\quad \langle w_e\rangle=\tfrac14\varepsilon_0E_0^2`],["Check",R`v_e=\frac{S_{av}}{\langle w_e\rangle+\langle w_m\rangle}=c`]]},
+"4.13":{notes:[R`An isotropic source spreads its power evenly over a sphere, so at distance $r$ the density is power over $4\pi r^2$. Far out, the wave is locally a plane wave and the Ch. 4 relations take over.`,R`The frequency is a distractor; nothing here depends on it. And the problem says specify the units: his “bring home two” point, a number without its unit means nothing.`],
+ tips:[R`Spread the power over the sphere. Leave the frequency alone.`,R`Watts and meters before you divide: mW to W, km to m. It's $4\pi r^2$, the full sphere.`,R`RMS values have the $\frac12$ already built in, so no $\frac12$ in the formula. Peak values carry it.`,R`Invert the rms form: $E_{rms}=\sqrt{\eta_0S_{av}}$. If you want peak, multiply by $\sqrt2$, but the question asks rms.`,R`$H_{rms}=E_{rms}/\eta_0$, same impedance as always.`,R`Energy density = power density over the energy velocity, $c$ in free space. W/m² over m/s is J/m³ before you finish the algebra.`],
+ eqs:[null,R`S_{av}=\frac{P_{rad}}{4\pi r^2}`,R`S_{av}=\frac{E_{rms}^2}{\eta_0}=\eta_0H_{rms}^2`,R`E_{rms}=\sqrt{\eta_0S_{av}}`,R`H_{rms}=\frac{E_{rms}}{\eta_0}`,R`w_{av}=\frac{S_{av}}{v_e}=\frac{S_{av}}{c}`],
+ card:[["Spherical spreading",R`S_{av}=\frac{P_{rad}}{4\pi r^2}`],["RMS power",R`S_{av}=\frac{E_{rms}^2}{\eta_0},\quad E_{peak}=\sqrt2E_{rms}`],["Energy",R`w_{av}=\frac{S_{av}}{c}=\varepsilon_0E_{rms}^2`]]},
+"4.3":{notes:[R`Given H, get E by one cross product. In L12 he hammered the order: $\mathbf E\times\mathbf H$ has to point along $\hat\beta$, so it's $\mathbf E=\eta_0\mathbf H\times\hat\beta$. Flip the order and your power flows backwards.`,R`For the instantaneous Poynting vector you go back to real fields first. Then the time average is half the peak, from $\langle\cos^2\rangle=\frac12$.`],
+ tips:[R`Read $\hat\beta$ from the exponent sign, then $\mathbf E=\eta_0\mathbf H\times\hat\beta$. Check the order: E cross H must land on $\hat\beta$.`,R`Term by term: $\hat a_y\times\hat a_z=\hat a_x$, so the H y-part feeds $E_x$. The $\frac{1}{120\pi}$ cancels $\eta_0$.`,R`$\hat a_x\times\hat a_z=-\hat a_y$, so the H x-part feeds $E_y$ with a sign flip. Check $\mathbf E\cdot\mathbf H=0$.`,R`Multiply by $e^{j\omega t}$, take the real part, then cross. Never cross phasors for the instantaneous $\boldsymbol{\mathcal S}$.`,R`Average is half the peak. Second check: $|\mathbf E|^2/2\eta_0$ gives the same number.`],
+ eqs:[EH,R`E_x=\eta_0H_y`,R`E_y=-\eta_0H_x`,R`\boldsymbol{\mathcal S}=\boldsymbol{\mathcal E}\times\boldsymbol{\mathcal H}=\hat a_z\,\eta_0|\mathbf H|^2\cos^2(\omega t-\beta_0z)`,R`\mathbf S_{av}=\tfrac12\text{Re}(\mathbf E\times\mathbf H^*)=\hat\beta\frac{|\mathbf E|^2}{2\eta_0}`],
+ card:[["E from H",EH],["Real fields",R`\boldsymbol{\mathcal E}=\text{Re}\left(\mathbf Ee^{j\omega t}\right)`],["Instantaneous",R`\boldsymbol{\mathcal S}=\boldsymbol{\mathcal E}\times\boldsymbol{\mathcal H}`],["Average",R`\mathbf S_{av}=\tfrac12\text{Re}(\mathbf E\times\mathbf H^*)`]]},
+"4.23":{notes:[R`Classify first. Moist earth at low frequency conducts like a metal: it's not a PEC, so the wave “will propagate into that medium a little bit” and dies. “The medium itself is taking power out of my wave as it propagates.”`,R`Good conductor means one number does everything: $\alpha=\beta=\sqrt{\pi f\mu\sigma}$. Distance, dB, wavelength and velocity all come from it, and $\eta$ sits at 45°.`],
+ tips:[R`Loss tangent before any formula. The $\varepsilon$ in it is $\varepsilon_r\varepsilon_0$; forgetting $\varepsilon_0$ is the classic slip.`,R`$\gg1$: good conductor. $\ll1$: good dielectric. Near 1: exact (4-28c). Don't let the word "earth" pick for you.`,R`The field envelope is $e^{-\alpha z}$: take the log of the field ratio. Not $2\alpha$, that's power. If the ratio is about $e$, you've gone one skin depth.`,R`Field ratio, so $20\log_{10}$. Same as $8.686\,\alpha z$: one neper is 8.686 dB.`,R`In a good conductor $\beta=\alpha$, so $\lambda=2\pi\delta$. Expect it far shorter than the lossless wavelength.`,R`$v_p=\omega/\beta$. Slow, way below $c$.`,R`Equal real and imaginary parts: magnitude at 45°. The question wants one of the two equal parts.`],
+ eqs:[CLS,R`\alpha=\beta\simeq\sqrt{\pi f\mu\sigma}`,R`z=\frac{1}{\alpha}\ln\frac{E(0)}{E(z)}`,R`\text{dB}=20\log_{10}\frac{E(0)}{E(z)}=8.686\,\alpha z`,R`\lambda=\frac{2\pi}{\beta}=2\pi\delta`,R`v_p=\frac{\omega}{\beta}`,R`\eta\simeq(1+j)\sqrt{\frac{\omega\mu}{2\sigma}}`],
+ card:[["Classify",CLS],["Good conductor",R`\alpha=\beta=\sqrt{\pi f\mu\sigma},\quad \delta=\frac1\alpha`],["Decay",R`|E(z)|=|E(0)|e^{-\alpha z},\quad \text{dB}=8.686\,\alpha z`],["Impedance",R`\eta\simeq(1+j)\sqrt{\frac{\omega\mu}{2\sigma}}`]]},
+"4.5":{notes:[R`Same cross product as 4.3, one change: the exponent is $e^{+j\beta y}$, so the wave runs toward $-y$. As he put it in L14, H “better be going in the other direction because I'm propagating in the backward direction.”`,R`Complex amplitudes don't change the recipe. They just ride along in E, and in power you take $|\mathbf H|^2=\mathbf H\cdot\mathbf H^*$.`],
+ tips:[R`Rewrite $e^{+j\beta y}$ as $e^{-j(-\beta)y}$ before anything. That's the move and the trap.`,R`A plus sign in the exponent with $e^{+j\omega t}$ means the negative direction.`,R`Cross term by term with $-\hat a_y$: $\hat a_x\times(-\hat a_y)=-\hat a_z$, $\hat a_z\times(-\hat a_y)=+\hat a_x$. The complex coefficients swap slots and keep their values.`,R`The prefactor is just $\eta_0$ times H's prefactor. Nothing else touches it.`,R`$|a+jb|^2=a^2+b^2$, summed over components. Not $(a+b)^2$, and don't drop the $j$-parts.`,R`$\mathbf S_{av}$ points along $\hat\beta$, so toward $-y$. A positive $S_y$ means you got the direction wrong.`],
+ eqs:[R`e^{+j\beta y}=e^{-j(-\beta)y}\ \Rightarrow\ \hat\beta=-\hat a_y`,null,EH,R`E_0=\eta_0H_0`,R`|\mathbf H|^2=\sum_i|H_i|^2,\qquad |a+jb|^2=a^2+b^2`,R`\mathbf S_{av}=\hat\beta\frac{\eta_0}{2}|\mathbf H|^2`],
+ card:[["Direction",R`e^{\pm j\beta y}\Rightarrow\hat\beta=\mp\hat a_y`],["E from H",EH],["Power",R`\mathbf S_{av}=\hat\beta\frac{\eta_0}{2}|\mathbf H|^2`]]},
+"4.7":{notes:[R`A real $\cos\beta_0x$ with no traveling phase is a standing wave: a forward and a backward wave of equal size. His picture from years at sea: a buoy anchored to the seabed has no idea which way the waves are going; it just bobs up and down.`,R`So there is no single $\hat\beta$ to cross with. Go back to Maxwell: E is the curl of H over $j\omega\varepsilon_0$. E comes out a quarter wavelength shifted from H, in time quadrature, and the net power is zero: energy sloshing in place.`],
+ tips:[R`Don't reach for $\eta_0\mathbf H\times\hat\beta$. Take the curl of H and divide by $j\omega\varepsilon_0$.`,R`No $e^{\mp j\beta_0x}$ anywhere, so standing. Euler splits the cosine into two equal waves, one toward $+x$ and one toward $-x$.`,R`H depends on $x$ only, so only $\frac{\partial}{\partial x}$ survives in the curl. $(\nabla\times\mathbf H)_y=-\frac{\partial H_z}{\partial x}$, and $\frac{\beta_0}{\omega\varepsilon_0}=\eta_0$.`,R`$(\nabla\times\mathbf H)_z=\frac{\partial H_y}{\partial x}$. Watch two signs: the derivative of cos is $-\sin$, and $\frac{1}{j}=-j$.`,R`$\mathbf E\times\mathbf H^*$ is purely imaginary, so its real part, the average power, is zero.`],
+ eqs:[R`\mathbf E=\frac{1}{j\omega\varepsilon_0}\nabla\times\mathbf H`,R`\cos\beta_0x=\tfrac12\left(e^{-j\beta_0x}+e^{+j\beta_0x}\right)`,R`(\nabla\times\mathbf H)_y=-\frac{\partial H_z}{\partial x},\qquad \frac{\beta_0}{\omega\varepsilon_0}=\eta_0`,R`(\nabla\times\mathbf H)_z=\frac{\partial H_y}{\partial x}`,R`\mathbf S_{av}=\tfrac12\text{Re}(\mathbf E\times\mathbf H^*)=0`],
+ card:[["Euler split",R`\cos\beta_0x=\tfrac12\left(e^{-j\beta_0x}+e^{+j\beta_0x}\right)`],["Ampère, source-free",R`\mathbf E=\frac{\nabla\times\mathbf H}{j\omega\varepsilon_0}`],["Power",R`\mathbf S_{av}=\tfrac12\text{Re}(\mathbf E\times\mathbf H^*)`]]},
+"4.21":{notes:[R`The good-dielectric partner of 4.23. Same word, earth, opposite regime: at high frequency with small $\sigma$ the displacement current wins, so it's nearly lossless and $\eta$ is essentially real.`,R`The loss comes from the binomial approximation, $\sqrt{1+x}\approx1+\frac x2$. “That's where this 2 comes from.” And notice the good-dielectric $\alpha$ doesn't depend on $f$.`],
+ tips:[R`Ratio first. "Lossy earth" does not mean good conductor.`,R`$\ll1$: good dielectric. $\eta\approx\eta_0/\sqrt{\varepsilon_r}$ and $\beta$ is the lossless one.`,R`E prefactor is $\eta H_0$ with the <b>medium's</b> $\eta$, not 377. Direction from $\eta\mathbf H\times\hat a_x$.`,R`$S_{av}=\frac{\eta}{2}|\mathbf H|^2$ at the surface; $|\hat a_y+j2\hat a_z|^2$ sums the squared magnitudes.`,R`$\beta\simeq\omega\sqrt{\mu\varepsilon}$: free-space $\beta$ times $\sqrt{\varepsilon_r}$.`,R`$\alpha\simeq\frac{\sigma}{2}\eta$, with the medium's $\eta$.`,R`$\delta=1/\alpha$. Big, because a good dielectric barely attenuates.`],
+ eqs:[CLS,R`\eta\simeq\sqrt{\frac{\mu}{\varepsilon}}=\frac{\eta_0}{\sqrt{\varepsilon_r}}`,R`\mathbf E=\eta\mathbf H\times\hat a_x`,R`\mathbf S_{av}=\hat a_x\frac{\eta}{2}|\mathbf H|^2e^{-2\alpha x}`,R`\beta\simeq\omega\sqrt{\mu\varepsilon}=\frac{2\pi f\sqrt{\varepsilon_r}}{c}`,R`\alpha\simeq\frac{\sigma}{2}\sqrt{\frac{\mu}{\varepsilon}}`,R`\delta=\frac{1}{\alpha}`],
+ card:[["Classify",CLS],["Good dielectric",R`\eta\simeq\frac{\eta_0}{\sqrt{\varepsilon_r}},\quad \beta\simeq\omega\sqrt{\mu\varepsilon},\quad \alpha\simeq\frac{\sigma}{2}\eta`],["Power",R`\mathbf S_{av}=\hat\beta\frac{\eta}{2}|\mathbf H|^2e^{-2\alpha x}`],["Skin depth",R`\delta=\frac1\alpha,\quad \lambda=\frac{2\pi}{\beta},\quad v_p=\frac\omega\beta`]]},
+"4.15":{notes:[R`An oblique wave: force the exponent into $e^{-j\boldsymbol\beta\cdot\mathbf r}$ and the wave vector falls out. Then every axis gets its own projection.`,R`The axis phase velocities beat $c$. “Wait a minute, Einstein said nothing can be bigger than the speed of light.” It's his car picture: at 50 mph the point far ahead sweeps by faster, but you're still doing 50. Energy moves along $\hat\beta$, and its axis projections are slower than $c$.`],
+ tips:[R`Rewrite $e^{+j(\cdots)}$ as $e^{-j\boldsymbol\beta\cdot\mathbf r}$ before reading anything.`,R`Flip <b>both</b> signs. Check $\boldsymbol\beta\cdot\mathbf E=0$: a plane wave is transverse.`,R`$\cos\theta=\beta_z/|\boldsymbol\beta|$, and $|\boldsymbol\beta|$ is the root of the sum of squares, not the sum.`,R`$v_{pi}=\omega/\beta_i=c\,\beta/\beta_i$, faster than $c$: the phase fronts projected onto an axis.`,R`$v_{ei}=c\,\beta_i/\beta$, slower than $c$. Check $v_{pi}v_{ei}=c^2$.`,R`$f=c\beta/2\pi$ with the full magnitude, not one component.`,R`$\mathbf H=\frac{1}{\eta_0}\hat\beta\times\mathbf E$ with the <b>signed</b> components of $\boldsymbol\beta$. Only $H_x$ survives.`],
+ eqs:[R`e^{-j\boldsymbol\beta\cdot\mathbf r},\quad \boldsymbol\beta\cdot\mathbf r=\beta_yy+\beta_zz`,R`\boldsymbol\beta\cdot\mathbf E=0`,R`\cos\theta=\frac{\beta_z}{\sqrt{\beta_y^2+\beta_z^2}}`,R`v_{pi}=\frac{\omega}{\beta_i}=c\frac{\beta}{\beta_i}`,R`v_{ei}=c\frac{\beta_i}{\beta},\qquad v_{pi}v_{ei}=c^2`,R`f=\frac{c\beta}{2\pi}`,R`H_x=\frac{1}{\eta_0}\frac{\beta_yE_z-\beta_zE_y}{\beta}`],
+ card:[["Wave vector",R`e^{-j\boldsymbol\beta\cdot\mathbf r},\quad \beta=\sqrt{\beta_y^2+\beta_z^2}`],["Axis velocities",R`v_{pi}=c\frac{\beta}{\beta_i},\quad v_{ei}=c\frac{\beta_i}{\beta}`],["Frequency",R`f=\frac{c\beta}{2\pi}`],["H from E",R`\mathbf H=\frac{1}{\eta_0}\hat\beta\times\mathbf E`]]},
+"4.1":{notes:[R`His L12 derivation, and he said a quiz can be part of a derivation. Curl Faraday into Ampère, kill terms with each physical assumption, keep the forward wave.`,R`The wave equation doesn't set the amplitude: “we get that by looking at energy, how much power do we launch.” Then H from Faraday, “don't solve the wave equation twice,” and $\beta/\omega\mu$ boils down to $1/\eta$.`],
+ tips:[R`Curl Faraday, substitute Ampère, then apply the assumptions one at a time: source-free, uniform, $+z$ only.`,R`Expand the curl-curl. Source-free means $\nabla\cdot\mathbf E=0$, so the gradient term drops.`,R`With $e^{+j\omega t}$, $e^{-j\beta z}$ travels toward $+z$. Drop the other term: nothing out there reflects.`,R`$\frac{\partial}{\partial z}$ pops down $-j\beta$, the $j$'s cancel, and $\frac{\beta}{\omega\mu}=\sqrt{\varepsilon/\mu}=\frac1\eta$.`,R`$\beta=\omega\sqrt{\mu\varepsilon}$: free-space $\beta$ times $\sqrt{\varepsilon_r}$.`,R`$H_0=E_0/\eta$ with $\eta=\eta_0/\sqrt{\varepsilon_r}$. The dielectric makes H bigger for the same E.`],
+ eqs:[R`\nabla\times\nabla\times\mathbf E=-j\omega\mu\nabla\times\mathbf H`,R`\nabla\times\nabla\times\mathbf E=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E\ \Rightarrow\ \nabla^2\mathbf E+\beta^2\mathbf E=0`,R`E_x=E_0^+e^{-j\beta z}+E_0^-e^{+j\beta z}`,R`\mathbf H=-\frac{1}{j\omega\mu}\nabla\times\mathbf E,\qquad \frac{\beta}{\omega\mu}=\frac{1}{\eta}`,R`\beta=\omega\sqrt{\mu\varepsilon}=\frac{2\pi f\sqrt{\varepsilon_r}}{c}`,R`H_0=\frac{E_0^+}{\eta},\quad \eta=\frac{\eta_0}{\sqrt{\varepsilon_r}}`],
+ card:[["Helmholtz",R`\nabla^2\mathbf E+\beta^2\mathbf E=0,\quad \beta=\omega\sqrt{\mu\varepsilon}`],["Forward wave",R`\mathbf E=\hat a_xE_0^+e^{-j\beta z}`],["Faraday",R`\mathbf H=-\frac{1}{j\omega\mu}\nabla\times\mathbf E=\hat a_y\frac{E_0^+}{\eta}e^{-j\beta z}`]]},
+"4.19":{notes:[R`Energy velocity is power density over energy density. His “bring home two” point: W/m² over J/m³ is m/s, a velocity, before you finish the algebra.`,R`Off-axis, $\mathcal S_z$ picks up the $z$-projection of $\hat\beta$, so $v_{ez}$ is slower than $v$ while $v_{pz}$ is faster, and their product is $v^2$. That product earns its keep in Ch. 8.`],
+ tips:[R`Real forward fields from (4-18), Poynting, total energy density, divide.`,R`Total means $w_e+w_m$, and for one traveling wave they're equal. Using $w_e$ alone doubles the answer.`,R`The $z$-component of $\hat\beta$ is $\cos\theta_i$, so $\mathcal S_z$ carries $\cos\theta_i$.`,R`$\cos^2\Phi$ cancels, so it holds at every instant: $v_{ez}=v\cos\theta_i$. Use the medium's $v$.`,R`$v_{pz}=v/\cos\theta_i$. Check $v_{pz}v_{ez}=v^2$.`],
+ eqs:[R`v_{ez}=\frac{\mathcal S_z}{w_e+w_m}`,R`w=\tfrac12\varepsilon E_0^2\cos^2\Phi+\tfrac12\mu\frac{E_0^2}{\eta^2}\cos^2\Phi=\varepsilon E_0^2\cos^2\Phi`,R`\mathcal S_z=\frac{E_0^2}{\eta}\cos^2\Phi\cos\theta_i`,R`v_{ez}=\frac{\cos\theta_i}{\sqrt{\mu\varepsilon}}=v\cos\theta_i`,R`v_{pz}=\frac{v}{\cos\theta_i},\qquad v_{pz}v_{ez}=v^2`],
+ card:[["Definition (4-9)",R`v_e=\frac{\mathcal S}{w_e+w_m}`],["Energy",R`w=\varepsilon E_0^2\cos^2\Phi`],["Result (4-24)",R`v_{ez}=v\cos\theta_i,\quad v_{pz}=\frac{v}{\cos\theta_i}`]]},
+"4.17":{notes:[R`Example 4-2 redone by curl. A pure-$y$ field that varies in $x$ and $z$ gives an H in the $xz$-plane. The work is sign bookkeeping on two waves: the backward wave flips every derivative, so its H flips too.`,R`On the directional impedance he stopped in L13: “Something just tells me that's not right.” The subscript names the direction of power flow. Use the E and H transverse to it, ordered so $\mathbf E\times\mathbf H$ points that way, and $\theta_i\to0$ must give $\eta$.`],
+ tips:[R`Write the curl of $\hat a_yE_y(x,z)$ before any exponentials. Only an $\hat a_x$ and an $\hat a_z$ term survive.`,R`$\frac{\partial}{\partial y}=0$, so there's no $y$-component.`,R`Backward exponent is $+j\beta(\cdots)$, so $\frac{\partial}{\partial z}$ brings down $+j\beta\cos\theta_i$. Every sign flips relative to the forward term.`,R`$H_x=-\frac{1}{j\omega\mu}\left(-\frac{\partial E_y}{\partial z}\right)$ and $\frac{\beta}{\omega\mu}=\frac1\eta$. The forward $H_x$ comes out negative.`,R`$S_z=E_xH_y^*-E_yH_x^*$, so $Z_z=-E_y/H_x$. Sanity: it's $\eta/\cos\theta_i$, which is $\eta$ at normal incidence.`],
+ eqs:[R`\nabla\times\mathbf E=-\hat a_x\frac{\partial E_y}{\partial z}+\hat a_z\frac{\partial E_y}{\partial x}`,null,R`\frac{\partial}{\partial z}e^{+j\beta(x\sin\theta_i+z\cos\theta_i)}=+j\beta\cos\theta_i\,e^{+j\beta(\cdots)}`,R`H_x^+=-\frac{E_0^+\cos\theta_i}{\eta}`,R`Z_z=-\frac{E_y^+}{H_x^+}=\frac{\eta}{\cos\theta_i}`],
+ card:[["Curl",R`\nabla\times(\hat a_yE_y)=-\hat a_x\frac{\partial E_y}{\partial z}+\hat a_z\frac{\partial E_y}{\partial x}`],["Faraday",R`\mathbf H=-\frac{1}{j\omega\mu}\nabla\times\mathbf E,\quad \frac{\beta}{\omega\mu}=\frac1\eta`],["Directional impedance",R`Z_z=-\frac{E_y}{H_x}=\frac{\eta}{\cos\theta_i}`]]}
+};})(window.MXG);
+
 /* QUIZ ARENA · HW 7 = Balanis Ch. 5 #1–5 (normal incidence, power, SWR). All five are normal incidence, so the
    ⊥/∥ (Prather: TM^y / TE^y) naming never enters; η = η0/√ε_r for nonmagnetic media, η0 = 120π.
    Ordering = estimated quiz likelihood. */
@@ -3202,6 +3456,63 @@ L.push({id:"5.5",like:4,min:12,why:"Same interface as 5.4 read as a transmission
 
 G.hw.ch5=L;
 })(window.MXG);
+
+/* QUIZ ARENA coaching for HW 7 (Ch. 5 #1–5, normal incidence): Prather-voiced notes, a tip per stage, the equation per stage
+   (eqs[i], aligned with stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
+   Quotes are from L13/L14 as already sourced in content/ch5.js and src/coach/ch5.js; everything else is his method, paraphrased. */
+(function(G){const R=String.raw;G.hwCoach=G.hwCoach||{};
+const ETA=R`\eta=\frac{\eta_0}{\sqrt{\varepsilon_r}},\qquad \eta_0=120\pi`,GB=R`\Gamma^b=\frac{\eta_2-\eta_1}{\eta_2+\eta_1}`,TB=R`T^b=\frac{2\eta_2}{\eta_2+\eta_1}=1+\Gamma^b`;
+const PR=R`\frac{S^r}{S^i}=|\Gamma^b|^2`,PT=R`\frac{S^t}{S^i}=|T^b|^2\frac{\eta_1}{\eta_2}=1-|\Gamma^b|^2`,SWR=R`\text{SWR}=\frac{1+|\Gamma^b|}{1-|\Gamma^b|}`;
+const EMX=R`|E|_{max}=E_0\left(1+|\Gamma^b|\right),\qquad |E|_{min}=E_0\left(1-|\Gamma^b|\right)`,GA=R`\Gamma^b=\frac{1-\sqrt{\varepsilon_r}}{1+\sqrt{\varepsilon_r}}\quad(\text{air}\to\varepsilon_r)`;
+G.hwCoach.ch5={
+"5.3":{notes:[R`His recipe never changes: write the incident, reflected and transmitted waves and make tangential $\mathbf E$ and $\mathbf H$ continuous. At normal incidence both fields are tangential, so out come $\Gamma^b$ and $T^b$ in terms of the two impedances.`,R`The graded idea is power. $S=|E|^2/2\eta$, and the two sides have different $\eta$. "The average power of this wave is nothing more than $V^2/R$, if you will, divided by 2", and the $R$ changes across the interface.`],
+ tips:[R`Coefficients come from <b>impedances</b>, not from $\varepsilon_r$ directly. Turn each dielectric constant into an $\eta$ first. Getting $T^b$ from power is backwards.`,
+  R`Where the wave goes minus where it came from: $\eta_2-\eta_1$ on top. Into a denser medium $\eta$ drops, so $\Gamma^b$ comes out negative.`,
+  R`$T^b=1+\Gamma^b$ is just tangential E continuity at $z=0$. Use it as the check on $\frac{2\eta_2}{\eta_2+\eta_1}$.`,
+  R`Power goes as field squared: square $|\Gamma^b|$, then turn it into a percent.`,
+  R`Write $S=|E|^2/2\eta$ on each side. The incident wave lives in $\eta_1$, the transmitted one in $\eta_2$, and that ratio doesn't cancel.`,
+  R`$|T^b|^2$ times $\eta_1/\eta_2$. Then check: reflected % + transmitted % must be 100. If you got $|T^b|^2$ alone, they won't add up.`],
+ eqs:[ETA,GB,TB,PR,null,PT],
+ card:[["Impedance",ETA],["Reflection",GB],["Transmission",TB],["Power split",PR+R`,\qquad `+PT]]},
+"5.2":{notes:[R`Air onto a calm lake: one interface, one $\Gamma$, square it. Water's huge dielectric constant drops its impedance way below 377 Ω, so most of the power bounces off.`,R`The whole problem is the difference between a <b>field</b> ratio and a <b>power</b> ratio. $|\Gamma^b|$ is what the E field does; the percentage asks about power.`],
+ tips:[R`Get $\eta_2=\eta_0/\sqrt{\varepsilon_r}$ and $\Gamma^b$; the reflected power is $|\Gamma^b|^2$, and the rest is transmitted.`,
+  R`Divide top and bottom by $\eta_0$: everything is in terms of $\sqrt{\varepsilon_r}$. Air into water is into a lower impedance, so the sign is negative.`,
+  R`$|\Gamma|$ is a field ratio. Power goes as field squared, so the power fraction must be the square.`,
+  R`Square $|\Gamma^b|$ and turn it into a percent. The sign of $\Gamma^b$ disappears.`,
+  R`Lossless, so what doesn't reflect goes in: $1-|\Gamma^b|^2$. Check it with $|T^b|^2\eta_1/\eta_2$ if you want to be sure.`],
+ eqs:[R`\eta_2=\frac{\eta_0}{\sqrt{\varepsilon_r}}`,GA,null,PR,R`\frac{S^t}{S^i}=1-|\Gamma^b|^2`],
+ card:[["Impedance",R`\eta_2=\frac{\eta_0}{\sqrt{\varepsilon_r}}`],["Reflection",GA],["Power",PR+R`,\qquad \frac{S^t}{S^i}=1-|\Gamma^b|^2`]]},
+"5.4":{notes:[R`In medium 1 the field is a forward wave plus a backward wave. Factor them and you get a traveling wave times a standing-wave bracket that swings between $1+|\Gamma^b|$ and $1-|\Gamma^b|$. "It's just like the wave going up and down, up and down."`,R`The skill he wants from L14 is the <b>phase condition</b>: write $\Gamma^b=|\Gamma^b|e^{j\psi_b}$ and find where $\psi_b+2\beta_0z$ hits even or odd multiples of $\pi$. The 2 is the round trip, so the pattern repeats every $\lambda_0/2$.`],
+ tips:[R`Write $\Gamma^b$ as magnitude and phase. A negative real $\Gamma^b$ means $\psi_b=\pi$; that one number places every max and min.`,
+  R`Free space into the dielectric: $\eta_2=\eta_0/\sqrt{\varepsilon_r}$, and going into a lower $\eta$ gives a negative $\Gamma^b$.`,
+  R`SWR from $|\Gamma^b|$ only, the sign doesn't enter. He's blunt about it: the "lowest it can ever be is one."`,
+  R`Put $z=0$ in the phase condition. With $\psi_b=\pi$ the reflected wave comes back out of phase right at the interface.`,
+  R`Maxima need $\psi_b+2\beta_0z=2m\pi$ with $z\le0$: the first one is $\lambda_0/4$ in front. Use the <b>free-space</b> wavelength, since the pattern lives in medium 1.`,
+  R`Peak = incident amplitude times $1+|\Gamma^b|$. Watch the mV/m.`,
+  R`Dip = incident amplitude times $1-|\Gamma^b|$. Check: max over min equals the SWR.`],
+ eqs:[R`\Gamma^b=|\Gamma^b|e^{j\psi_b}`,GB,SWR,null,R`\psi_b+2\beta_0z=2m\pi\ (\max),\qquad \beta_0=\frac{2\pi}{\lambda_0}`,R`|E|_{max}=E_0\left(1+|\Gamma^b|\right)`,R`|E|_{min}=E_0\left(1-|\Gamma^b|\right)`],
+ card:[["Reflection",GB],["SWR",SWR],["Max / min positions",R`\psi_b+2\beta_0z=\begin{cases}2m\pi&\max\\(2m+1)\pi&\min\end{cases}`],["Max / min values",EMX]]},
+"5.1":{notes:[R`All the bookkeeping in one problem: H from E, then $\Gamma$, $T$, four fields and three powers. $\mathbf H$ comes from Faraday, so it's $E/\eta$ with the right-hand rule, and the reflected $\mathbf H$ flips: "If I do the right-hand rule, H better be going in the other direction because I'm propagating in the backward direction."`,R`The twist: dielectric into free space is into a <b>higher</b> impedance, so $T^b>1$. That's fine. E is not power, and the transmitted power still comes out smaller than the incident.`],
+ tips:[R`Medium first. The incident side is the dielectric, so $\eta_1=\eta_0/\sqrt{\varepsilon_r}$, not 377 Ω. Free space is medium 2.`,
+  R`Right-hand rule: $\hat a_z\times\hat a_y$. Do the cross product, don't guess the sign.`,
+  R`Amplitude is $E_0/\eta_1$. Watch the μA/m.`,
+  R`Into a higher $\eta$: $\Gamma^b$ positive, so $T^b=1+\Gamma^b$ comes out above 1.`,
+  R`Transmitted H uses the <b>transmitted</b> E over the <b>medium 2</b> impedance.`,
+  R`Incident power density: $|E_0|^2/2\eta_1$, with the dielectric's $\eta$. Watch the nW/m$^2$.`,
+  R`Transmitted: $|T^bE_0|^2/2\eta_2$. Check it with $S^i-S^r=S^t$.`],
+ eqs:[R`\eta_1=\frac{\eta_0}{\sqrt{\varepsilon_r}},\qquad \eta_2=\eta_0`,R`\mathbf H^i=\frac{1}{\eta_1}\hat a_z\times\mathbf E^i`,R`|\mathbf H^i|=\frac{E_0}{\eta_1}`,GB,R`H^t=\frac{T^bE_0}{\eta_2}`,R`S^i_{av}=\frac{|E_0|^2}{2\eta_1}`,R`S^t_{av}=\frac{|T^bE_0|^2}{2\eta_2}`],
+ card:[["H from E",R`\mathbf H=\frac1\eta\hat\beta\times\mathbf E`],["Coefficients",GB+R`,\qquad `+TB],["Fields",R`E^r=\Gamma^bE_0,\qquad E^t=T^bE_0`],["Power",R`S_{av}=\frac{|E|^2}{2\eta}`]]},
+"5.5":{notes:[R`Same interface as 5.4, read as a transmission line. In L14 he tied it straight back: we've seen this a lot in transmission lines, where it's called the VSWR. The wave impedance $E/H$ in front of the interface changes with position, just like the input impedance of a line.`,R`At a maximum E is big and H is small, so the impedance is large; at a minimum it's the other way around. The two answers come out as $\eta_0$ times and divided by the SWR.`],
+ tips:[R`Move $\Gamma$ away from the interface with the round-trip phase, $\Gamma(-\ell)=\Gamma^be^{-j2\beta_0\ell}$, then use the line formula for $Z$.`,
+  R`$\Gamma^b<0$ puts a minimum on the interface. The maximum is a quarter wavelength back.`,
+  R`$E_0=1$, so the max is just $1+|\Gamma^b|$.`,
+  R`Min is $1-|\Gamma^b|$.`,
+  R`SWR = max over min. It can't be less than 1.`,
+  R`At the first max, $2\beta_0\ell=\pi$ turns $\Gamma$ real and positive. Plug it in: $Z=\eta_0\,\text{SWR}$, above 377 Ω.`,
+  R`At the min (the interface) $Z=\eta_0/\text{SWR}$. Sanity check: it must equal $\eta_2$ exactly, since you're sitting on medium 2.`],
+ eqs:[R`Z(-\ell)=\eta_0\frac{1+\Gamma(-\ell)}{1-\Gamma(-\ell)},\qquad \Gamma(-\ell)=\Gamma^be^{-j2\beta_0\ell}`,null,R`|E|_{max}=E_0\left(1+|\Gamma^b|\right)`,R`|E|_{min}=E_0\left(1-|\Gamma^b|\right)`,R`\text{SWR}=\frac{|E|_{max}}{|E|_{min}}`,R`Z_{max}=\eta_0\frac{1+|\Gamma^b|}{1-|\Gamma^b|}=\eta_0\,\text{SWR}`,R`Z_{min}=\frac{\eta_0}{\text{SWR}}`],
+ card:[["Reflection",GA],["Max / min",EMX],["SWR",SWR],["Wave impedance",R`Z(-\ell)=\eta_0\frac{1+\Gamma^be^{-j2\beta_0\ell}}{1-\Gamma^be^{-j2\beta_0\ell}}`]]}
+};})(window.MXG);
 
 /* QUIZ ARENA · HW 8 = Balanis Ch. 6 #1, 2, 7, 8, 10, 12 (vector and Hertzian potentials, TE/TM construction).
    All six are "show that / derive" problems: choice stages walk his key decisions, then MAXWELL adds a short numeric
@@ -3343,6 +3654,73 @@ L.push({id:"6.2",like:3,min:10,why:"The mirror of 6.1. If he asks a Hertz potent
 
 G.hw.ch6=L;
 })(window.MXG);
+
+/* QUIZ ARENA coaching for HW 8 (Ch. 6: potentials, TE/TM construction, Hertz potentials): Prather-voiced notes, a tip per stage,
+   the equation per stage (eqs[i], aligned with stages; index 0 = first-move stage), and a per-problem equation card.
+   Quotes are from L15 (transcript b140b059) and those already in content/ch6.js / src/coach/ch6.js; everything else is paraphrase. */
+(function(G){const R=String.raw;G.hwCoach=G.hwCoach||{};
+const EA=R`\mathbf E_A=-j\omega\mathbf A-j\frac{1}{\omega\mu\varepsilon}\nabla(\nabla\cdot\mathbf A),\qquad \mathbf H_A=\frac1\mu\nabla\times\mathbf A`;
+const EF=R`\mathbf E_F=-\frac1\varepsilon\nabla\times\mathbf F,\qquad \mathbf H_F=-j\omega\mathbf F-j\frac{1}{\omega\mu\varepsilon}\nabla(\nabla\cdot\mathbf F)`;
+const BZ=R`\beta_z=\sqrt{\beta^2-\beta_c^2},\qquad \beta=\frac{2\pi f}{c}`,BC=R`\beta_c^2=\left(\frac{m\pi}{a}\right)^2+\left(\frac{n\pi}{b}\right)^2`;
+const CURL=R`\nabla\times\mathbf E=-j\omega\mu\mathbf H,\qquad \nabla\times\mathbf H=j\omega\varepsilon\mathbf E,\qquad \frac{\partial}{\partial z}\to-j\beta_z`;
+const GDD=R`\nabla\times\nabla\times\mathbf X=\nabla(\nabla\cdot\mathbf X)-\nabla^2\mathbf X`;
+G.hwCoach.ch6={
+"6.12":{notes:[R`The potentials are a shortcut: pick one, then "we always have to just take derivatives of those to get back to the fields." TE$^z$ means $E_z=0$, and the question is just which potential can't put anything along $z$.`,R`$\mathbf A$ always leaks into E through $-j\omega\mathbf A$ and the grad-div term. $\mathbf F$ only enters E through a curl, and the curl of $\hat zF_z$ has no $z$ part. That's the whole construction, and you "should definitely know the Cartesian stuff."`],
+ tips:[R`Write the general $\mathbf E$ and $\mathbf H$ from both potentials, then ask which choice forces $E_z=0$: keep $\mathbf F=\hat zF_z$, throw out $\mathbf A$.`,
+  R`Expand $\nabla\times(\hat zF_z)$ first, then multiply by $-\frac1\varepsilon$. That minus flips both signs; it's the trap.`,
+  R`$\nabla\cdot\mathbf F$ is just $\frac{\partial F_z}{\partial z}$, so the grad-div term hits all three H components. The $-j\omega F_z$ piece only lands on the component <b>along</b> $\mathbf F$, and folds in as $+\beta^2$.`,
+  R`TE to any axis $u$: put $\mathbf F$ along $u$, $\mathbf A=0$. Then cycle $x\to y\to z\to x$ instead of redoing the algebra.`,
+  R`TE$_{10}$: half a wavelength across the wide side. Put $a$ in meters.`,
+  R`Take $E_y$ and $H_x$ from your derived fields; the $\sin$ and the exponential cancel in the ratio. What's left is the L18 TE impedance, and it must sit <b>above</b> 377 Ω.`],
+ eqs:[EF,R`\nabla\times(\hat zF_z)=\hat x\frac{\partial F_z}{\partial y}-\hat y\frac{\partial F_z}{\partial x}`,R`\mathbf H_F=-j\omega\mathbf F-j\frac{1}{\omega\mu\varepsilon}\nabla(\nabla\cdot\mathbf F)`,null,R`(f_c)_{10}=\frac{c}{2a}`,R`\left|\frac{E_y}{H_x}\right|=\frac{\omega\mu}{\beta_z}=Z^{TE}`],
+ card:[["Fields from F",EF],["TEᶻ, E",R`E_x=-\frac1\varepsilon\frac{\partial F_z}{\partial y},\qquad E_y=\frac1\varepsilon\frac{\partial F_z}{\partial x}`],["TEᶻ, H_z",R`H_z=-j\frac{1}{\omega\mu\varepsilon}\left(\frac{\partial^2}{\partial z^2}+\beta^2\right)F_z`],["Cutoff",R`(f_c)_{10}=\frac{c}{2a}`],["TE impedance",R`Z^{TE}=\frac{\omega\mu}{\beta_z}`]]},
+"6.10":{notes:[R`No potentials this time: just Faraday and Ampère, back and forth. He was clear the two routes agree: "You get the same answers if you use Maxwell's equation."`,R`The move is to make $z$ trivial. With $e^{-j\beta_zz}$ every $\frac{\partial}{\partial z}$ becomes $-j\beta_z$, the six scalar curl rows become algebra, and two substitutions put everything in terms of $E_z$.`],
+ tips:[R`Write all six scalar rows of the two curl equations, set $H_z=0$, and replace $\frac{\partial}{\partial z}$ with $-j\beta_z$ before doing anything else.`,
+  R`Ampère's $x$ row: with $H_z=0$ only the $\frac{\partial H_y}{\partial z}$ term is left. Track the sign of $-j\beta_z$ carefully.`,
+  R`Put your $E_x$ into Faraday's $y$ row and collect $H_y$. Use $\omega\mu\omega\varepsilon=\beta^2$ so $\beta^2-\beta_z^2$ shows up as $\beta_c^2$.`,
+  R`You never used Ampère's $z$ row. Plug the transverse H back in and see what it needs; that's why the problem hands you the Helmholtz equation.`,
+  R`TM$_{11}$: one half-wave across each side. Get $\beta_c$ from both walls, then subtract from $\beta^2$. Real $\beta_z$ means you're above cutoff.`,
+  R`Read the ratio straight off Ampère's $x$ row. TM sits <b>below</b> 377 Ω; if you got more, you've got the TE answer.`],
+ eqs:[CURL,R`(\nabla\times\mathbf H)_x=\frac{\partial H_z}{\partial y}-\frac{\partial H_y}{\partial z}=j\omega\varepsilon E_x`,R`-j\omega\mu H_y=\frac{\partial E_x}{\partial z}-\frac{\partial E_z}{\partial x},\qquad \beta_c^2=\beta^2-\beta_z^2`,null,BZ,R`\frac{E_x}{H_y}=\frac{\beta_z}{\omega\varepsilon}`],
+ card:[["Curl rows",CURL],["Transverse fields",R`E_x=-j\frac{\beta_z}{\beta_c^2}\frac{\partial E_z}{\partial x},\qquad H_y=-j\frac{\omega\varepsilon}{\beta_c^2}\frac{\partial E_z}{\partial x}`],["Cutoff",BC],["Propagation",BZ],["TM impedance",R`Z^{TM}=\frac{\beta_z}{\omega\varepsilon}`]]},
+"6.1":{notes:[R`This is the class derivation of $\mathbf A$ rerun with a new constant out front. His exam rule fits it exactly: "only a derivation that we covered in class. I want you to know where things come from."`,R`Same three beats as the $\mathbf A$ derivation: curl-free means gradient, grad div minus del squared, then a gauge to kill "that funny term on the right." A gauge "is just a mathematical construct": it doesn't change the fields, it just cleans up the equation.`],
+ tips:[R`Electric source only, so Faraday has no source term. Put the given $\mathbf H_e$ straight into it.`,
+  R`$(-j\omega\mu)(j\omega\varepsilon)$: the $j$'s give $+1$, and $\omega^2\mu\varepsilon$ is $\beta^2$. Then a curl-free vector is a gradient.`,
+  R`Ampère with "grad div minus del squared," collect, and you get the funny gradient term again. Only the curl of $\boldsymbol\Pi_e$ is fixed, so its divergence is yours to choose: pick $\phi_e$ to cancel it.`,
+  R`Set the two expressions for $\mathbf H$ equal and match what's under the curl. Watch $\frac1j=-j$.`,
+  R`β of the medium: $\omega\sqrt{\mu\varepsilon}$, with $\varepsilon_r$ under the root.`,
+  R`$\boldsymbol\Pi_e$ along $z$ varying in $x$ has zero divergence, so $E_z=\beta^2\Pi$. Take the curl for $H_y$; the ratio is just the medium's $\eta$. It's an ordinary plane wave.`],
+ eqs:[R`\nabla\times\mathbf E_e=-j\omega\mu\mathbf H_e`,R`\beta^2=\omega^2\mu\varepsilon`,R`\nabla^2\boldsymbol\Pi_e+\beta^2\boldsymbol\Pi_e=-\frac{\mathbf J}{j\omega\varepsilon}+\nabla\left(\nabla\cdot\boldsymbol\Pi_e+\phi_e\right)`,R`\mathbf H_A=\frac1\mu\nabla\times\mathbf A`,R`\beta=\frac{2\pi f\sqrt{\varepsilon_r}}{c}`,R`\left|\frac{E_z}{H_y}\right|=\frac{\beta^2}{\omega\varepsilon\beta}=\frac{\beta}{\omega\varepsilon}=\eta`],
+ card:[["Maxwell",R`\nabla\times\mathbf E=-j\omega\mu\mathbf H,\qquad \nabla\times\mathbf H=\mathbf J+j\omega\varepsilon\mathbf E`],["Identity",GDD],["Gauge",R`\phi_e=-\nabla\cdot\boldsymbol\Pi_e`],["Results",R`\nabla^2\boldsymbol\Pi_e+\beta^2\boldsymbol\Pi_e=j\frac{1}{\omega\varepsilon}\mathbf J,\qquad \mathbf E_e=\beta^2\boldsymbol\Pi_e+\nabla(\nabla\cdot\boldsymbol\Pi_e)`]]},
+"6.7":{notes:[R`This was the 10/15 quiz. TM$^x$ means $H_x=0$, so ask which potential can't put anything into $H_x$: $\mathbf A$ along $x$, because $\mathbf H_A$ is a curl and the curl of $\hat xA_x$ has no $\hat x$ part.`,R`E is the messy side. $\nabla(\nabla\cdot\mathbf A)$ spreads one component of $\mathbf A$ into all three components of E. Then the TM$^y$ case is the same thing with the letters cycled.`],
+ tips:[R`Write the general $\mathbf E$ and $\mathbf H$ (6-34, 6-35), then ask which choice forces $H_x=0$: $\mathbf F=0$, $\mathbf A=\hat xA_x$.`,
+  R`$-j\omega\mathbf A$ only lands on $E_x$, but the grad-div term has an $x$ part too. Combine them using $\omega^2\mu\varepsilon=\beta^2$.`,
+  R`Expand $\nabla\times(\hat xA_x)$ term by term and divide by $\mu$. Don't trust memory for the signs.`,
+  R`Cycle the letters. In the cyclic order, the component one step ahead gets $+$, the one behind gets $-$.`,
+  R`Plug the plane wave in: each derivative becomes $-j\beta$ times a direction cosine. The bracket becomes $\beta^2\cos^2\theta$ and the ratio collapses to $\eta$ times a cosine.`,
+  R`The mixed partial brings down $\sin\theta\cos\theta$; divide by $H_y$. This is Ch. 5's directional impedance in disguise.`],
+ eqs:[EA,R`\nabla(\nabla\cdot\hat xA_x)=\nabla\frac{\partial A_x}{\partial x}`,R`\nabla\times(\hat xA_x)=\hat y\frac{\partial A_x}{\partial z}-\hat z\frac{\partial A_x}{\partial y}`,null,R`\frac{\partial}{\partial x}\to-j\beta\sin\theta,\quad \frac{\partial}{\partial z}\to-j\beta\cos\theta,\quad \frac{\beta}{\omega\varepsilon}=\eta`,R`\left|\frac{E_z}{H_y}\right|=\frac{\beta^2\sin\theta\cos\theta/\omega\mu\varepsilon}{\beta\cos\theta/\mu}=\eta\sin\theta`],
+ card:[["Fields from A",EA],["TMˣ, E_x",R`E_x=-j\frac{1}{\omega\mu\varepsilon}\left(\frac{\partial^2}{\partial x^2}+\beta^2\right)A_x`],["TMˣ, H",R`H_y=\frac1\mu\frac{\partial A_x}{\partial z},\qquad H_z=-\frac1\mu\frac{\partial A_x}{\partial y}`],["Ratios",R`\left|\frac{E_x}{H_y}\right|=\eta\cos\theta,\qquad \left|\frac{E_z}{H_y}\right|=\eta\sin\theta`]]},
+"6.8":{notes:[R`Same physics as 6.10 by the potential route. Write $E_z$ from $A_z$, flip it around so $A_z$ is in terms of $E_z$, and every other component follows by taking derivatives.`,R`The one move that makes it work is the traveling-wave assumption. With $e^{-j\beta_zz}$ the operator $\left(\frac{\partial^2}{\partial z^2}+\beta^2\right)$ is just a number, $\beta_c^2$, and you can divide by it. Then TM$^x$ and TM$^y$ are relabeling.`],
+ tips:[R`Pick $E_z$ for TM$^z$ and write it from $A_z$ (6-59). Say out loud that you're assuming $e^{-j\beta_zz}$.`,
+  R`A traveling wave turns $\frac{\partial^2}{\partial z^2}$ into $-\beta_z^2$. That's the only reason the operator can be divided out.`,
+  R`Invert ($\frac{1}{-j}=j$), then take $E_x$ from the mixed partial. One $\frac{\partial}{\partial z}$ brings down $-j\beta_z$.`,
+  R`Relabel <b>all three</b> letters, and the traveling direction now sets $\beta_c^2$. Leaving $\beta_z$ in a TM$^x$ answer is the trap.`,
+  R`TM$_{11}$: both walls count. Meters first.`,
+  R`$\beta=2\pi f/c$, then subtract $\beta_c^2$ under the root. Imaginary means below cutoff.`,
+  R`$\frac{\partial}{\partial x}$ of $\sin\frac{\pi x}{a}$ brings down $\frac{\pi}{a}$. Compare peak to peak, so drop the sines.`],
+ eqs:[R`E_z=-j\frac{1}{\omega\mu\varepsilon}\left(\frac{\partial^2}{\partial z^2}+\beta^2\right)A_z`,null,R`E_x=-j\frac{1}{\omega\mu\varepsilon}\frac{\partial^2A_z}{\partial x\partial z},\qquad A_z=j\frac{\omega\mu\varepsilon}{\beta_c^2}E_z`,null,BC,BZ,R`\frac{|E_x|_{max}}{|E_z|_{max}}=\frac{\beta_z}{\beta_c^2}\cdot\frac{\pi}{a}`],
+ card:[["TMᶻ from A_z",R`E_z=-j\frac{\beta_c^2}{\omega\mu\varepsilon}A_z,\qquad \beta_c^2=\beta^2-\beta_z^2`],["Transverse E",R`E_x=-j\frac{\beta_z}{\beta_c^2}\frac{\partial E_z}{\partial x},\qquad E_y=-j\frac{\beta_z}{\beta_c^2}\frac{\partial E_z}{\partial y}`],["Transverse H",R`H_x=j\frac{\omega\varepsilon}{\beta_c^2}\frac{\partial E_z}{\partial y},\qquad H_y=-j\frac{\omega\varepsilon}{\beta_c^2}\frac{\partial E_z}{\partial x}`],["Guide numbers",BC+R`,\qquad `+BZ]]},
+"6.2":{notes:[R`The mirror of 6.1 by duality: swap $\mathbf J\to\mathbf M$, $\mathbf A\to\mathbf F$, $\varepsilon\leftrightarrow\mu$. In L15 he said the entire formulation is identical and skipped the steps, so you supply them.`,R`The only new thing to watch is the sign on $\mathbf M$ in Faraday. Get that wrong and (a) comes out with the wrong sign.`],
+ tips:[R`Only magnetic sources here, so Ampère is source-free. Put the given $\mathbf E_h$ into it.`,
+  R`No $\mathbf J$ anywhere: the source-free equation is the one that normally carries $\mathbf J$.`,
+  R`Balanis' symmetric form (6-1a): $\mathbf M$ goes in Faraday with a minus, next to $-j\omega\mu\mathbf H$.`,
+  R`Set the two E's equal: the $\mathbf F$ one is $-\frac1\varepsilon\nabla\times\mathbf F$. Match under the curl and simplify the $j$.`,
+  R`Now both $\mu_r$ and $\varepsilon_r$ go under the root.`,
+  R`Zero divergence again, so $H_z=\beta^2\Pi$; the curl gives $E_y$. The ratio is $\omega\mu/\beta$, the ferrite's own $\eta$.`],
+ eqs:[R`\nabla\times\mathbf H_h=j\omega\varepsilon\mathbf E_h`,null,null,R`\mathbf E_F=-\frac1\varepsilon\nabla\times\mathbf F`,R`\beta=\frac{2\pi f\sqrt{\mu_r\varepsilon_r}}{c}`,R`\left|\frac{E_y}{H_z}\right|=\frac{\omega\mu}{\beta}=\eta_0\sqrt{\frac{\mu_r}{\varepsilon_r}}`],
+ card:[["Maxwell",R`\nabla\times\mathbf E=-\mathbf M-j\omega\mu\mathbf H,\qquad \nabla\times\mathbf H=j\omega\varepsilon\mathbf E`],["Identity",GDD],["Gauge",R`\phi_m=-\nabla\cdot\boldsymbol\Pi_h`],["Results",R`\nabla^2\boldsymbol\Pi_h+\beta^2\boldsymbol\Pi_h=j\frac{1}{\omega\mu}\mathbf M,\qquad \boldsymbol\Pi_h=-j\frac{1}{\omega\mu\varepsilon}\mathbf F`]]}
+};})(window.MXG);
 
 /* QUIZ ARENA · HW 9 = Balanis Ch. 8 (rectangular waveguides). Each problem: assigned numbers + remix generator,
    graded with the real formulas (c = 3e8, η0 = 120π, TE10 dominant). Ordering = estimated quiz likelihood. */

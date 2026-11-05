@@ -242,6 +242,85 @@ math[display=block]{margin:.3em 0}
 
 .mathbox{scrollbar-width:thin}
 .mathbox.scrolls{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+
+/* ================= GAME ================= */
+.pcard{display:flex;align-items:center;gap:14px;margin-top:10px;padding:14px 16px;border-radius:20px;background:linear-gradient(135deg,#1B1E27,#13151B);border:1px solid var(--line-2)}
+.avatar{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font:800 24px var(--fd);color:#0B0C10;background:conic-gradient(from 210deg,#4FC8D8,#C7B6FF,#FF9F5A,#4FC8D8);box-shadow:0 0 22px rgba(199,182,255,.25);flex:none}
+.pinfo{flex:1;min-width:0}.pinfo small{display:block;font:650 11px var(--fn);letter-spacing:.08em;color:var(--muted)}
+.xpbar{height:9px;border-radius:5px;background:var(--bg);overflow:hidden;margin:6px 0 4px;border:1px solid var(--line)}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,#4FC8D8,#C7B6FF);border-radius:5px;transition:width 900ms var(--ease-out)}
+.pstats{display:flex;flex-direction:column;gap:4px;font:700 14px var(--fn);align-items:flex-end}.pstats span{display:flex;align-items:center;gap:4px}
+.evbar{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--acc) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--acc) 30%,var(--line));font-weight:650}
+.evbar b{color:var(--acc)}
+.contbtn{display:block;width:100%;text-align:left;margin-top:12px;padding:18px;border-radius:20px;border:0;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 85%,#000),color-mix(in srgb,var(--acc) 45%,#13151B));color:#0B0C10;position:relative;box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 25%,transparent);transition:transform var(--t-fast) var(--ease-out)}
+.contbtn:active{transform:scale(.98)}.contbtn small{font:800 11px var(--fn);letter-spacing:.12em;opacity:.8}.contbtn b{display:block;font:800 21px/1.2 var(--fd);margin-top:4px;padding-right:80px}
+.contbtn .go{position:absolute;right:16px;top:50%;transform:translateY(-50%);font:800 15px var(--fd);background:#0B0C10;color:var(--acc);padding:10px 14px;border-radius:12px}
+.contbtn math{color:#0B0C10}
+.qbtn{display:flex;flex-direction:column;gap:2px;text-align:left;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--surface);min-height:64px}
+.qbtn span{font:750 16px var(--fd)}.qbtn small{color:var(--muted);font-size:13px}
+.worlds{display:flex;flex-direction:column;gap:10px}
+.world{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--acc) 30%,var(--line));background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 10%,var(--surface)),var(--surface));text-align:left;width:100%}
+.world.off{opacity:.45}
+.wnum{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font:800 18px var(--fd);background:var(--acc);color:#0B0C10}
+.wnum.big{width:60px;height:60px;font-size:24px;border-radius:18px}
+.wt{flex:1;min-width:0}.wt b{display:block;font:750 16px var(--fd)}.wt small{color:var(--muted);font-size:12.5px}
+.wbar{display:block;height:5px;border-radius:3px;background:var(--bg);margin-top:7px;overflow:hidden}.wbar i{display:block;height:100%;background:var(--acc)}
+.wst{font:700 12px var(--fn);color:var(--muted);display:flex;align-items:center;gap:3px;white-space:nowrap}
+.whead{display:flex;gap:14px;align-items:center;margin-top:12px}
+.map{position:relative;margin-top:10px}
+.mapsvg{position:absolute;left:0;top:0;width:100%;height:auto;overflow:visible}
+.mapsvg .road{fill:none;stroke:var(--line-2);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 12}
+.mapsvg .road2{fill:none;stroke:var(--acc);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.65}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;width:150px;z-index:2}
+.node .disc{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font:800 19px var(--fd);background:var(--surface-2);border:3px solid var(--line-2);color:var(--muted);box-shadow:0 6px 0 #05060A;transition:transform var(--t-fast) var(--ease-out)}
+.node:active .disc{transform:translateY(3px);box-shadow:0 3px 0 #05060A}
+.node.done .disc{background:color-mix(in srgb,var(--acc) 30%,var(--surface-2));border-color:var(--acc);color:var(--fg)}
+.node.cur .disc{background:var(--acc);color:#0B0C10;border-color:#fff;animation:pulse 1.6s var(--ease-out) infinite}
+@keyframes pulse{0%{box-shadow:0 6px 0 #05060A,0 0 0 0 color-mix(in srgb,var(--acc) 60%,transparent)}70%{box-shadow:0 6px 0 #05060A,0 0 0 16px transparent}100%{box-shadow:0 6px 0 #05060A,0 0 0 0 transparent}}
+.node.lock .disc{opacity:.5}
+.node.boss .disc{width:74px;height:74px;font-size:30px;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--surface-2))}
+.ntitle{font:650 11.5px/1.25 var(--fb);color:var(--muted);text-align:center;max-width:150px;background:rgba(11,12,16,.75);padding:2px 6px;border-radius:6px}
+.node.cur .ntitle{color:var(--fg)}.ntag{position:absolute;top:-4px;right:38px;font-size:14px}
+.st3{display:inline-flex;gap:1px;vertical-align:middle}
+.lhead{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.brief p{font-size:16px}
+.stages{display:flex;flex-direction:column;gap:8px}
+.stg{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:0 10px;padding:10px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
+.stg span{grid-row:span 2;font-size:22px}.stg b{font:700 15px var(--fd)}.stg small{color:var(--muted);font-size:13px}
+/* battle */
+.bhud{display:flex;align-items:center;gap:10px;margin:8px 0 10px}
+.hearts{display:flex;gap:3px;font-size:22px}.hearts i{font-style:normal;color:#3A3F4E;transition:transform .2s}.hearts i.on{color:var(--bad);text-shadow:0 0 10px rgba(242,102,138,.5)}
+.combo{flex:1;font:800 13px var(--fn);color:var(--warn);letter-spacing:.06em}.combo.hot{color:#FF9F5A;animation:flick .6s infinite alternate}
+@keyframes flick{to{text-shadow:0 0 12px #FF9F5A}}
+.xpnow{font:700 14px var(--fn);color:var(--h)}
+.snd{min-width:40px;min-height:40px;font-size:16px}
+.enemy{position:relative;padding:10px 14px;border-radius:16px;background:linear-gradient(120deg,rgba(242,102,138,.10),var(--surface));border:1px solid rgba(242,102,138,.3)}
+.enemy.bossy{background:linear-gradient(120deg,rgba(242,102,138,.25),var(--surface));border-width:2px}
+.ename{font:800 14px var(--fd);letter-spacing:.04em}
+.hp{height:10px;border-radius:5px;background:var(--bg);margin-top:6px;overflow:hidden;border:1px solid var(--line)}.hp i{display:block;height:100%;background:linear-gradient(90deg,#F2668A,#FF9F5A);transition:width 500ms var(--ease-out)}
+.hitfx{animation:hitfx .35s var(--ease-out)}@keyframes hitfx{20%{transform:translateX(6px) scale(.98);filter:brightness(1.8)}60%{transform:translateX(-4px)}}
+.missfx{animation:missfx .4s}@keyframes missfx{30%{box-shadow:0 0 0 3px var(--bad)}}
+.dmg{position:absolute;right:16px;top:-6px;font:800 22px var(--fd);color:var(--good);animation:dmg .9s var(--ease-out) forwards;pointer-events:none}
+@keyframes dmg{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-34px)}}
+.shakey main{animation:shake .32s}
+.rtag{display:flex;gap:10px;align-items:center;margin:12px 0 8px}.timer{margin-left:auto;font:700 15px var(--fn)}.timer.low{color:var(--bad)}
+.rwhy{margin:12px 0 8px;padding:12px 14px;border-radius:14px;font-size:15px;border:1px solid var(--line)}
+.rwhy.ok{background:rgba(120,213,140,.08);border-color:rgba(120,213,140,.35)}.rwhy.no{background:rgba(242,102,138,.08);border-color:rgba(242,102,138,.35)}
+.nextwrap{animation:vin var(--t-base) var(--ease-out)}
+.game3d{cursor:grab;background:radial-gradient(ellipse at 50% 40%,#11131B,#07080C)}
+.gctl{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+.pick{margin-top:6px;display:flex;width:100%}.pick button{flex:1}
+.dsteps{display:flex;flex-direction:column;gap:8px}
+.dstep{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface-2);min-width:0}
+.dstep>div{min-width:0}
+.dstep .dn{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:800 13px var(--fn);border:2px dashed var(--line-2);color:var(--good)}
+.dstep.placed{border-color:var(--good);background:rgba(120,213,140,.07);opacity:.8}.dstep.placed .dn{border:2px solid var(--good);background:rgba(120,213,140,.15)}
+.res{margin-top:24px}.resstars{display:flex;justify-content:center;gap:6px}
+.rs{opacity:.3;transform:scale(.6)}.rs.on{opacity:1;animation:starpop .55s var(--ease-out) both}
+@keyframes starpop{0%{transform:scale(0) rotate(-40deg)}70%{transform:scale(1.25) rotate(8deg)}100%{transform:scale(1)}}
+.lvlup{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(5,6,10,.6);animation:fade .3s;pointer-events:none}
+.lvlup div{display:flex;flex-direction:column;align-items:center;padding:26px 40px;border-radius:26px;background:#13151B;border:2px solid #C7B6FF;box-shadow:0 0 60px rgba(199,182,255,.35);animation:starpop .6s var(--ease-out)}
+.lvlup small{font:800 13px var(--fn);letter-spacing:.2em;color:#C7B6FF}.lvlup b{font:900 64px/1 var(--fd);background:linear-gradient(90deg,#4FC8D8,#C7B6FF,#FF9F5A);-webkit-background-clip:text;background-clip:text;color:transparent}.lvlup span{font:700 16px var(--fd)}
 </style>
 </head><body>
 <noscript>MAXWELL needs JavaScript.</noscript>
@@ -669,6 +748,1385 @@ W.poynting=function(el,ctx){el.innerHTML=`<canvas class="viz"></canvas>${rng("ps
   el.addEventListener("input",draw);draw();};
 
 })(W8);
+
+/* MAXWELL — game layer. Campaign worlds (one per chapter), levels (one per lesson), physics mini-games in a 3D scene,
+   battles (hearts, combo, XP), derivation builder, chapter boss. Mini-games register on window.MXG.mini[key]. */
+window.MXG=window.MXG||{mini:{}};
+window.__MXGAME=function(A){
+"use strict";
+const G=window.MXG,{$,$$,esc,M,TX,tex,block}=A;
+const RM=()=>window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+const gs=()=>{const S=A.S;if(!S.game)S.game={xp:0,stars:{},boss:{},best:{},sound:true,seen:{}};return S.game;};
+/* ---------------- sound + haptics ---------------- */
+let AC=null;function tone(fr,dur,type,vol,delay){if(!gs().sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+(delay||0);const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.setValueAtTime(fr,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.12,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+dur+0.02);}catch(e){}}
+const sfx={hit:c=>{const b=520*Math.pow(1.06,Math.min(c||0,12));tone(b,.12,"triangle",.14);tone(b*1.5,.16,"triangle",.1,.06);},
+ miss:()=>{tone(180,.22,"sawtooth",.08);tone(120,.3,"sawtooth",.07,.08);},tap:()=>tone(880,.04,"sine",.05),
+ win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.22,"triangle",.13,i*.09)),lvl:()=>[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,.2,"square",.06,i*.07)),
+ boss:()=>{tone(98,.6,"sawtooth",.09);tone(73,.8,"sawtooth",.08,.15);},lose:()=>[392,330,262,196].forEach((f,i)=>tone(f,.25,"triangle",.1,i*.12))};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
+G.sfx=sfx;G.buzz=buzz;G.tex=tex;G.M=M;G.TX=TX;
+/* ---------------- XP & ranks ---------------- */
+const RANKS=["Static Charge","Coulomb Cadet","Gauss Guardian","Ampère Apprentice","Faraday Fighter","Poynting Pilot","Phasor Phantom","Wave Rider","Polarization Pro","Brewster Blade","Skin-Depth Diver","Potential Wizard","Waveguide Warden","Dipole Duke","Aperture Ace","Maxwell"];
+const lvlXP=n=>60*n*(n+1);// cumulative XP to reach level n+1
+function level(xp){let n=0;while(xp>=lvlXP(n+1))n++;return{n:n+1,cur:xp-lvlXP(n),need:lvlXP(n+1)-lvlXP(n),rank:RANKS[Math.min(RANKS.length-1,Math.floor(n/2))]};}
+function addXP(x){const g=gs();const before=level(g.xp).n;g.xp+=Math.round(x);A.save();const after=level(g.xp);if(after.n>before){setTimeout(()=>levelUp(after),400);}return after;}
+function levelUp(L){sfx.lvl();buzz([30,40,30]);const d=document.createElement("div");d.className="lvlup";d.innerHTML=`<div><small>LEVEL UP</small><b>${L.n}</b><span>${esc(L.rank)}</span></div>`;document.body.appendChild(d);A.confetti();setTimeout(()=>d.remove(),2600);}
+G.addXP=addXP;
+/* ---------------- 3D scene helper ---------------- */
+G.scene3d=function(cv,LW,LH,draw,opt){opt=opt||{};const r=Math.min(3,devicePixelRatio||1);let cw,s,c;
+  function size(){cw=Math.max(280,cv.clientWidth||cv.parentElement.clientWidth||340);s=cw/LW;cv.width=Math.round(cw*r);cv.height=Math.round(LH*s*r);cv.style.aspectRatio=LW+"/"+LH;c=cv.getContext("2d");c.setTransform(r*s,0,0,r*s,0,0);c.px=n=>n/s;}
+  size();const cam={yaw:opt.yaw??-0.6,pitch:opt.pitch??0.35,dist:opt.dist??6,scale:opt.scale??(LH*0.28),cx:LW/2,cy:LH/2+(opt.dy||0),auto:opt.auto??true};
+  const P=(x,y,z)=>{const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=Math.sin(cam.pitch);
+    let X=x*cy-z*sy,Z=x*sy+z*cy;let Y=y*cp-Z*sp;Z=y*sp+Z*cp;const k=cam.dist/(cam.dist+Z);return[cam.cx+X*cam.scale*k,cam.cy-Y*cam.scale*k,k,Z];};
+  const api={c:()=>c,P,cam,LW,LH,
+   line(a,b,col,w){const p=P(...a),q=P(...b);c.strokeStyle=col;c.lineWidth=c.px(w||2);c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();},
+   poly(pts,col,w,close,fill){c.beginPath();pts.forEach((pt,i)=>{const p=P(...pt);i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);});if(close)c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(col){c.strokeStyle=col;c.lineWidth=c.px(w||2);c.stroke();}},
+   arrow(a,b,col,w,hs){const p=P(...a),q=P(...b);c.strokeStyle=col;c.fillStyle=col;c.lineWidth=c.px(w||2.5);c.beginPath();c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();const an=Math.atan2(q[1]-p[1],q[0]-p[0]),h=c.px(hs||9)*Math.max(.6,q[2]);c.beginPath();c.moveTo(q[0],q[1]);c.lineTo(q[0]-h*Math.cos(an-.42),q[1]-h*Math.sin(an-.42));c.lineTo(q[0]-h*Math.cos(an+.42),q[1]-h*Math.sin(an+.42));c.closePath();c.fill();},
+   dot(a,col,rad){const p=P(...a);c.fillStyle=col;c.beginPath();c.arc(p[0],p[1],c.px(rad||4)*p[2],0,7);c.fill();},
+   text(a,t,col,sz,w){const p=P(...a);c.fillStyle=col||"#C9CEDA";c.font=`${w||600} ${c.px(sz||12)}px ui-monospace,"SF Mono",Menlo,monospace`;c.fillText(t,p[0],p[1]);},
+   axes(L,lab){const ax=[[[L,0,0],"x","#FF7E6B"],[[0,L,0],"y","#78D58C"],[[0,0,L],"z","#6FA8FF"]];ax.forEach(([e,n,col])=>{api.arrow([0,0,0],e,col+"AA",1.6,7);if(lab!==false)api.text(e.map(v=>v*1.08),n,col,12,700);});},
+   clear(bg){c.setTransform(r*s,0,0,r*s,0,0);c.fillStyle=bg||"#07080C";c.fillRect(0,0,LW,LH);}};
+  // drag to orbit
+  let drag=null;cv.style.touchAction="none";
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,yaw:cam.yaw,pitch:cam.pitch};cam.auto=false;cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener("pointermove",e=>{if(!drag)return;cam.yaw=drag.yaw+(e.clientX-drag.x)*0.01;cam.pitch=Math.max(-1.3,Math.min(1.3,drag.pitch+(e.clientY-drag.y)*0.01));});
+  cv.addEventListener("pointerup",()=>{drag=null;});cv.addEventListener("pointercancel",()=>{drag=null;});
+  let t0=performance.now(),on=true;const tick=now=>{if(!on||!cv.isConnected)return;if(cam.auto&&!RM())cam.yaw+=0.0025;api.clear();draw(api,(now-t0)/1000);requestAnimationFrame(tick);};requestAnimationFrame(tick);
+  api.stop=()=>{on=false;};return api;};
+/* ---------------- level ↔ item mapping ---------------- */
+const STOP=new Set("the a an of to in and is for on with by at as from that this it be are or its which what when use using his he how than then into each one two not no".split(" "));
+const toks=s=>String(s||"").toLowerCase().replace(/\\[a-z]+/g," ").replace(/[^a-z0-9αβγδεηθλμρσφψωΓΔ]+/g," ").split(" ").filter(w=>w.length>2&&!STOP.has(w));
+let MAP=null;
+function buildMap(){MAP={};A.CH.forEach(ch=>{if(!ch.lessons)return;const L=ch.lessons.map(l=>({id:l.id,t:new Set(toks([l.title,l.hook,(l.math||[]).map(m=>m.t).join(" "),String(l.intuition).slice(0,400)].join(" ")))}));
+  const lessonFor=txt=>{const T=toks(txt);let best=L[0].id,bs=-1;L.forEach((l,i)=>{let sc=0;T.forEach(w=>{if(l.t.has(w))sc++;});sc+=i*0.001;if(sc>bs){bs=sc;best=l.id;}});return best;};
+  const pmap={};(ch.problems||[]).forEach(p=>{pmap[p.id]=lessonFor([p.tag,p.st,p.first].join(" "));});
+  ch.lessons.forEach(l=>MAP[ch.id+":"+l.id]=[]);
+  A.ORDER.filter(id=>A.ITEMS[id].ch===ch.id).forEach(id=>{const it=A.ITEMS[id];let lid;
+    if(it.kind==="fm"&&it.o.ex)lid=it.o.ex;else if(it.kind==="fm"&&it.o.prob)lid=pmap[it.o.prob];else if(it.kind==="prob")lid=pmap[it.o.id];
+    else lid=lessonFor(it.kind==="card"?[it.o.q,it.o.o.join(" "),it.o.why].join(" "):it.o.prompt);
+    if(!MAP[ch.id+":"+lid])lid=ch.lessons[0].id;MAP[ch.id+":"+lid].push(id);});});}
+function levelItems(ch,lid,n){if(!MAP)buildMap();let ids=(MAP[ch.id+":"+lid]||[]).filter(id=>A.ITEMS[id].kind!=="prob");
+  if(ids.length<n){const i=ch.lessons.findIndex(l=>l.id===lid);for(let d=1;ids.length<n&&d<ch.lessons.length;d++)for(const j of [i-d,i+d]){const l=ch.lessons[j];if(!l)continue;(MAP[ch.id+":"+l.id]||[]).forEach(id=>{if(ids.length<n&&A.ITEMS[id].kind!=="prob"&&!ids.includes(id))ids.push(id);});}}
+  return A.shuffle(ids.slice()).slice(0,n);}
+/* mini-game for a lesson: from its viz key */
+const VIZ2MINI={pol:"phaselock",bc:"sculptor",oblique:"sniper",standing:"sniper",modesTE:"modehunter",modesTM:"modehunter",ladder:"modehunter",zig:"modehunter",hero:"modehunter",
+ dipole:"dipole",sph:"waveform",bessel:"waveform",skin:"skindiver",planewave:"skindiver",atten:"skindiver",friis:"friis",lorentz:"skindiver",zw:"modehunter",poynting:"skindiver"};
+const vizKey=l=>!l.viz?null:(typeof l.viz==="string"?l.viz:l.viz.k);
+const miniFor=l=>{const k=VIZ2MINI[vizKey(l)];return k&&G.mini[k]?k:null;};
+/* derivation builder availability */
+const derivSteps=l=>(l.math||[]).filter(m=>m.tex);
+const hasDeriv=l=>derivSteps(l).length>=3;
+/* ---------------- views ---------------- */
+const lkey=(ch,l)=>ch.id+":"+l.id;
+const starsOf=(ch,l)=>gs().stars[lkey(ch,l)]||0;
+const chStars=ch=>ch.lessons.reduce((s,l)=>s+starsOf(ch,l),0)+((gs().boss[ch.id]||0));
+const starSVG=(on,sz)=>`<svg viewBox="0 0 24 24" width="${sz||16}" height="${sz||16}"><path d="M12 2.6l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17.2 6.1 20.4l1.3-6.5L2.5 9.4l6.6-.8z" fill="${on?"#F2BF4C":"none"}" stroke="${on?"#F2BF4C":"#4A5063"}" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+const stars3=(n,sz)=>`<span class="st3">${[0,1,2].map(i=>starSVG(i<n,sz)).join("")}</span>`;
+function nextLevel(ch){for(const l of ch.lessons)if(starsOf(ch,l)<2)return l;return null;}
+function unlocked(ch,i){return i===0||starsOf(ch,ch.lessons[i-1])>=1||starsOf(ch,ch.lessons[i])>0;}
+function bossReady(ch){return ch.lessons.every(l=>starsOf(ch,l)>=2);}
+
+A.VIEWS.play=v=>{const g=gs(),L=level(g.xp),ev=A.nextEvent(),st=A.streak(),tr=A.troubleIds().length,q=A.queue();
+  const worlds=A.CH.filter(c=>c.lessons);
+  const cont=(()=>{const foc=new Set((ev&&ev.chs)||[]);for(const c of worlds.filter(c=>foc.has(c.id)).concat(worlds)){const l=nextLevel(c);if(l)return{c,l};}return null;})();
+  v.innerHTML=`<div class="pcard"><div class="avatar">${L.n}</div><div class="pinfo"><small>LEVEL ${L.n} · ${esc(L.rank)}</small><div class="xpbar"><i style="width:${Math.round(100*L.cur/L.need)}%"></i></div><small class="num">${g.xp} XP · ${L.need-L.cur} to level ${L.n+1}</small></div>
+   <div class="pstats"><span title="streak">🔥 ${st}</span><span title="stars">${starSVG(true,14)} ${worlds.reduce((s,c)=>s+chStars(c),0)}</span></div></div>
+  ${ev?(()=>{const u=A.until(ev.t);return `<div class="evbar"><span>${esc(ev.title)}</span><b class="num">${u.n} ${u.u}</b></div>`;})():""}
+  ${cont?`<button class="contbtn" data-go="${cont.c.id}" style="--acc:${cont.c.color}"><small>CONTINUE · ${A.chOf(cont.c.id).id==="ant"?"ANT":"Ch. "+cont.c.num}</small><b>Level ${cont.l.id}: ${M(cont.l.title)}</b><span class="go">PLAY ▸</span></button>`:""}
+  <div class="grid2" style="margin-top:12px">
+   <button class="qbtn" data-daily><span>⚡ Daily Quest</span><small>${q.ids.length?`${q.ids.length} items · ${q.min} min · +${q.ids.length*15} XP`:"Done for today"}</small></button>
+   <button class="qbtn" data-trouble><span>☠ Trouble Spots</span><small>${tr?`${tr} to clear`:"none"}</small></button></div>
+  <h2 style="margin-top:22px">Worlds</h2>
+  <div class="worlds">${worlds.map(c=>{const tot=c.lessons.length*3+3,got=chStars(c);const boss=gs().boss[c.id]||0;return `<button class="world" data-world="${c.id}" style="--acc:${c.color}"><span class="wnum">${c.id==="ant"?"ANT":c.num}</span><span class="wt"><b>${esc(c.title)}</b><small>${esc(c.lectures)} · ${c.lessons.length} levels + boss</small><span class="wbar"><i style="width:${Math.round(100*got/tot)}%"></i></span></span><span class="wst">${starSVG(true,13)} ${got}/${tot}${boss?" · 👑":""}</span></button>`;}).join("")}</div>
+  <div class="worlds">${A.CH.filter(c=>!c.lessons).map(c=>`<div class="world off" style="--acc:${c.color}"><span class="wnum">${c.id==="ant"?"ANT":c.num}</span><span class="wt"><b>${esc(c.title)}</b><small>${esc(c.note||"coming")}</small></span><span class="wst">🔒</span></div>`).join("")}</div>`;
+  v.addEventListener("click",e=>{const w=e.target.closest("[data-world]");if(w){sfx.tap();A.push({v:"world",ch:w.dataset.world});}
+    const c=e.target.closest("[data-go]");if(c){sfx.tap();A.push({v:"world",ch:c.dataset.go});setTimeout(()=>{A.push({v:"level",ch:cont.c.id,id:cont.l.id});},10);}
+    if(e.target.closest("[data-daily]")&&q.ids.length){sfx.tap();A.push({v:"battle",mode:"daily",ids:q.ids});}
+    if(e.target.closest("[data-trouble]")){A.push({v:"trouble"});}});
+  A.setKey(e=>{if(e.key==="Enter"&&cont){A.push({v:"world",ch:cont.c.id});A.push({v:"level",ch:cont.c.id,id:cont.l.id});return true;}});};
+
+/* ---------- world map ---------- */
+A.VIEWS.world=(v,p)=>{const ch=A.chOf(p.ch);A.setAcc(v,ch);const n=ch.lessons.length;const W=340,step=92,H=step*(n+1)+80;
+  const pos=i=>[W/2+Math.sin(i*1.15)*95,60+i*step];const bpos=pos(n);
+  let path="";for(let i=0;i<=n;i++){const [x,y]=pos(i);path+=(i?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);}
+  const nx=nextLevel(ch);
+  v.innerHTML=`<div class="whead"><span class="wnum big">${ch.id==="ant"?"ANT":ch.num}</span><div><small>${esc(ch.lectures)}</small><h1 style="margin:2px 0 0;font-size:26px">${esc(ch.title)}</h1><span class="num mut" style="font-size:13px">${starSVG(true,13)} ${chStars(ch)}/${n*3+3} · clear every level with 2★ to face the boss</span></div></div>
+  <div class="map" style="--acc:${ch.color}"><svg viewBox="0 0 ${W} ${H}" class="mapsvg"><path d="${path}" class="road"/><path d="${path}" class="road2" style="stroke-dasharray:${(chStars(ch)/(n*3+3)*n*step*1.25).toFixed(0)} 9999"/></svg>
+   ${ch.lessons.map((l,i)=>{const [x,y]=pos(i);const s=starsOf(ch,l),u=unlocked(ch,i),cur=nx&&nx.id===l.id;return `<button class="node ${u?"":"lock"} ${cur?"cur":""} ${s?"done":""}" data-lv="${l.id}" style="left:${(x/W*100).toFixed(2)}%;top:${y}px"><span class="disc">${u?l.id.split(".").pop():"🔒"}</span>${stars3(s,12)}<span class="ntitle">${M(l.title)}</span>${miniFor(l)?`<span class="ntag">🎮</span>`:""}</button>`;}).join("")}
+   <button class="node boss ${bossReady(ch)?"":"lock"}" data-boss style="left:${(bpos[0]/W*100).toFixed(2)}%;top:${bpos[1]}px"><span class="disc">${bossReady(ch)?"👾":"🔒"}</span>${stars3(gs().boss[ch.id]||0,12)}<span class="ntitle"><b>BOSS</b> · HW Gauntlet</span></button>
+   <div style="height:${H}px"></div></div>`;
+  v.addEventListener("click",e=>{const b=e.target.closest("[data-lv]");if(b){const i=ch.lessons.findIndex(l=>l.id===b.dataset.lv);if(!unlocked(ch,i)){sfx.miss();A.toast("🔒",`Clear level ${ch.lessons[i-1].id} first`,"Get at least 1★ to unlock the next level.");return;}sfx.tap();A.push({v:"level",ch:ch.id,id:b.dataset.lv});}
+    if(e.target.closest("[data-boss]")){if(!bossReady(ch)){sfx.miss();A.toast("👾","The boss is sealed","Earn 2★ on every level of this world first.");return;}sfx.boss();A.push({v:"battle",mode:"boss",ch:ch.id});}});
+  if(nx)setTimeout(()=>{const el=v.querySelector(".node.cur");if(el)el.scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"});},150);};
+
+/* ---------- level: briefing → mini-game → battle ---------- */
+A.VIEWS.level=(v,p)=>{const ch=A.chOf(p.ch);A.setAcc(v,ch);const l=ch.lessons.find(x=>x.id===p.id);const mk=miniFor(l);const firstMath=(l.math||[])[0];
+  const para=String(l.intuition).split("¶")[0];
+  v.innerHTML=`<div class="lhead"><span class="tag acc">LEVEL ${l.id}</span>${l.tag?`<span class="tag">${esc(l.tag)}</span>`:""}${stars3(starsOf(ch,l),14)}</div>
+  <h1 style="font-size:28px">${M(l.title)}</h1><div class="hook">${M(l.hook)}</div>
+  <div class="card brief"><span class="lab">Mission briefing</span><p>${M(para)}</p>${firstMath?`<div class="mt" style="font:650 13px var(--fn);color:var(--acc)">${M(firstMath.t)}</div>${block(firstMath.tex)}`:""}
+   <button class="btn sm ghost" data-full>Read the full lesson ▸</button></div>
+  <div class="card"><span class="lab">This level</span><div class="stages">
+   ${mk?`<div class="stg"><span>🎮</span><b>${esc(G.mini[mk].title)}</b><small>${esc(G.mini[mk].blurb)}</small></div>`:""}
+   ${hasDeriv(l)?`<div class="stg"><span>🧩</span><b>Derivation Builder</b><small>Put his steps in order</small></div>`:""}
+   <div class="stg"><span>⚔️</span><b>Battle</b><small>5 questions · 3 hearts · combos</small></div></div>
+   <button class="btn cta block" data-start style="margin-top:12px">START LEVEL ▸<span class="kbd">↵</span></button></div>`;
+  const start=()=>{sfx.tap();A.push({v:"battle",mode:"level",ch:ch.id,id:l.id});};
+  v.querySelector("[data-start]").onclick=start;v.querySelector("[data-full]").onclick=()=>A.push({v:"lesson",ch:ch.id,id:l.id});
+  A.setKey(e=>{if(e.key==="Enter"){start();return true;}});};
+
+/* ---------- battle engine ---------- */
+let B=null;
+A.VIEWS.battle=(v,p)=>{const ch=p.ch?A.chOf(p.ch):null;if(ch)A.setAcc(v,ch);
+  if(!B||B.key!==JSON.stringify(p)){B=newBattle(p);}
+  if(B.i>=B.rounds.length||B.hearts<=0)return results(v,p);
+  const rd=B.rounds[B.i];
+  v.innerHTML=`<div class="battle"><div class="bhud"><span class="hearts">${[0,1,2].map(i=>`<i class="${i<B.hearts?"on":""}">♥</i>`).join("")}</span>
+   <span class="combo ${B.combo>=3?"hot":""}">${B.combo>=2?`x${mult().toFixed(1)} COMBO ${B.combo}`:""}</span><span class="num xpnow">+${B.xp} XP</span>
+   <button class="iconbtn snd" aria-label="sound">${gs().sound?"🔊":"🔈"}</button></div>
+   <div class="enemy ${p.mode==="boss"?"bossy":""}"><span class="ename">${esc(B.enemy)}</span><div class="hp"><i style="width:${Math.max(0,100*B.hp/B.maxhp)}%"></i></div></div>
+   <div class="rtag"><span class="tag acc">${rd.label}</span><span class="num faint">${B.i+1}/${B.rounds.length}</span>${B.timer?`<span class="num timer" data-t></span>`:""}</div>
+   <div data-round></div></div>`;
+  v.querySelector(".snd").onclick=e=>{gs().sound=!gs().sound;A.save();e.currentTarget.textContent=gs().sound?"🔊":"🔈";};
+  const body=v.querySelector("[data-round]");let done=false;
+  const finish=(score,detail)=>{if(done)return;done=true;clearInterval(B.tmr);const ok=score>=0.7;
+    if(rd.id)A.grade(rd.id,ok,true);
+    B.scores.push(score);if(ok){B.combo++;const dmg=Math.round(10*score);B.hp=Math.max(0,B.hp-dmg);const gain=Math.round((10+10*score)*mult());B.xp+=gain;sfx.hit(B.combo);buzz(15);fx(v,true,`+${gain}`);}
+    else{B.combo=0;B.hearts--;sfx.miss();buzz([40,30,40]);fx(v,false);}
+    v.querySelector(".hearts").innerHTML=[0,1,2].map(i=>`<i class="${i<B.hearts?"on":""}">♥</i>`).join("");v.querySelector(".hp i").style.width=Math.max(0,100*B.hp/B.maxhp)+"%";
+    v.querySelector(".xpnow").textContent=`+${B.xp} XP`;const cb=v.querySelector(".combo");cb.textContent=B.combo>=2?`x${mult().toFixed(1)} COMBO ${B.combo}`:"";cb.classList.toggle("hot",B.combo>=3);
+    const nb=document.createElement("div");nb.className="nextwrap";nb.innerHTML=`${detail?`<div class="rwhy ${ok?"ok":"no"}">${detail}</div>`:""}<button class="btn cta block">${B.hearts<=0?"See results":B.i+1>=B.rounds.length?"Finish ▸":"Next ▸"}<span class="kbd">→</span></button>`;body.appendChild(nb);
+    nb.querySelector("button").onclick=adv;A.setKey(e=>{if(e.key==="ArrowRight"||e.key==="Enter"){adv();return true;}});
+    if(B.hearts<=0||B.i+1>=B.rounds.length){}};
+  const adv=()=>{B.i++;A.render();scrollTo(0,0);};
+  if(B.timer){const end=Date.now()+B.timer*1000;const el=v.querySelector("[data-t]");B.tmr=setInterval(()=>{const left=Math.ceil((end-Date.now())/1000);if(el)el.textContent=left+"s";if(left<=5&&el)el.classList.add("low");if(left<=0){clearInterval(B.tmr);finish(0,"⏱ Time's up.");}},250);}
+  rd.run(body,finish);};
+const mult=()=>Math.min(3,1+Math.floor(B.combo/3)*0.5);
+function fx(v,ok,txt){if(RM())return;const en=v.querySelector(".enemy");if(!en)return;en.classList.remove("hitfx","missfx");void en.offsetWidth;en.classList.add(ok?"hitfx":"missfx");
+  if(txt){const f=document.createElement("span");f.className="dmg";f.textContent=txt;en.appendChild(f);setTimeout(()=>f.remove(),900);}
+  if(!ok){document.body.classList.add("shakey");setTimeout(()=>document.body.classList.remove("shakey"),320);}}
+function newBattle(p){const rounds=[];let enemy="",timer=0;
+  const qRound=id=>{const it=A.ITEMS[id];return{id,label:it.kind==="fm"?"FIRST MOVE":"CONCEPT",run:(el,fin)=>mcqRound(el,it,fin)};};
+  if(p.mode==="level"){const ch=A.chOf(p.ch),l=ch.lessons.find(x=>x.id===p.id);enemy=enemyName(l);
+    const mk=miniFor(l);if(mk)for(let k=0;k<2;k++)rounds.push({label:"🎮 "+G.mini[mk].title.toUpperCase(),run:(el,fin)=>G.mini[mk].play(el,{ch,lesson:l,round:k,sfx,M,tex,TX,scene3d:G.scene3d},fin)});
+    if(hasDeriv(l))rounds.push({label:"🧩 DERIVATION",run:(el,fin)=>derivRound(el,l,fin)});
+    levelItems(ch,l.id,5).forEach(id=>rounds.push(qRound(id)));}
+  else if(p.mode==="boss"){const ch=A.chOf(p.ch);enemy=`${ch.short} Overlord`;timer=75;
+    const fm=A.shuffle(A.ORDER.filter(id=>A.ITEMS[id].ch===ch.id&&A.ITEMS[id].kind==="fm"));fm.slice(0,7).forEach(id=>rounds.push(qRound(id)));
+    const dl=A.shuffle(ch.lessons.filter(hasDeriv)).slice(0,2);dl.forEach(l=>rounds.splice(Math.floor(Math.random()*rounds.length),0,{label:"🧩 DERIVATION",run:(el,fin)=>derivRound(el,l,fin)}));
+    const minis=[...new Set(ch.lessons.map(miniFor).filter(Boolean))];if(minis.length){const mk=minis[Math.floor(Math.random()*minis.length)];rounds.push({label:"🎮 "+G.mini[mk].title.toUpperCase(),run:(el,fin)=>G.mini[mk].play(el,{ch,lesson:ch.lessons[0],round:2,hard:true,sfx,M,tex,TX,scene3d:G.scene3d},fin)});}}
+  else{enemy="The Forgetting Curve";(p.ids||[]).filter(id=>A.ITEMS[id].kind!=="prob").forEach(id=>rounds.push(qRound(id)));}
+  const maxhp=rounds.length*10;return{key:JSON.stringify(p),rounds,i:0,hearts:3,combo:0,xp:0,hp:maxhp,maxhp,scores:[],enemy,timer,mode:p.mode};}
+function enemyName(l){const w=toks(l.title).filter(x=>x.length>3);const pick=w[0]?w[0][0].toUpperCase()+w[0].slice(1):"Field";const kinds=["Phantom","Golem","Wraith","Hydra","Specter","Leviathan"];return `${pick} ${kinds[(l.id.length+pick.length)%kinds.length]}`;}
+function mcqRound(el,it,fin){const o=it.o;const isFm=it.kind==="fm";const opts=isFm?o.opts:o.o.map(t=>[t,""]);const {idx,ans}=A.order(opts.length,o.a);
+  el.innerHTML=`${isFm?`<span class="lab">${esc(o.src)}</span><div class="statement card tight" style="margin:0 0 10px">${TX(o.prompt)}</div><div class="q" style="font-size:17px">First move?</div>`:`<div class="q">${TX(o.q)}</div>`}
+   <div class="opts">${idx.map((oi,k)=>`<button class="opt" data-k="${k}"><span class="k">${k+1}</span><span class="ot">${TX(opts[oi][0])}</span></button>`).join("")}</div>`;
+  let picked=false;const pick=k=>{if(picked)return;picked=true;const bs=$$(".opt",el);bs.forEach((b,j)=>{b.disabled=true;if(j===ans)b.classList.add("right");else if(j===k)b.classList.add("wrong");});
+    const why=isFm?TX(o.opts[o.a][1]):TX(o.why);fin(k===ans?1:0,(k===ans?"<b>Hit!</b> ":"<b>Missed.</b> ")+why);};
+  el.addEventListener("click",e=>{const b=e.target.closest(".opt");if(b)pick(+b.dataset.k);});A.setKey(e=>{if(/^[1-4]$/.test(e.key)){pick(+e.key-1);return true;}});}
+/* derivation builder: tap steps in the correct order */
+function derivRound(el,l,fin){const steps=derivSteps(l).slice(0,6);const N=steps.length;const sh=A.shuffle(steps.map((s,i)=>i));let next=0,errs=0;
+  el.innerHTML=`<div class="q" style="font-size:17px">Rebuild <b>${M(l.title)}</b> in Prather's order. Tap the steps 1 → ${N}.</div><div class="dsteps">${sh.map(i=>`<button class="dstep" data-i="${i}"><span class="dn"></span><div><div class="mt" style="font:650 12px var(--fn);color:var(--acc)">${M(steps[i].t)}</div>${block(steps[i].tex)}</div></button>`).join("")}</div>`;
+  el.addEventListener("click",e=>{const b=e.target.closest(".dstep");if(!b||b.classList.contains("placed"))return;const i=+b.dataset.i;
+    if(i===next){b.classList.add("placed");b.querySelector(".dn").textContent=++next;sfx.tap();if(next===N){const sc=Math.max(0,1-errs*0.25);fin(sc,sc>=0.7?`<b>Clean derivation.</b> ${errs?errs+" slip"+(errs>1?"s":"")+".":"No slips."}`:`<b>Too many slips (${errs}).</b> Reread the lesson's math in order.`);}}
+    else{errs++;b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake");sfx.miss();buzz(20);}});}
+/* results */
+function results(v,p){const ch=p.ch?A.chOf(p.ch):null;const n=B.scores.length,acc=n?B.scores.reduce((a,b)=>a+b,0)/n:0;const alive=B.hearts>0&&B.i>=B.rounds.length;
+  const stars=!alive?0:acc>=0.95?3:acc>=0.8?2:1;let bonus=0,msg="";
+  if(alive){bonus=30+stars*20+(p.mode==="boss"?250:0);}
+  if(p.mode==="level"&&alive){const k=ch.id+":"+p.id;const prev=gs().stars[k]||0;if(stars>prev)gs().stars[k]=stars;}
+  if(p.mode==="boss"&&alive){const prev=gs().boss[ch.id]||0;if(stars>prev)gs().boss[ch.id]=stars;A.award("boss-"+ch.id,`${ch.title} conquered`,`Boss defeated with ${stars}★.`);}
+  if(!B.paid){B.paid=true;addXP(B.xp+bonus);A.markDay();A.save();if(alive)sfx.win();else sfx.lose();if(alive&&stars===3)A.confetti();}
+  msg=!alive?"Out of hearts. Every miss is now in your review queue. Run it back.":stars===3?"Flawless. That's expert-level recall.":stars===2?"Solid. One more clean run for 3★.":"Cleared, but shaky. 2★ is needed to unlock the boss.";
+  const nextL=p.mode==="level"?(()=>{const i=ch.lessons.findIndex(x=>x.id===p.id);return ch.lessons[i+1];})():null;
+  v.innerHTML=`<div class="res"><div class="resstars">${[0,1,2].map(i=>`<span class="rs ${i<stars?"on":""}" style="animation-delay:${i*0.18}s">${starSVG(i<stars,54)}</span>`).join("")}</div>
+   <h1 style="text-align:center;margin:8px 0 2px">${alive?(p.mode==="boss"?"BOSS DEFEATED":"LEVEL CLEAR"):"DEFEATED"}</h1>
+   <p class="mut" style="text-align:center">${msg}</p>
+   <div class="readout" style="margin:14px 0"><div><small>accuracy</small><b>${Math.round(acc*100)}%</b></div><div><small>XP earned</small><b>+${B.xp+bonus}</b></div><div><small>hearts left</small><b>${Math.max(0,B.hearts)}</b></div></div>
+   <div class="grid2"><button class="btn" data-retry>${alive?"Replay":"Retry"}</button>${alive&&nextL?`<button class="btn cta" data-next>Next level ▸</button>`:`<button class="btn cta" data-map>${ch?"World map":"Done"}</button>`}</div></div>`;
+  const reset=()=>{B=null;};
+  v.querySelector("[data-retry]").onclick=()=>{reset();A.render();};
+  const nx=v.querySelector("[data-next]");if(nx)nx.onclick=()=>{reset();const st=A.NAV.stack;st.pop();st.pop();st.push({v:"level",ch:ch.id,id:nextL.id});A.render();scrollTo(0,0);};
+  const mp=v.querySelector("[data-map]");if(mp)mp.onclick=()=>{reset();const st=A.NAV.stack;while(st.length&&st[st.length-1].v!=="world")st.pop();if(!st.length)A.go("play");else{A.render();scrollTo(0,0);}};
+  A.setKey(e=>{if(e.key==="Enter"||e.key==="ArrowRight"){(nx||mp).click();return true;}});}
+G.API=A;
+};
+
+/* Mini-game: RADIATION RANGE (Ch. 6 infinitesimal dipole & far field; Ch. 11 Example 6-4 rectangular aperture).
+   Rounds: aim a probe at a pattern level of the sin²θ doughnut; classify near / intermediate / far by βr; decide which
+   observers are in the far field of an aperture (R ≥ 2D²/λ, D = largest dimension); put θ on the first E- or H-plane null
+   of a uniform a×b aperture (E-plane φ = 90° ↔ b, H-plane φ = 0° ↔ a). Graded on the exact formulas. */
+(function(G){
+"use strict";
+const PI=Math.PI,C0=3e8,ETA0=120*PI,rad=d=>d*PI/180,deg=r=>r*180/PI;
+const CE="#4FC8D8",CH="#C7B6FF",CK="#FF9F5A",CG="#F2BF4C",GOOD="#78D58C",BAD="#F2668A",TXT="#C9CEDA",MUT="#8C92A4";
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sig=(x,d=3)=>(+(+x).toPrecision(d)).toString();
+const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a.toFixed(3)})`;};
+const dot3=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=a=>{const l=Math.hypot(...a)||1;return a.map(v=>v/l);};
+const sph=(th,ph)=>[Math.sin(th)*Math.cos(ph),Math.sin(th)*Math.sin(ph),Math.cos(th)];
+
+/* ---------------- physics ---------------- */
+// Hertzian dipole along p̂: far-field power ∝ sin²ψ, ψ = angle from the wire (sin²θ for p̂ = ẑ).
+const angFromAxis=(r,p)=>deg(Math.acos(Math.min(1,Math.abs(dot3(nrm(r),p)))));// 0…90°
+const levelAngle=L=>deg(Math.asin(Math.sqrt(L)));// sin²ψ = L
+// exact fields (Lesson 6.10), normalised by ηβ²I₀l/4π:  E_r = 2cosθ/(βr)²·(1+1/(jβr)),  E_θ = j sinθ/(βr)·(1+1/(jβr)−1/(βr)²)
+function dipoleE(br,th){const c=Math.cos(th),s=Math.sin(th);// returns complex [re,im] pairs (without e^{−jβr})
+  return{Er:[2*c/br**2,-2*c/br**3],Et:[s/br**2,s/br-s/br**3]};}// j(s/βr)(1 − j/βr − 1/(βr)²) = s/(βr)² + j(s/βr − s/(βr)³)
+// region: which terms in the brackets matter.  near: 1/(βr)² term ≫ 1;  far: corrections ≪ 1
+const region=br=>br<0.3?"near":br>10?"far":br>=0.5&&br<=3?"mid":null;
+// far-field distance (L17 board derivation): quadratic phase β(D/2)²/(2R) ≤ π/8  ⇒  R ≥ 2D²/λ
+const Rff=(D,lam)=>2*D*D/lam;
+// Example 6-4: uniform aperture a×b (E_a = ŷE₀). E-plane φ = 90°: sinc((βb/2)sinθ); H-plane φ = 0°: sinc((βa/2)sinθ)
+const firstNull=dl=>dl>1?deg(Math.asin(1/dl)):null;// dl = dimension/λ
+const apPattern=(dl,th)=>{const u=PI*dl*Math.sin(th);return Math.abs((1+Math.cos(th))/2*(Math.abs(u)<1e-9?1:Math.sin(u)/u));};
+
+/* ---------------- shared scene bits ---------------- */
+const WD=(x,y,z)=>[x,z,y];// dipole scenes: physics z → screen up (proper rotation of scene3d's viewed axes)
+function axesD(S,W,L){[[[L,0,0],"x","#FF7E6B"],[[0,L,0],"y","#78D58C"],[[0,0,L],"z","#6FA8FF"]].forEach(([e,n,col])=>{S.arrow(W(0,0,0),W(...e),col+"99",1.4,7);S.text(W(...e.map(v=>v*1.07)),n,col,12,700);});}
+function dipoleBody(S,W,p,t){const a=p.map(v=>v*0.32),b=p.map(v=>-v*0.32),g=p.map(v=>v*0.04);S.line(W(...g),W(...a),CK,5);S.line(W(...g.map(v=>-v)),W(...b),CK,5);
+  S.dot(W(0,0,0),"#fff",2.5);const s=Math.cos(2.2*t);if(Math.abs(s)>.15)S.arrow(W(...p.map(v=>-v*0.2*s)),W(...p.map(v=>v*0.2*s)),"#fff",1.6,6);}
+function frameOf(p){const u=nrm(Math.abs(p[2])<.9?cross(p,[0,0,1]):cross(p,[1,0,0]));const v=cross(p,u);return[u,v];}
+function doughnut(S,W,p,R,alpha){const [u,v]=frameOf(p);const c=S.c();const NP=16,NC=28;const pt=(ps,ch)=>{const r=R*Math.sin(ps)**2,cs=Math.cos(ch),sn=Math.sin(ch),sp=Math.sin(ps),cp=Math.cos(ps);
+    return W(...[0,1,2].map(i=>r*(p[i]*cp+(u[i]*cs+v[i]*sn)*sp)));};
+  for(let i=0;i<NP;i++)for(let j=0;j<NC;j+=1){const a=PI*i/NP,b=PI*(i+1)/NP,x=2*PI*j/NC,y=2*PI*(j+1)/NC;S.poly([pt(a,x),pt(b,x),pt(b,y),pt(a,y)],null,0,true,rgba(CK,alpha*0.55));}
+  for(let j=0;j<NC;j+=2){const L=[];for(let i=0;i<=NP*2;i++)L.push(pt(PI*i/(NP*2),2*PI*j/NC));S.poly(L,rgba(CK,alpha*2.6),1);}
+  for(const ps of [PI/4,PI/2,3*PI/4]){const L=[];for(let j=0;j<=48;j++)L.push(pt(ps,2*PI*j/48));S.poly(L,rgba(CK,alpha*3.4),1.1);}}
+function ring(S,W,R,col,w,dash,axis,ang){// circle of directions at angle ang from axis, radius R
+  const [u,v]=frameOf(axis);const L=[];for(let j=0;j<=64;j++){const ch=2*PI*j/64;L.push(W(...[0,1,2].map(i=>R*(axis[i]*Math.cos(ang)+(u[i]*Math.cos(ch)+v[i]*Math.sin(ch))*Math.sin(ang)))));}
+  const c=S.c();if(dash)c.setLineDash([c.px(5),c.px(5)]);S.poly(L,col,w||1);c.setLineDash([]);}
+function sphereGrid(S,W,R,a){for(const th of [PI/2])ring(S,W,R,rgba("#8C92A4",a),1,false,[0,0,1],th);for(const ph of [0,PI/3,2*PI/3])ring(S,W,R,rgba("#8C92A4",a),1,false,[Math.cos(ph+PI/2),Math.sin(ph+PI/2),0],PI/2);}
+const hint=t=>`<small class="mut">${t}</small>`;
+
+/* ---------------- round: aim ---------------- */
+function roundAim(el,ctx,fin,hard){
+  const p=hard?rnd([[1,0,0],[0,1,0]]):[0,0,1];const pn=p[0]?"x":p[1]?"y":"z";
+  const T=rnd(hard?[["max",1],["null",0],["−3 dB",0.5]]:[["max",1],["null",0],["−3 dB",0.5],["−6 dB",0.25]]);
+  const goal={max:"the direction of <b>maximum radiation</b>",null:"a <b>null</b> of the pattern","−3 dB":"a <b>half-power</b> direction (−3 dB)","−6 dB":"a direction where |E<sub>θ</sub>| is <b>half its maximum</b>"}[T[0]];
+  el.innerHTML=`<div class="q" style="font-size:17px">A Hertzian dipole along <b style="color:${CK}">${pn}</b>. Aim the <b style="color:${CG}">probe</b> at ${goal}. ${hint("Far field: cyan E, lavender H on the sphere. Drag to orbit.")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl"><label class="rng">θ<input type="range" data-th min="0" max="180" step="0.5" value="${(20+Math.random()*30).toFixed(1)}"><output></output></label>
+   <label class="rng">φ<input type="range" data-ph min="0" max="360" step="1" value="${Math.round(30+Math.random()*60)}"><output></output></label></div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  const v=n=>+el.querySelector(`[data-${n}]`).value;const out=()=>el.querySelectorAll(".rng").forEach(r=>{r.querySelector("output").textContent=(+r.querySelector("input").value).toFixed(r.querySelector("[data-th]")?1:0)+"°";});out();el.addEventListener("input",out);
+  const st={done:false};const Rs=2.1;
+  const S=ctx.scene3d(el.querySelector("canvas"),900,560,(S,t)=>{const W=WD;sphereGrid(S,W,Rs,.22);axesD(S,W,2.55);
+    doughnut(S,W,p,1.85,0.07);
+    // far-field E_θ, H_φ on the sphere: E ∝ (p̂·r̂)r̂ − p̂ (transverse), H = r̂ × E/η, all in phase at fixed r
+    const s=Math.sin(2.2*t);
+    for(const th of [PI/6,PI/3,PI/2,2*PI/3,5*PI/6])for(let k=0;k<8;k++){const r=sph(th,k*PI/4+(th===PI/2?PI/8:0));const pr=dot3(p,r);const E=r.map((ri,i)=>pr*ri-p[i]);const m=Math.hypot(...E);if(m<.08)continue;
+      const H=cross(r,E);const c0=r.map(q=>q*Rs);const kE=0.36*s,kH=0.26*s;
+      S.arrow(W(...c0.map((q,i)=>q-E[i]*kE)),W(...c0.map((q,i)=>q+E[i]*kE)),rgba(CE,.45+.55*m*Math.abs(s)),2.4,7);
+      S.arrow(W(...c0.map((q,i)=>q-H[i]*kH)),W(...c0.map((q,i)=>q+H[i]*kH)),rgba(CH,.3+.55*m*Math.abs(s)),1.6,5);}
+    dipoleBody(S,W,p,t);
+    if(st.done){const ang=rad(st.target);ring(S,W,Rs,GOOD,2.4,false,p,ang);if(ang>0.01&&ang<PI/2-0.01)ring(S,W,Rs,GOOD,2.4,false,p.map(q=>-q),ang);if(ang<0.01){S.dot(W(...p.map(q=>q*Rs)),GOOD,7);S.dot(W(...p.map(q=>-q*Rs)),GOOD,7);}}
+    const r=sph(rad(v("th")),rad(v("ph")));S.line(W(0,0,0),W(...r.map(q=>q*Rs*1.12)),CG,2.6);S.dot(W(...r.map(q=>q*Rs)),CG,7);S.text(W(...r.map(q=>q*Rs*1.2)),"probe",CG,12,700);
+  },{yaw:-0.6,pitch:0.3,dist:8,scale:108,auto:true,dy:8});
+  el.querySelector("[data-fire]").onclick=()=>{if(st.done)return;const th=v("th"),ph=v("ph");const r=sph(rad(th),rad(ph));const ps=angFromAxis(r,p);// angle between the probe and the wire axis, 0…90°
+    const target=levelAngle(T[1]);st.target=target;st.done=true;el.querySelectorAll("input").forEach(i=>i.disabled=true);
+    const d=Math.abs(ps-target);const sc=d<=3?1:Math.max(0,1-(d-3)/9);const lvl=Math.sin(rad(ps))**2;
+    const dB=lvl>1e-6?(10*Math.log10(lvl)).toFixed(1)+" dB":"−∞ dB (null)";
+    const where=pn==="z"?{max:"θ = 90° (broadside), any φ",null:"θ = 0° or 180° (along the wire)","−3 dB":"θ = 45° or 135°: HPBW = 90°","−6 dB":"θ = 30° or 150°"}[T[0]]
+      :{max:`anywhere in the plane ⊥ ${pn} (e.g. θ = 0°, straight up z)`,null:`along ±${pn}: θ = 90°, φ = ${pn==="x"?"0° or 180°":"90° or 270°"}`,"−3 dB":`45° from the ${pn} axis`}[T[0]];
+    fin(sc,`Probe at θ = ${th.toFixed(1)}°, φ = ${ph}° is ${ps.toFixed(1)}° from the ${pn}-axis: sin²ψ = ${lvl.toFixed(3)} (${dB}). Target ${T[0]==="−6 dB"?"|E| = ½ max ⇒ power ¼ ⇒ sin ψ = ½":T[0]==="−3 dB"?"sin²ψ = ½":T[0]==="max"?"sin²ψ = 1":"sin²ψ = 0"}: <b>${where}</b> (green ring). ${pn==="z"?`${ctx.M("$E_\\theta\\propto\\sin\\theta$")}, power ${ctx.M("$\\propto\\sin^2\\theta$")}, independent of φ.`:`For a dipole along ${pn} the pattern is sin²ψ with ψ measured from ${pn}, not from z: the doughnut just tips over.`}${T[0]==="−6 dB"?" Field halves at 30°, power halves at 45°: don't mix |E| and |E|².":""}`);
+    S.cam.auto=true;};}
+
+/* ---------------- round: field region ---------------- */
+function roundRegion(el,ctx,fin,hard){
+  const pools={near:hard?[0.005,0.01,0.02,0.03,0.04]:[0.04,0.06,0.08,0.1,0.15,0.2],mid:hard?[0.1,0.15,0.2,0.3,0.4]:[0.6,0.8,1,1.5,2,2.5],far:hard?[2,3,5,8,10]:[15,20,30,50,100]};
+  const kinds=[rnd(["near","mid","far"]),rnd(["near","mid","far"]),rnd(["near","mid","far"])];if(new Set(kinds).size===1)kinds[1]=kinds[0]==="far"?"near":"far";
+  const used=new Set();const P=kinds.map((k,i)=>{const v=rnd(pools[k].filter(x=>!used.has(x)));used.add(v);const br=hard?2*PI*v:v;return{k,v,br,dir:[[60,25],[60,150],[60,265]][i]};});
+  const cls=P.map(()=>null);
+  el.innerHTML=`<div class="q" style="font-size:17px">Classify each probe of this Hertzian dipole: reactive <b>near</b> field, <b>intermediate</b>, or <b>far</b> field. ${hint("Each probe shows its E vector over one cycle. Drag to orbit.")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl" style="gap:8px">${P.map((q,i)=>`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font:700 14px var(--fn);min-width:120px">${"①②③"[i]} ${hard?`r = ${q.v}λ`:`βr = ${q.v}`}</b><span class="seg" role="group" style="flex:1">${["near","mid","far"].map(k=>`<button data-p="${i}" data-c="${k}" aria-pressed="false" style="flex:1">${k==="mid"?"interm.":k}</button>`).join("")}</span></div>`).join("")}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{if(st.done)return;const i=+b.dataset.p;cls[i]=b.dataset.c;el.querySelectorAll(`[data-p="${i}"]`).forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();});
+  const pos=br=>0.45+0.5*Math.log10(br/0.03);const st={done:false};
+  const S=ctx.scene3d(el.querySelector("canvas"),900,540,(S,t)=>{const W=WD;axesD(S,W,1.4);dipoleBody(S,W,[0,0,1],t);
+    if(st.done){for(const [br,lab] of [[1,"βr = 1"],[10,"βr = 10"]]){const R=pos(br);ring(S,W,R,rgba(CG,.75),1.6,true,[0,0,1],PI/2);ring(S,W,R,rgba(CG,.45),1.2,true,[0,1,0],PI/2);S.text(W(-R*0.74,0,-R*0.74),lab,CG,12,700);}}
+    P.forEach((q,i)=>{const th=rad(q.dir[0]),ph=rad(q.dir[1]);const r=sph(th,ph),R=pos(q.br);const c0=r.map(v=>v*R);
+      const tht=[Math.cos(th)*Math.cos(ph),Math.cos(th)*Math.sin(ph),-Math.sin(th)];const {Er,Et}=dipoleE(q.br,th);
+      // real E(t) = Re{(E_r r̂ + E_θ θ̂) e^{j(ωt−βr)}}: trace the tip over one period, normalised per probe
+      const at=w=>{const ph0=w-q.br;const c=Math.cos(ph0),s=Math.sin(ph0);const er=Er[0]*c-Er[1]*s,et=Et[0]*c-Et[1]*s;return[er,et];};
+      let mx=1e-12;for(let k=0;k<48;k++){const [a,b]=at(2*PI*k/48);mx=Math.max(mx,Math.hypot(a,b));}
+      const sc=0.42/mx,vec=([a,b])=>c0.map((v,j)=>v+(a*r[j]+b*tht[j])*sc);const L=[];for(let k=0;k<=48;k++)L.push(W(...vec(at(2*PI*k/48))));S.poly(L,rgba(CE,.5),1.6);
+      S.arrow(W(...c0),W(...vec(at(2.0*t))),CE,2.8,8);S.line(W(0,0,0),W(...c0),"rgba(201,206,218,.18)",1);
+      const col=st.done?(cls[i]===q.k?GOOD:BAD):"#fff";S.dot(W(...c0),col,6);S.text(W(...r.map(v=>v*(R+0.22))),"①②③"[i],col,15,800);});
+  },{yaw:-0.5,pitch:0.28,dist:9,scale:132,auto:true,dy:30});
+  el.querySelector("[data-fire]").onclick=()=>{if(st.done)return;if(cls.some(c=>!c)){ctx.sfx.miss();const g=el.querySelector(".gctl");g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");return;}
+    st.done=true;const n=P.filter((q,i)=>cls[i]===q.k).length;const sc=n===3?1:n===2?0.4:0;
+    const name={near:"near",mid:"intermediate",far:"far"};
+    const rows=P.map((q,i)=>`${"①②③"[i]} ${hard?`r = ${q.v}λ → βr = 2π(${q.v}) = ${sig(q.br,3)}`:`βr = ${q.v}`}: 1/(βr) = ${sig(1/q.br,2)}, 1/(βr)² = ${sig(1/q.br**2,2)} ⇒ <b style="color:${cls[i]===q.k?GOOD:BAD}">${name[q.k]}</b>${cls[i]===q.k?"":` (you: ${name[cls[i]]})`}`).join("<br>");
+    fin(sc,`${rows}<br>In ${ctx.M("$E_\\theta\\propto\\left[1+\\frac{1}{j\\beta r}-\\frac{1}{(\\beta r)^2}\\right]$")}: βr ≪ 1 ⇒ the ${ctx.M("$1/r^3$")} terms dominate (reactive, E has a big radial part); βr ≫ 1 ⇒ only ${ctx.M("$1/r$")} survives (E ⊥ r̂, η = 120π).${hard?" Always convert first: βr = 2πr/λ, so 0.2λ is already βr ≈ 1.3.":""}`);S.cam.auto=true;};}
+
+/* ---------------- aperture scenes ---------------- */
+function apScene(ctx,cv,st,cam){// physics (x,y,z) → world (z+ox, y, x): z to the right, proper rotation
+  const W=(x,y,z)=>[z+st.ox,y,x];
+  return ctx.scene3d(cv,900,520,(S,t)=>{const a=st.av,b=st.bv;
+    [[[0,0,0],[0,0,3.6],"z","#6FA8FF"],[[0,0,0],[1.3,0,0],"x","#FF7E6B"],[[0,0,0],[0,1.3,0],"y","#78D58C"]].forEach(([p,q,n,c])=>{S.arrow(W(...p),W(...q),c+"88",1.3,7);S.text(W(...q.map(v=>v*1.06)),n,c,12,700);});
+    S.poly([W(-a/2,-b/2,0),W(a/2,-b/2,0),W(a/2,b/2,0),W(-a/2,b/2,0)],rgba(CK,.95),2,true,rgba(CK,.12));
+    const s=Math.cos(2.2*t);for(let i=0;i<3;i++)for(let j=0;j<3;j++){const x=(i-1)*a/3,y=(j-1)*b/3;S.arrow(W(x,y-0.13*s*b/1.2,0),W(x,y+0.13*s*b/1.2,0),rgba(CE,.5+.5*Math.abs(s)),2,6);}
+    S.text(W(a/2+0.08,-b/2-0.12,0),"a",TXT,13,700);S.text(W(-a/2-0.18,0,0),"b",TXT,13,700);
+    st.draw(S,W,t);
+  },cam);}
+
+/* ---------------- round: far-field distance ---------------- */
+function roundFar(el,ctx,fin,hard){
+  let f,a,b,lam,D,R,obs;for(let tries=0;tries<300;tries++){f=rnd([3,5,6,10,12,15,24,30])*1e9;lam=C0/f;const al=2+Math.random()*4,bl=1.5+Math.random()*(al-1.5);a=+(al*lam*100).toPrecision(2)/100;b=+(bl*lam*100).toPrecision(2)/100;
+    D=Math.hypot(a,b);R=Rff(D,lam);const Ra=2*a*a/lam;
+    const pick=(lo,hi)=>{const v=lo*Math.pow(hi/lo,Math.random());const d=Math.pow(10,Math.floor(Math.log10(v))-1);return Math.round(v/d)*d;};
+    obs=[{r:pick(1.4*R,3*R),trap:""},{r:pick(0.15*R,0.5*R),trap:""}];
+    if(Ra<0.8*R)obs.push({r:pick(Ra*1.1,R*0.9),trap:"side"});else obs.push({r:pick(R*0.55,R*0.9),trap:"two"});
+    if(hard){obs[0]={r:pick(R*1.08,R*1.3),trap:""};}
+    obs.forEach(o=>{o.far=o.r>=R;});if(obs.every(o=>Math.abs(o.r/R-1)>0.05)&&obs[2].r>(obs[2].trap==="side"?Ra:D*D/lam))break;}
+  shuffle(obs);const cls=obs.map(()=>null);const fmtR=r=>r>=1?sig(r,3)+" m":sig(r*100,3)+" cm";
+  el.innerHTML=`<div class="q" style="font-size:17px">A ${sig(a*100,3)} cm × ${sig(b*100,3)} cm aperture radiates at <b style="color:${CG}">${f/1e9} GHz</b>. Which observers are in its <b>far field</b>? ${hint("Prather's criterion, plus R ≫ D, R ≫ λ.")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl" style="gap:8px">${obs.map((o,i)=>`<div style="display:flex;align-items:center;gap:8px"><b style="font:700 14px var(--fn);min-width:116px">${"①②③"[i]} r = ${fmtR(o.r)}</b><span class="seg" role="group" style="flex:1">${[["far","far field"],["not","not yet"]].map(([k,l])=>`<button data-p="${i}" data-c="${k}" aria-pressed="false" style="flex:1">${l}</button>`).join("")}</span></div>`).join("")}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  el.querySelectorAll("[data-c]").forEach(b2=>b2.onclick=()=>{if(st.done)return;const i=+b2.dataset.p;cls[i]=b2.dataset.c;el.querySelectorAll(`[data-p="${i}"]`).forEach(x=>x.setAttribute("aria-pressed",x===b2));ctx.sfx.tap();});
+  const rs=obs.map(o=>o.r).concat([R]);const lo=Math.min(...rs)*0.7,hi=Math.max(...rs)*1.2;const zv=r=>0.7+3.0*Math.log(r/lo)/Math.log(hi/lo);
+  const sz=1.1/Math.max(a,b);const st={done:false,av:a*sz,bv:b*sz,ox:-1.75,draw:(S,W,t)=>{
+    obs.forEach((o,i)=>{const z=zv(o.r);const col=st.done?(o.far?GOOD:BAD):"#fff";S.line(W(0,0,z),W(0,-0.55,z),"rgba(201,206,218,.25)",1);S.dot(W(0,0,z),col,7);S.text(W(0,0.18,z-0.06),"①②③"[i],col,15,800);});
+    if(st.done){const z=zv(R);const L=[];for(let k=0;k<=48;k++)L.push(W(0.75*Math.cos(2*PI*k/48),0.75*Math.sin(2*PI*k/48),z));S.poly(L,CG,2,true,rgba(CG,.12));S.text(W(0,-0.95,z-0.3),"2D²/λ",CG,12,750);
+      S.line(W(-st.av/2,-st.bv/2,0),W(st.av/2,st.bv/2,0),CG,3);S.text(W(0.05,0.08,0),"D",CG,13,800);}
+    // dashed observation axis
+    const c=S.c();c.setLineDash([c.px(4),c.px(6)]);S.line(W(0,0,0),W(0,0,zv(hi)),"rgba(201,206,218,.3)",1);c.setLineDash([]);}};
+  const S=apScene(ctx,el.querySelector("canvas"),st,{yaw:-0.5,pitch:0.28,dist:9,scale:150,auto:false,dy:14});
+  el.querySelector("[data-fire]").onclick=()=>{if(st.done)return;if(cls.some(c=>!c)){ctx.sfx.miss();const g=el.querySelector(".gctl");g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");return;}
+    st.done=true;const n=obs.filter((o,i)=>(cls[i]==="far")===o.far).length;const sc=n===3?1:n===2?0.4:0;
+    const trapTxt=o=>o.trap==="side"?` (beats 2a²/λ = ${fmtR(2*a*a/lam)}, but D is the <b>diagonal</b>)`:o.trap==="two"?` (beats D²/λ = ${fmtR(D*D/lam)}: don't drop the 2)`:"";
+    fin(sc,`λ = ${sig(lam*100,3)} cm, D = √(a² + b²) = ${sig(D*100,3)} cm ⇒ <b>2D²/λ = ${fmtR(R)}</b>.<br>${obs.map((o,i)=>`${"①②③"[i]} ${fmtR(o.r)}: <b style="color:${(cls[i]==="far")===o.far?GOOD:BAD}">${o.far?"far field":"not far field"}</b>${o.far?"":trapTxt(o)}`).join("<br>")}<br>Derivation (L17): the dropped quadratic phase ${ctx.M("$\\beta\\frac{(D/2)^2}{2R}\\le\\frac{\\pi}{8}$")} (22.5°) ⇒ ${ctx.M("$R\\ge\\frac{2D^2}{\\lambda}$")}, with D the largest dimension.`);};}
+
+/* ---------------- round: aperture nulls ---------------- */
+function roundNull(el,ctx,fin,hard){
+  const al=rnd([2,2.5,3,3.5,4,5]),bl=rnd([1.25,1.5,2,2.5,3].filter(x=>x<al));const plane=rnd(["E","H"]);const dl=plane==="E"?bl:al;const tn=firstNull(dl);
+  let given;if(hard){const f=rnd([5,10,12,15,20])*1e9,lam=C0/f;given=`a = ${sig(al*lam*100,3)} cm, b = ${sig(bl*lam*100,3)} cm at ${f/1e9} GHz`;}else given=`a = ${al}λ, b = ${bl}λ`;
+  el.innerHTML=`<div class="q" style="font-size:17px">Uniform aperture, ${given}, ${ctx.M("$\\mathbf E_a=\\hat yE_0$")} (Example 6-4). Set θ onto the <b>first null</b> of the <b style="color:${CG}">${plane}-plane</b> pattern. ${hint("Drag to orbit.")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl"><label class="rng">θ<input type="range" data-th min="0" max="90" step="0.1" value="${(45+Math.random()*30).toFixed(1)}"><output></output></label></div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  const inp=el.querySelector("[data-th]"),out=el.querySelector("output");const upd=()=>{out.textContent=(+inp.value).toFixed(1)+"°";};upd();inp.addEventListener("input",upd);
+  const sz=1.0/al;const dirIn=(th,pl)=>pl==="E"?[0,Math.sin(th),Math.cos(th)]:[Math.sin(th),0,Math.cos(th)];const Rp=1.9;
+  const st={done:false,av:al*sz,bv:bl*sz,ox:-0.55,draw:(S,W,t)=>{
+    // the cut plane as a translucent fan
+    const fan=[W(0,0,0)];for(let k=0;k<=36;k++){const th=-PI/2+PI*k/36;fan.push(W(...dirIn(th,plane).map(v=>v*Rp)));}S.poly(fan,rgba(CG,.35),1,true,rgba(CG,.06));
+    S.text(W(...dirIn(rad(-58),plane).map(v=>v*(Rp+0.12))),`${plane}-plane, φ = ${plane==="E"?90:0}°`,CG,12,700);
+    if(st.done){for(const pl of [plane==="E"?"H":"E",plane]){const d=pl==="E"?bl:al;const L=[];for(let k=0;k<=360;k++){const th=-PI/2+PI*k/360;L.push(W(...dirIn(th,pl).map(v=>v*Rp*apPattern(d,th))));}
+        S.poly(L,pl===plane?CE:rgba(CH,.45),pl===plane?2.4:1.3);}
+      const n=rad(tn);for(const sg of [1,-1])S.dot(W(...dirIn(sg*n,plane).map(v=>v*Rp*0.72)),GOOD,6);
+      S.line(W(0,0,0),W(...dirIn(n,plane).map(v=>v*Rp)),GOOD,2);}
+    const th=rad(+inp.value);S.line(W(0,0,0),W(...dirIn(th,plane).map(v=>v*Rp*1.05)),CG,2.6);S.dot(W(...dirIn(th,plane).map(v=>v*Rp*1.05)),CG,6);
+    const arc=[];for(let k=0;k<=24;k++)arc.push(W(...dirIn(th*k/24,plane).map(v=>v*0.9)));S.poly(arc,CG,1.6);S.text(W(...dirIn(th/2,plane).map(v=>v*1.08)),"θ",CG,14,800);}};
+  const cam=plane==="E"?{yaw:-0.42,pitch:0.16,dist:9,scale:118,auto:false,dy:4}:{yaw:-0.3,pitch:-1.1,dist:9,scale:118,auto:false,dy:8};
+  apScene(ctx,el.querySelector("canvas"),st,cam);
+  el.querySelector("[data-fire]").onclick=()=>{if(st.done)return;st.done=true;inp.disabled=true;const th=+inp.value;const d=Math.abs(th-tn);const sc=d<=1?1:Math.max(0,1-(d-1)/6);
+    const other=firstNull(plane==="E"?al:bl),half=firstNull(2*dl);let trap="";
+    if(sc<0.7&&other&&Math.abs(th-other)<1.5)trap=` That's the ${plane==="E"?"H":"E"}-plane null: you used ${plane==="E"?"a":"b"}. The E-plane contains E<sub>a</sub> = ŷ, so it's φ = 90° and depends on b.`;
+    else if(sc<0.7&&half&&Math.abs(th-half)<1.5)trap=" You set β·d·sinθ = π; the sinc argument is (βd/2)sinθ.";
+    fin(sc,`You: ${th.toFixed(1)}°. ${plane}-plane (φ = ${plane==="E"?90:0}°) depends on <b>${plane==="E"?"b":"a"}</b> only: ${ctx.M(`$\\frac{\\beta ${plane==="E"?"b":"a"}}{2}\\sin\\theta=\\pi\\Rightarrow\\sin\\theta=\\frac{\\lambda}{${plane==="E"?"b":"a"}}=\\frac{1}{${dl}}$`)} ⇒ <b>θ = ${tn.toFixed(2)}°</b>.${trap} The wider side gives the narrower beam: a rect in space is a sinc in angle (dim curve: the other plane).`);};}
+
+G.mini.dipole={title:"Radiation Range",blurb:"Aim, classify and range a radiator's fields",
+ _phys:{angFromAxis,levelAngle,dipoleE,region,Rff,firstNull,apPattern},
+ play(el,ctx,fin){const id=ctx.lesson&&ctx.lesson.id;const r=ctx.round||0;
+  const pref={"6.9":["aim","aim"],"6.10":["aim","region"],"6.11":["region","aim"],"6.12":["far","far"],"6.13":["far","null"],"11.6":["null","far"],"11.7":["null","null"]}[ctx.ch&&/^(ch6|ch11)$/.test(ctx.ch.id)?id:""];
+  const type=ctx.force?ctx.force.replace(/h$/,""):ctx.hard?rnd(["aim","region","far","null"]):pref?pref[r%2]:["aim","region","far","null"][r%4];
+  const hard=!!ctx.hard;({aim:roundAim,region:roundRegion,far:roundFar,null:roundNull})[type](el,ctx,fin,hard);}
+};
+})(window.MXG);
+
+/* Mini-game: LINK BUDGET (Ch. 2 L6, Friis). Tx and Rx antennas over a ground grid; spherical wavefronts spread from the Tx,
+   squeezed by its gain. Goals: compute P_r in dBm (±1 dB), or set R, G_r or f to land a required P_r. His form:
+   P_r/P_t = G_t G_r (λ/4πR)², times the polarization loss factor |ρ̂_t·ρ̂_r|² = cos²ψ on some rounds (L6 "the real link"). */
+(function(G){
+const PI=Math.PI,C0=3e8,R=a=>a[Math.floor(Math.random()*a.length)],U=(a,b)=>a+(b-a)*Math.random();
+const lg=Math.log10,dB=x=>10*lg(x),undB=x=>10**(x/10);
+function budget(o){// o: {Pt (W), Gt, Gr (linear), f (Hz), R (m), psi (deg|0)}
+  const lam=C0/o.f,path=20*lg(lam/(4*PI*o.R)),plf=o.psi?Math.cos(o.psi*PI/180)**2:1;
+  const PtdBm=dB(o.Pt/1e-3);return{lam,path,plf,PtdBm,Pr:PtdBm+dB(o.Gt)+dB(o.Gr)+path+dB(plf)};}
+const GAINS=[{t:"1×",g:1},{t:"1.64×",g:1.64},{t:"2.15 dBi",g:undB(2.15)},{t:"6 dBi",g:undB(6)},{t:"10 dBi",g:10},{t:"15 dBi",g:undB(15)},{t:"20 dBi",g:100},{t:"25 dBi",g:undB(25)},{t:"30 dBi",g:1000},{t:"100×",g:100},{t:"50×",g:50}];
+const PTS=[1e-3,0.01,0.1,0.25,1,2,5,10,100,1000],FS=[300e6,900e6,1e9,2.4e9,5.8e9,10e9,28e9,60e9];
+const sig2=v=>+v.toPrecision(2);
+function scenario(round,hard){const mode=hard?R(["compute","setR","setG","setF"]):round===0?"compute":R(["setR","setG"]);
+  const usePLF=hard?Math.random()<0.75:round>=1&&Math.random()<0.35;
+  for(let k=0;k<200;k++){const o={Pt:R(PTS),f:R(FS),R:sig2(10**U(1,4.7)),psi:usePLF?R([30,45,60]):0};
+    const gt=R(GAINS),gr=R(GAINS);o.Gt=gt.g;o.Gr=gr.g;const sc={mode,o,gtT:gt.t,grT:gr.t};
+    if(mode==="compute"){sc.truth=budget(o).Pr;if(sc.truth<-125||sc.truth>10)continue;sc.lo=Math.round(sc.truth-U(10,50));return sc;}
+    if(mode==="setG"){sc.GrdB=Math.round(U(0,40)*2)/2;o.Gr=undB(sc.GrdB);sc.grT="?";}
+    if(mode==="setF")o.f=10**U(8,11);
+    const req=Math.round(budget(o).Pr*2)/2;if(req<-125||req>10)continue;sc.req=req;
+    const b0=budget({...o,Gr:mode==="setG"?1:o.Gr});// with G_r = 1 for setG
+    if(mode==="setR"){sc.Rs=o.R*10**((budget(o).Pr-req)/20);sc.lo=lg(sc.Rs)-U(0.5,2.5);}
+    if(mode==="setG"){sc.GrdB=req-b0.Pr;if(sc.GrdB<0||sc.GrdB>45)continue;}
+    if(mode==="setF"){sc.fs=o.f*10**((budget(o).Pr-req)/20);sc.lo=lg(sc.fs)-U(0.5,2.5);if(sc.fs<1e8||sc.fs>2e11)continue;}
+    return sc;}
+  return scenario(0,false);}
+const si=(v,u,d)=>{d=d||3;const P=[[1e9,"G"],[1e6,"M"],[1e3,"k"],[1,""],[1e-2,"c",["m"]],[1e-3,"m"],[1e-6,"µ"]];const a=Math.abs(v);
+  for(const[m,p,only]of P){if(only&&!only.includes(u))continue;if(a>=m*0.99995)return`${+(v/m).toPrecision(d)} ${p}${u}`;}return`${+(v/1e-6).toPrecision(d)} µ${u}`;};
+const mn1=x=>String(x).replace("-","−");const fdb=(x,d)=>(x>=0?"+":"−")+Math.abs(x).toFixed(d??1);
+
+G.mini.friis={title:"Link Budget",blurb:"Close a radio link with the Friis equation",
+ _phys:{budget,scenario},
+ play(el,ctx,fin){const sc=scenario(ctx.round||0,!!ctx.hard);G.mini.friis._last=sc,o=sc.o,mode=sc.mode;
+  const gold=s=>`<span style="color:#F2BF4C">${s}</span>`;
+  const tiles=[["P<sub>t</sub>",si(o.Pt,"W")],["G<sub>t</sub>",sc.gtT],["G<sub>r</sub>",mode==="setG"?gold("?"):sc.grT],["f",mode==="setF"?gold("?"):si(o.f,"Hz",2)],["R",mode==="setR"?gold("?"):si(o.R,"m",2)]];
+  if(o.psi)tiles.push(["ψ",o.psi+"°"]);
+  tiles.push(["P<sub>r</sub>",mode==="compute"?gold("?"):gold(mn1(sc.req)+" dBm")]);
+  const pol=o.psi?` The Rx dipole is rotated <b>ψ = ${o.psi}°</b> from the Tx polarization.`:" Polarizations matched.";
+  const prompt={compute:`Run the link budget: what does the receiver get, in <b style="color:#F2BF4C">dBm</b>? (±1 dB)`,
+   setR:`Place the receiver so it gets exactly <b style="color:#F2BF4C">${sc.req} dBm</b>. (±1 dB)`,
+   setG:`Pick the receive-antenna gain that delivers <b style="color:#F2BF4C">${sc.req} dBm</b>. (±1 dB)`,
+   setF:`Pick the carrier frequency that delivers <b style="color:#F2BF4C">${sc.req} dBm</b>, gains fixed. (±1 dB)`}[mode]+pol;
+  const lab={compute:"P<sub>r</sub>",setR:"R",setG:"G<sub>r</sub>",setF:"f"}[mode];
+  const [mn,mx,st,v0]=mode==="compute"?[sc.lo,sc.lo+60,0.5,sc.lo+30]:mode==="setG"?[0,45,0.5,20]:[0,1000,1,500];
+  el.innerHTML=`<div class="q" style="font-size:17px;margin-bottom:8px">${prompt} <small class="mut">Drag to orbit.</small></div>
+   <div class="readout" style="margin:0 0 8px;grid-template-columns:repeat(4,minmax(0,1fr))">${tiles.map(([a,b],i)=>`<div style="padding:6px 8px;min-width:0${i===tiles.length-1?";grid-column:span "+(tiles.length===6?3:2):""}"><small style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a}</small><b style="white-space:nowrap;font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis">${b}</b></div>`).join("")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl"><label class="rng">${lab}<input type="range" data-v min="${mn}" max="${mx}" step="${st}" value="${v0}"><output></output></label></div>
+   <button class="btn cta block" data-fire style="margin-top:10px">TRANSMIT ▸</button>`;
+  const inp=el.querySelector("[data-v]");
+  const val=()=>{const x=+inp.value;return mode==="setR"?10**(sc.lo+3*x/1000):mode==="setF"?10**(sc.lo+3*x/1000):x;};
+  const fmtV=v=>mode==="compute"?v.toFixed(1)+" dBm":mode==="setG"?v.toFixed(1)+" dBi":mode==="setR"?si(v,"m"):si(v,"Hz");
+  const out=()=>{el.querySelector(".rng output").textContent=fmtV(val());};out();el.addEventListener("input",out);
+  const cur=()=>{const v=val();return{...o,R:mode==="setR"?v:o.R,Gr:mode==="setG"?undB(v):o.Gr,f:mode==="setF"?v:o.f};};
+  let locked=false,tLock=0,lastT=0,res=null;
+  const cv=el.querySelector("canvas");
+  const lobe=g=>Math.max(0.6,dB(g)/2.2);// cosⁿ exponent for drawing (D ≈ 2(n+1))
+  const S=ctx.scene3d(cv,720,480,(S,t)=>{lastT=t;const c=S.c(),px=c.px,fnt=(w,z)=>`${w} ${px(z)}px ui-monospace,"SF Mono",Menlo,monospace`;
+    const q=cur(),a=Math.max(0.75,Math.min(2.5,0.6+0.38*lg(q.R)));const tx=[-a,0,0],rx=[a,0,0],gy=-1.05;
+    // ground grid
+    for(let i=-6;i<=6;i++){S.line([i*0.5,gy,-1.6],[i*0.5,gy,1.6],"rgba(255,255,255,.05)",1);}
+    for(let j=-3;j<=3;j++){S.line([-3,gy,j*0.5],[3,gy,j*0.5],"rgba(255,255,255,.05)",1);}
+    // wavefronts from Tx, brightness shaped by the Tx pattern cosⁿ
+    const nT=lobe(q.Gt),nR=lobe(q.Gr),Rmax=2*a+0.9;
+    for(let i=0;i<6;i++){const rr=((t*0.42+i/6)%1)*Rmax,fade=1-rr/Rmax;if(rr<0.08)continue;
+      for(const plane of[0,1]){let prev=null;for(let k=0;k<=64;k++){const th=-PI/2+PI*k/64;const pt=plane?[tx[0]+rr*Math.cos(th),rr*Math.sin(th),0]:[tx[0]+rr*Math.cos(th),0,rr*Math.sin(th)];
+        if(pt[1]<gy){prev=null;continue;}const pat=Math.cos(th)**nT;
+        if(prev){c.globalAlpha=Math.max(0,fade*(0.08+0.8*pat));S.line(prev,pt,"#4FC8D8",1.6);}prev=pt;}}}
+    c.globalAlpha=1;
+    // beam lobes (gain) in the horizontal plane
+    const lobeP=(p0,dir,g,col)=>{const n=Math.min(24,lobe(g)),Lb=0.32+0.035*Math.max(0,dB(g));const pts=[];for(let k=0;k<=96;k++){const th=-PI/2+PI*k/96,r=Lb*Math.cos(th)**n;pts.push([p0[0]+dir*r*Math.cos(th),0,r*Math.sin(th)]);}S.poly(pts,col,1.2,true,col.replace(/[\d.]+\)$/,"0.12)"));};
+    lobeP(tx,1,q.Gt,"rgba(255,159,90,.8)");lobeP(rx,-1,q.Gr,"rgba(199,182,255,.8)");
+    // masts and dipoles (Tx vertical; Rx rotated ψ about the link axis)
+    [[tx,0,"Tx"],[rx,o.psi,"Rx"]].forEach(([p,ps,nm])=>{S.line([p[0],gy,0],[p[0],-0.28,0],"#5A6278",2.2);
+      const d=[0,0.3*Math.cos(ps*PI/180),0.3*Math.sin(ps*PI/180)];S.line([p[0],-d[1],-d[2]],[p[0],d[1],d[2]],"#E8ECF4",3.4);S.dot(p,"#E8ECF4",3);
+      S.text([p[0]-0.12,0.52,0],nm,"#C9CEDA",13,800);});
+    if(o.psi){S.text([rx[0]+0.1,0.38,0.25],`ψ ${o.psi}°`,"#F2BF4C",12,800);}
+    // Rx glow when a front passes
+    const glow=Math.max(0,Math.cos(2*PI*(t*0.42*6-(2*a)/Rmax*6)))**6;S.dot(rx,`rgba(242,191,76,${0.15+0.6*glow})`,10);
+    // distance on the ground
+    const dz=1.15;if(mode==="setR")c.setLineDash([6,5]);S.line([tx[0],gy,dz],[rx[0],gy,dz],mode==="setR"?"#F2BF4C":"#7E8699",1.6);c.setLineDash([]);
+    S.line([tx[0],gy,dz-0.1],[tx[0],gy,dz+0.1],"#7E8699",1.4);S.line([rx[0],gy,dz-0.1],[rx[0],gy,dz+0.1],"#7E8699",1.4);
+    S.text([-0.32,gy+0.14,dz],"R = "+si(q.R,"m",2),mode==="setR"?"#F2BF4C":"#9AA3B8",12,800);
+    // HUD
+    c.textAlign="left";c.font=fnt(700,12);c.fillStyle="#9AA3B8";c.fillText(`f ${si(q.f,"Hz",3)}  λ ${si(C0/q.f,"m",3)}`,px(10),px(20));
+    c.textAlign="right";c.font=fnt(800,13);c.fillStyle="#F2BF4C";c.fillText(mode==="compute"?`guess ${fmtV(val())}`:`${{setR:"R",setG:"Gr",setF:"f"}[mode]} ${fmtV(val())}`,S.LW-px(10),px(20));
+    if(locked&&res&&t-tLock>0.4){c.textAlign="left";c.font=fnt(800,13);c.fillStyle=res.ok?"#78D58C":"#F2668A";c.fillText(res.hud,px(10),S.LH-px(12));}
+    c.textAlign="left";
+  },{yaw:-0.5,pitch:0.38,dist:9,scale:120,dy:-6});
+  el.querySelector("[data-fire]").onclick=()=>{if(locked)return;locked=true;tLock=lastT;inp.disabled=true;
+    const v=val(),q=cur(),b=budget(q);const F1=x=>mn1(x.toFixed(1));let score=0,why="";
+    const target=mode==="compute"?budget(o).Pr:sc.req,got=mode==="compute"?v:b.Pr,dd=got-target;
+    score=Math.abs(dd)<=1?1:Math.abs(dd)<=3?0.4:0;
+    const T=budget(mode==="setR"?{...o,R:sc.Rs}:mode==="setG"?{...o,Gr:undB(sc.GrdB)}:mode==="setF"?{...o,f:sc.fs}:o);
+    if(mode==="compute"&&Math.abs(dd)>1){if(Math.abs(Math.abs(dd)-30)<=1)why="Off by 30 dB: dBm is relative to 1 mW (P<sub>t</sub>[dBm] = 10 log₁₀(P<sub>t</sub>/1 mW)).";
+      else if(Math.abs(dd-(-T.path/2))<=1)why="You took 10 log of (λ/4πR); it's squared, so the path term is 20 log₁₀(λ/4πR).";
+      else if(o.psi&&Math.abs(dd+dB(T.plf))<=1)why="You left out the polarization loss factor.";
+      else if(o.psi&&Math.abs(dd+dB(T.plf)/2)<=1)why="PLF is |ρ̂<sub>t</sub>·ρ̂<sub>r</sub>|² = cos²ψ, not cos ψ.";}
+    const chain=`P<sub>t</sub> = ${F1(T.PtdBm)} dBm, G<sub>t</sub> ${fdb(dB(o.Gt))} dB, G<sub>r</sub> ${fdb(mode==="setG"?sc.GrdB:dB(o.Gr))} dB, 20 log₁₀(λ/4πR) = ${fdb(T.path)} dB (λ = ${si(T.lam,"m")})${o.psi?`, PLF = cos²${o.psi}° = ${T.plf.toFixed(3)} (${fdb(dB(T.plf))} dB)`:""}`;
+    const ans=({compute:()=>`P<sub>r</sub> = <b>${F1(T.Pr)} dBm</b>; you said ${F1(v)}.`,
+      setR:()=>`R = <b>${si(sc.Rs,"m")}</b>; your ${si(v,"m")} gives ${F1(b.Pr)} dBm.`,
+      setG:()=>`G<sub>r</sub> = <b>${sc.GrdB.toFixed(1)} dBi</b> (${undB(sc.GrdB).toPrecision(3)}×); your ${F1(v)} dBi gives ${F1(b.Pr)} dBm.`,
+      setF:()=>`f = <b>${si(sc.fs,"Hz")}</b>; your ${si(v,"Hz")} gives ${F1(b.Pr)} dBm. Fixed gains: P<sub>r</sub> ∝ λ², so each 10× in f costs 20 dB.`})[mode]();
+    res={ok:score>=0.7,hud:mode==="compute"?`P_r = ${F1(T.Pr)} dBm`:`you deliver ${F1(b.Pr)} dBm`};
+    const detail=`${ans} ${why?"<b>"+why+"</b> ":""}P<sub>r</sub>/P<sub>t</sub> = G<sub>t</sub>G<sub>r</sub>(λ/4πR)²${o.psi?"|ρ̂<sub>t</sub>·ρ̂<sub>r</sub>|²":""}: ${chain} ⇒ ${F1(T.Pr)} dBm.`;
+    el.querySelector("[data-fire]").textContent=score>=0.7?"LINK CLOSED ✓":"LINK DOWN ✕";
+    fin(score,detail);};}
+};
+})(window.MXG);
+
+/* Mini-game: MODE HUNTER (Ch. 8 rectangular waveguides). A metal guide, a along x (the long side, "always, always,
+   always"), b along y, propagation +z. Rounds: identify the mode from its 3D fields + cross-section; tune f so exactly
+   N modes propagate (cutoff ladder revealed after firing); Z_w or λ_g within 1%; PMC walls when ctx.hard (TE → sin·sin).
+   Cutoffs (8-16) with c = 3×10⁸, η₀ = 120π. Physics verified numerically (Maxwell's curl equations + wall BCs). */
+(function(G){
+"use strict";
+const PI=Math.PI,C0=3e8,ETA0=120*PI;
+const CE="#4FC8D8",CH="#C7B6FF",CK="#FF9F5A",CG="#F2BF4C",GOOD="#78D58C",BAD="#F2668A",TXT="#C9CEDA",MUT="#8C92A4";
+const RM=()=>window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sig=(x,d=4)=>(+(+x).toPrecision(d)).toString();
+const nm=md=>`${md.k}<sub>${md.m}${md.n}</sub>`;
+const nmt=md=>`${md.k}${md.m}${md.n}`;
+
+/* ---------------- physics ---------------- */
+// (8-16): (f_c)mn = c/(2√ε_r) · √((m/a)² + (n/b)²)   [μ_r = 1]
+const fcOf=(m,n,a,b,er)=>C0/(2*Math.sqrt(er))*Math.hypot(m/a,n/b);
+// PEC: TE → F_z ∝ cos·cos, TM → A_z ∝ sin·sin.  PMC (HW 8.10–8.11): the dual, TE → sin·sin, TM → cos·cos.
+const sinsin=(k,pmc)=>(k==="TE")===pmc;
+const exists=(k,m,n,pmc)=>sinsin(k,pmc)?(m>0&&n>0):(m+n>0);
+function modeList(a,b,er,pmc,M){M=M||7;const L=[];for(const k of ["TE","TM"])for(let m=0;m<=M;m++)for(let n=0;n<=M;n++)if(exists(k,m,n,pmc))L.push({k,m,n,fc:fcOf(m,n,a,b,er)});
+  L.sort((p,q)=>p.fc-q.fc||(p.k<q.k?-1:p.k>q.k?1:0)||q.m-p.m);return L;}
+const countProp=(L,f)=>L.filter(x=>x.fc<f).length;
+/* Real-time fields of mode (k,m,n) with μ = ε = 1, ω² = β_c² + β_z².  Ψ = F_z (TE) or A_z (TM).
+   TE (6-72):  E_t = (−∂Ψ/∂y, ∂Ψ/∂x),  H_t = −(β_z/ω)∇_tΨ,  H_z = −j(β_c²/ω)Ψ
+   TM (8-24):  H_t = (∂Ψ/∂y, −∂Ψ/∂x),  E_t = −(β_z/ω)∇_tΨ,  E_z = −j(β_c²/ω)Ψ
+   Phasor × e^{j(ωt−β_z z)}: transverse parts ∝ cos(ωt−β_z z); the −j longitudinal part ∝ sin(ωt−β_z z). */
+function shape(k,pmc,m,n,a,b,bz){const kx=m*PI/a,ky=n*PI/b,bc2=kx*kx+ky*ky,w=Math.sqrt(bc2+bz*bz),ss=sinsin(k,pmc);
+  const f=(x,y)=>{const cx=Math.cos(kx*x),sx=Math.sin(kx*x),cy=Math.cos(ky*y),sy=Math.sin(ky*y);let P,Px,Py;
+    if(ss){P=sx*sy;Px=kx*cx*sy;Py=ky*sx*cy;}else{P=cx*cy;Px=-kx*sx*cy;Py=-ky*cx*sy;}
+    if(k==="TE")return{Ex:-Py,Ey:Px,Ez:0,Hx:-bz/w*Px,Hy:-bz/w*Py,Hz:bc2/w*P,P};
+    return{Ex:-bz/w*Px,Ey:-bz/w*Py,Ez:bc2/w*P,Hx:Py,Hy:-Px,Hz:0,P};};
+  f.w=w;f.bz=bz;return f;}
+function realAt(f,x,y,z,t){const F=f(x,y),ph=f.w*t-f.bz*z,c=Math.cos(ph),s=Math.sin(ph);
+  return{E:[F.Ex*c,F.Ey*c,F.Ez*s],H:[F.Hx*c,F.Hy*c,F.Hz*s]};}
+function zw(md,f,er){const s=Math.sqrt(1-(md.fc/f)**2),eta=ETA0/Math.sqrt(er);return md.k==="TE"?eta/s:eta*s;}// (8-20), (8-29)
+function lamg(md,f,er){const s=Math.sqrt(1-(md.fc/f)**2);return C0/(f*Math.sqrt(er))/s;}// (8-50)
+
+/* ---------------- drawing helpers ---------------- */
+function setup2(cv,LW,LH){const cw=Math.max(280,cv.clientWidth||cv.parentElement.clientWidth||340),s=cw/LW,r=Math.min(3,window.devicePixelRatio||1);
+  cv.width=Math.round(cw*r);cv.height=Math.round(LH*s*r);cv.style.aspectRatio=LW+"/"+LH;const c=cv.getContext("2d");c.setTransform(r*s,0,0,r*s,0,0);
+  c.px=n=>n/s;c.f=(n,w)=>{c.font=`${w||600} ${n/s}px ui-monospace,"SF Mono",Menlo,monospace`;};return c;}
+function loop(cv,fn){const t0=performance.now();const tick=now=>{if(!cv.isConnected)return;fn(RM()?0.7:(now-t0)/1000);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
+function arr(c,x0,y0,x1,y1,col,w,hs){c.strokeStyle=col;c.fillStyle=col;c.lineWidth=c.px(w||2);c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();
+  const a=Math.atan2(y1-y0,x1-x0),h=c.px(hs||6);c.beginPath();c.moveTo(x1,y1);c.lineTo(x1-h*Math.cos(a-.45),y1-h*Math.sin(a-.45));c.lineTo(x1-h*Math.cos(a+.45),y1-h*Math.sin(a+.45));c.closePath();c.fill();}
+const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a.toFixed(3)})`;};
+
+/* 3D guide. Physics (x,y,z) → world (x−A/2, y−B/2, −(z−L/2)): a proper rotation of scene3d's viewed axes, so the
+   right-hand rule on screen is the real one (E×H points down +z). */
+const AW=2.5,LZ=5.4;
+function guide3d(ctx,cv,st){
+  const W=(x,y,z)=>[x-AW/2,y-AW/st.ab/2,-(z-LZ/2)];
+  let cache=null;
+  const S=ctx.scene3d(cv,900,470,(S,t)=>{const B=AW/st.ab,c=S.c();
+    const box=(back)=>{const E=[[[0,0,0],[AW,0,0]],[[0,B,0],[AW,B,0]],[[0,0,0],[0,B,0]],[[AW,0,0],[AW,B,0]]];
+      const col=st.pmc?CH:CK;if(st.pmc)c.setLineDash([c.px(7),c.px(5)]);
+      for(const zz of back?[LZ]:[0])E.forEach(([p,q])=>S.line(W(p[0],p[1],zz),W(q[0],q[1],zz),rgba(col,back?.35:.95),back?1.2:2));
+      [[0,0],[AW,0],[0,B],[AW,B]].forEach(([x,y])=>S.line(W(x,y,0),W(x,y,LZ),rgba(col,back?.3:.75),back?1:1.6));c.setLineDash([]);};
+    // walls (faint) + filling tint
+    const fill=st.er>1?"rgba(150,160,255,.07)":"rgba(255,159,90,.035)";
+    S.poly([W(0,0,0),W(AW,0,0),W(AW,0,LZ),W(0,0,LZ)],null,0,true,fill);S.poly([W(0,0,0),W(0,B,0),W(0,B,LZ),W(0,0,LZ)],null,0,true,fill);
+    S.poly([W(AW,0,0),W(AW,B,0),W(AW,B,LZ),W(AW,0,LZ)],null,0,true,fill);
+    box(true);
+    // k arrow and dimension labels
+    S.arrow(W(AW/2,-0.42,-0.2),W(AW/2,-0.42,LZ+0.75),CK,2.4,10);S.text(W(AW/2,-0.42,LZ+0.95),"+z",CK,13,700);
+    S.text(W(AW*0.42,B+0.12,0),"a",TXT,13,700);S.text(W(-0.32,B*0.4,0),"b",TXT,13,700);
+    if(st.er>1)S.text(W(AW*0.5,B+0.18,LZ*0.55),"εr = "+st.er,"#AEB6FF",12,650);
+    const md=st.mode;
+    if(md){const key=[md.k,md.m,md.n,st.pmc,st.ab,st.lg].join();
+      if(!cache||cache.key!==key){const bc=Math.hypot(md.m*PI/AW,md.n*PI/B);const bz=2*PI/st.lg;const f=shape(md.k,st.pmc,md.m,md.n,AW,B,bz);
+        const Nx=md.m>=3?6:md.m>=2?5:4,Ny=md.n>=2?4:2,Nz=Math.max(7,Math.min(12,Math.round(LZ/(st.lg/5))));
+        const pts=[];for(let i=0;i<Nx;i++)for(let j=0;j<Ny;j++)for(let q=0;q<Nz;q++)pts.push([(i+.5)/Nx*AW,(j+.5)/Ny*B,(q+.5)/Nz*LZ]);
+        let mE=1e-9,mH=1e-9;pts.forEach(p=>{const F=f(p[0],p[1]);mE=Math.max(mE,Math.hypot(F.Ex,F.Ey),Math.abs(F.Ez));mH=Math.max(mH,Math.hypot(F.Hx,F.Hy),Math.abs(F.Hz));});
+        cache={key,f,pts,mE,mH,cell:Math.min(AW/Nx,B/Ny,LZ/Nz),bc};}
+      const {f,pts,mE,mH,cell}=cache;const tt=t*1.0;const show=st.show||"EH";
+      const draw=(p,v,mx,col,dz,k,w)=>{const l=Math.hypot(v[0],v[1],v[2])/mx;if(l<.07)return;
+        const u=v.map(q=>q/mx*cell*k);const z=p[2]+dz;S.arrow(W(p[0]-u[0],p[1]-u[1],z-u[2]),W(p[0]+u[0],p[1]+u[1],z+u[2]),rgba(col,.4+.6*l),w,8);};
+      for(const p of pts){const R=realAt(f,p[0],p[1],p[2],tt);if(show!=="H")draw(p,R.E,mE,CE,0,0.6,2.7);
+        if(show!=="E"){const R2=realAt(f,p[0],p[1],p[2]+cell*0.5,tt);draw([p[0],p[1],p[2]+cell*0.5],R2.H,mH,CH,0,show==="H"?0.6:0.42,2);}}}
+    else if(st.empty){S.text(W(AW*0.15,B*0.5,LZ*0.35),st.empty,MUT,13,650);}
+    box(false);
+    if(st.label){c.font=`750 ${c.px(15)}px ui-monospace,"SF Mono",Menlo,monospace`;c.fillStyle=st.labelCol||CG;c.fillText(st.label,c.px(12),c.px(22));}
+  },{yaw:0.95,pitch:-0.32,dist:10,scale:106,auto:false,dy:-4});
+  return S;}
+
+/* 2D cross-section: heat map of Ψ (the z-directed field pattern) + transverse E and H arrows at z = 0, in sync with 3D */
+function xsec(cv,st){let c=null,key="",off=null,mE=1,mH=1;const LW=900;
+  loop(cv,t=>{const md=st.mode;const sc=(cv.clientWidth||340)/LW,TOP=24/sc,BOT=24/sc;const LH=Math.round((LW-80)/st.ab+TOP+BOT);const k2=[LH,cv.clientWidth].join();if(!c||k2!==key){c=setup2(cv,LW,LH);key=k2;off=null;}
+    c.fillStyle="#07080C";c.fillRect(0,0,LW,LH);const pad=40,gw=LW-2*pad,gh=gw/st.ab,top=TOP;if(!md)return;
+    const B=AW/st.ab,f=shape(md.k,st.pmc,md.m,md.n,AW,B,2*PI/st.lg);const mk=[md.k,md.m,md.n,st.pmc,st.ab,st.lg].join();
+    if(!off||off.k!==mk){const NX=180,NY=Math.max(24,Math.round(180/st.ab));const o=document.createElement("canvas");o.width=NX;o.height=NY;const oc=o.getContext("2d"),id=oc.createImageData(NX,NY);
+      for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){const v=f((i+.5)/NX*AW,(1-(j+.5)/NY)*B).P;const a2=Math.min(1,Math.sqrt(Math.abs(v)));const q=(j*NX+i)*4;
+        if(v>=0){id.data[q]=12+200*a2;id.data[q+1]=12+110*a2;id.data[q+2]=18+48*a2;}else{id.data[q]=12+40*a2;id.data[q+1]=14+120*a2;id.data[q+2]=20+170*a2;}id.data[q+3]=255;}
+      oc.putImageData(id,0,0);off=o;off.k=mk;mE=mH=1e-9;for(let j=0;j<=16;j++)for(let i=0;i<=16;i++){const F=f(i/16*AW,j/16*B);mE=Math.max(mE,Math.hypot(F.Ex,F.Ey));mH=Math.max(mH,Math.hypot(F.Hx,F.Hy));}}
+    c.imageSmoothingEnabled=true;c.drawImage(off,pad,top,gw,gh);
+    const ct=Math.cos(f.w*t);const nx=st.ab>1.6?10:8,ny=Math.max(3,Math.round(nx/st.ab));const cs=gw/nx;
+    const dr=(x,y,vx,vy,mx,col,w)=>{const m=Math.hypot(vx,vy);const l=m/mx*Math.abs(ct);if(l<.06)return;const Lh=cs*.42*Math.sqrt(l);const sg=Math.sign(ct)||1;const ux=vx/m*sg,uy=vy/m*sg;
+      const X=pad+x*gw,Y=top+(1-y)*gh;arr(c,X-ux*Lh,Y+uy*Lh,X+ux*Lh,Y-uy*Lh,rgba(col,.45+.55*Math.sqrt(l)),w,7);};
+    if(st.show!=="H")for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const x=(i+.5)/nx,y=(j+.5)/ny;const F=f(x*AW,y*B);dr(x,y,F.Ex,F.Ey,mE,CE,2.6);}
+    if(st.show!=="E")for(let j=1;j<ny;j++)for(let i=1;i<nx;i++){const x=i/nx,y=j/ny;const F=f(x*AW,y*B);dr(x,y,F.Hx,F.Hy,mH,CH,2.1);}
+    c.strokeStyle=st.pmc?CH:CK;c.lineWidth=c.px(3);if(st.pmc)c.setLineDash([c.px(9),c.px(6)]);c.strokeRect(pad,top,gw,gh);c.setLineDash([]);
+    c.f(12,700);c.fillStyle=TXT;c.fillText("cross-section at z = 0, looking down +z",pad,top-c.px(9));
+    c.f(11,600);c.fillStyle=MUT;c.fillText("x → (a)",pad+gw-c.px(58),top+gh+c.px(17));c.fillText(st.pmc?"PMC: tangential H = 0":"PEC: tangential E = 0",pad,top+gh+c.px(17));
+    const lx=pad+gw*0.45;c.fillStyle="#D98A4A";c.fillText("■+",lx,top+gh+c.px(17));c.fillStyle="#3A86B8";c.fillText("■−",lx+c.px(26),top+gh+c.px(17));c.fillStyle=MUT;c.fillText("z-field",lx+c.px(54),top+gh+c.px(17));
+  });}
+
+/* cutoff ladder (2D): rungs at each cutoff, labels packed into rows so they never collide */
+function ladder(cv,st){let c=null,key="",sc=1;const LW=900;
+  loop(cv,t=>{const k2=cv.clientWidth+"";const q=n=>n/sc;
+    if(!c||k2!==key){sc=(cv.clientWidth||340)/LW;c=setup2(cv,LW,Math.round(q(150)));key=k2;}
+    const LH=q(150);c.fillStyle="#07080C";c.fillRect(0,0,LW,LH);
+    const XL=q(12),XR=LW-q(14),Y0=q(112),fmax=st.fmax,X=f=>XL+(XR-XL)*f/fmax;const f=st.f();
+    c.strokeStyle="#3A3F4F";c.lineWidth=c.px(1);c.beginPath();c.moveTo(XL,Y0);c.lineTo(XR,Y0);c.stroke();
+    const gs=fmax/1e9>60?10:fmax/1e9>30?5:fmax/1e9>12?2:1;c.f(10,600);c.fillStyle=MUT;
+    for(let g=0;g<=fmax/1e9+1e-9;g+=gs){const x=X(g*1e9);c.fillRect(x,Y0,c.px(1),q(4));const w=c.measureText(String(g)).width;c.fillText(String(g),Math.min(x-w/2,XR-w),Y0+q(15));}
+    if(st.revealed){if(st.rt==null)st.rt=t;const L=st.L;const p=Math.min(1,(t-st.rt)/1.2);const x1=X(L[st.N-1].fc),x2=X(L[st.N].fc);
+      c.fillStyle="rgba(120,213,140,.16)";c.fillRect(x1,q(22),x2-x1,Y0-q(22));c.strokeStyle=rgba(GOOD,.8);c.lineWidth=c.px(1.2);c.strokeRect(x1,q(22),x2-x1,Y0-q(22));
+      const grp=[];L.forEach(md=>{if(md.fc>fmax)return;const g=grp.find(z=>Math.abs(z.fc-md.fc)/md.fc<1e-9);if(g)g.list.push(md);else grp.push({fc:md.fc,list:[md]});});
+      const rows=[[],[],[],[]];c.f(10,700);
+      grp.forEach((g,i)=>{if(i/grp.length>p*1.02)return;const x=X(g.fc);const deg=g.list.length>1;const col=deg?CH:CE;const md=g.list[0];const lab=(deg?"TE/TM":md.k)+md.m+md.n;const w=c.measureText(lab).width;
+        let lx=Math.min(x+q(2),XR-w);let r=rows.findIndex(R=>R.every(([a,b])=>lx>b+q(4)||lx+w<a-q(4)));if(r<0)r=3;rows[r].push([lx,lx+w]);const ly=q(36)+r*q(14);
+        c.strokeStyle=rgba(col,.9);c.lineWidth=c.px(1.8);c.beginPath();c.moveTo(x,Y0);c.lineTo(x,ly-q(9));c.stroke();c.fillStyle=col;c.fillText(lab,lx,ly);});
+      c.f(10,700);c.fillStyle=GOOD;c.fillText(`exactly ${st.N}: ${sig(L[st.N-1].fc/1e9,4)}–${sig(L[st.N].fc/1e9,4)} GHz`,XL,Y0+q(31));
+      c.fillStyle=CH;const tl="lavender = TE+TM pair";c.fillText(tl,XR-c.measureText(tl).width,Y0+q(31));}
+    else{c.f(11,600);c.fillStyle=MUT;c.fillText("cutoff ladder hidden until you fire",XL,q(60));}
+    c.strokeStyle=CG;c.lineWidth=c.px(2.4);c.beginPath();c.moveTo(X(f),q(18));c.lineTo(X(f),Y0+q(3));c.stroke();
+    c.fillStyle=CG;c.f(12,750);const lab=`f = ${(f/1e9).toFixed(2)} GHz`;const w=c.measureText(lab).width;c.fillText(lab,Math.min(Math.max(XL,X(f)-w/2),XR-w),q(13));
+  });}
+
+/* ---------------- round builders ---------------- */
+const PEC_POOL=[["TE",1,0],["TE",2,0],["TE",0,1],["TE",1,1],["TM",1,1],["TE",2,1],["TM",2,1],["TE",1,2],["TM",1,2],["TE",3,0],["TE",0,2],["TM",3,1]];
+const PMC_POOL=[["TM",1,0],["TM",2,0],["TM",0,1],["TE",1,1],["TM",1,1],["TE",2,1],["TM",2,1],["TE",1,2],["TM",1,2]];
+const GUIDES=[["WR-90",2.286,1.016],["WR-62",1.58,0.79],["WR-137",3.485,1.58],["WR-112",2.85,1.262],["WR-187",4.755,2.215],["WR-75",1.905,0.953],["a = 2b",2.0,1.0],["a = 1.5b",2.4,1.6]];
+const legendHTML=`<div class="legend"><span class="e">→ E</span><span class="h">→ H</span><span class="a">→ +z (k)</span><span>drag to orbit</span></div>`;
+
+function roundIdentify(el,ctx,fin,pmc){
+  const pool=(pmc?PMC_POOL:PEC_POOL).filter(p=>ctx.lesson&&ctx.lesson.viz==="modesTM"?p[0]==="TM"||Math.random()<.4:true);
+  const [k,m,n]=rnd(pool);const md={k,m,n};const ab=rnd([2,2,2.25,1.8]);
+  // choices: truth, swapped indices, other family (may not exist!), a non-existent trap, neighbours
+  const other=k==="TE"?"TM":"TE";const C=[md];const add=q=>{if(q.m<0||q.n<0||q.m+q.n===0)return;if(!C.some(x=>x.k===q.k&&x.m===q.m&&x.n===q.n))C.push(q);};
+  if(m!==n)add({k,m:n,n:m});add({k:other,m,n});
+  add(pmc?{k:"TE",m:1,n:0}:{k:"TM",m:1,n:0});add({k,m:m+1,n});add({k,m,n:n+1});add({k:other,m:n,n:m});
+  const choices=shuffle([C[0],...shuffle(C.slice(1)).slice(0,3)]);
+  el.innerHTML=`<div class="q" style="font-size:17px">Name this mode. ${pmc?`<b style="color:${CH}">PMC walls</b> (dashed): tangential <b>H</b> = 0, not E.`:"PEC walls."} The color map is the field component along <b style="color:${CK}">+z</b>.</div>
+   <canvas class="viz game3d" data-g></canvas>${legendHTML}
+   <canvas class="viz" data-x style="margin-top:6px"></canvas>
+   <div class="seg" role="group" style="margin:10px 0">${[["EH","E + H"],["E","E only"],["H","H only"]].map(([v,l])=>`<button data-sh="${v}" aria-pressed="${v==="EH"}">${l}</button>`).join("")}</div>
+   <div class="opts" style="display:grid;grid-template-columns:1fr 1fr">${choices.map((q,i)=>`<button class="opt" data-k="${i}" style="justify-content:center;align-items:center"><span class="ot" style="font:750 20px var(--fn);text-align:center">${nm(q)}</span></button>`).join("")}</div>`;
+  const st={ab,pmc,er:1,mode:md,lg:3.4,show:"EH"};
+  const S=guide3d(ctx,el.querySelector("[data-g]"),st);xsec(el.querySelector("[data-x]"),st);
+  el.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>{st.show=b.dataset.sh;el.querySelectorAll("[data-sh]").forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();});
+  let done=false;el.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(done)return;done=true;const q=choices[+b.dataset.k];const ok=q===md;
+    el.querySelectorAll(".opt").forEach((x,i)=>{x.disabled=true;if(choices[i]===md)x.classList.add("right");else if(x===b)x.classList.add("wrong");});
+    st.label=nmt(md)+(pmc?" · PMC":"");st.labelCol=ok?GOOD:BAD;
+    const fam=k==="TE"?`E has no z-component (only H<sub>z</sub>) ⇒ TE<sup>z</sup>, ${ctx.M(pmc?"$F_z\\propto\\sin\\frac{m\\pi x}{a}\\sin\\frac{n\\pi y}{b}$":"$F_z\\propto\\cos\\frac{m\\pi x}{a}\\cos\\frac{n\\pi y}{b}$")}`
+      :`H has no z-component (E<sub>z</sub> ≠ 0) ⇒ TM<sup>z</sup>, ${ctx.M(pmc?"$A_z\\propto\\cos\\frac{m\\pi x}{a}\\cos\\frac{n\\pi y}{b}$":"$A_z\\propto\\sin\\frac{m\\pi x}{a}\\sin\\frac{n\\pi y}{b}$")}`;
+    let why="";if(!ok){if(!exists(q.k,q.m,q.n,pmc))why=` ${nm(q)} doesn't exist with ${pmc?"PMC":"PEC"} walls: ${sinsin(q.k,pmc)?"it needs sin·sin, and a zero index gives sin 0 = 0":"m = n = 0 makes the potential constant"}, so every field vanishes.`;
+      else{const cnt=q.m!==m||q.n!==n;why=` ${nm(q)} ${q.k!==k?`is the other family (look at which field tilts into z)${cnt?" and has":""}`:"has"}${cnt?" the wrong counts: m is half-cycles across a (x, the long side), n across b (y)":""}.`;}}
+    const fc=Math.sqrt(m*m+(n*ab)**2);
+    fin(ok?1:0,`<b>${nm(md)}</b>${pmc?" (PMC)":""}: ${fam}. m = ${m} half-cycle${m===1?"":"s"} along x (a), n = ${n} along y (b); ${ctx.M(`$(f_c)_{${m}${n}}/(f_c)_{10}=\\sqrt{m^2+(n\\,a/b)^2}=${fc.toFixed(3)}$`)} for a/b = ${ab}.${why}`);});}
+
+function roundSetN(el,ctx,fin,hard){
+  let g,er,N,L;for(let tries=0;tries<200;tries++){g=rnd(GUIDES);er=hard?rnd([2.25,2.56,4]):rnd([1,1,1,2.25,2.56]);N=hard?2+Math.floor(Math.random()*6):2+Math.floor(Math.random()*4);
+    L=modeList(g[1]/100,g[2]/100,er,false);if(L[N].fc/L[N-1].fc>1.05)break;}
+  const fmax=Math.ceil(L[9].fc*1.12/1e9)*1e9,fmin=Math.max(0.5e9,Math.floor(L[0].fc*0.6/1e9)*1e9);
+  el.innerHTML=`<div class="q" style="font-size:17px">Tune <b style="color:${CG}">f</b> so that <b>exactly ${N} modes</b> propagate in ${g[0]==="a = 2b"||g[0]==="a = 1.5b"?"this":g[0]} guide: a = ${g[1]} cm, b = ${g[2]} cm, ${er>1?`filled with ε<sub>r</sub> = ${er}`:"air-filled"}. Count TE and TM separately. <small class="mut">c = 3×10⁸ m/s</small></div>
+   <canvas class="viz game3d" data-g></canvas>
+   <canvas class="viz" data-l style="margin-top:6px"></canvas>
+   <div class="gctl"><label class="rng">f (GHz)<input type="range" data-f min="${fmin/1e9}" max="${fmax/1e9}" step="0.01" value="${((fmin+0.3*(fmax-fmin)*(0.6+Math.random()))/1e9).toFixed(2)}"><output></output></label>
+   <div style="display:flex;gap:8px"><button class="btn sm" data-d="-0.1" style="flex:1">−0.1</button><button class="btn sm" data-d="-0.01" style="flex:1">−0.01</button><button class="btn sm" data-d="0.01" style="flex:1">+0.01</button><button class="btn sm" data-d="0.1" style="flex:1">+0.1</button></div></div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  const inp=el.querySelector("[data-f]"),out=el.querySelector("output");const fv=()=>+inp.value*1e9;const upd=()=>{out.textContent=(+inp.value).toFixed(2);};upd();
+  inp.addEventListener("input",upd);
+  el.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{if(st.done)return;inp.value=Math.min(+inp.max,Math.max(+inp.min,+inp.value+ +b.dataset.d)).toFixed(2);upd();ctx.sfx.tap();});
+  const st={ab:g[1]/g[2],pmc:false,er,mode:null,lg:3,empty:"fields appear after you fire"};
+  guide3d(ctx,el.querySelector("[data-g]"),st);
+  const ls={fmax,f:fv,L,N,revealed:0};ladder(el.querySelector("[data-l]"),ls);
+  el.querySelector("[data-fire]").onclick=()=>{if(st.done)return;st.done=true;inp.disabled=true;const f=fv();const cnt=countProp(L,f);ls.revealed=true;
+    // animate the propagating modes one after another, with the true λ_g/β_c ratio
+    const prop=L.filter(x=>x.fc<f);let idx=0;const show=()=>{if(!el.isConnected)return;if(!prop.length){st.empty="no mode propagates: f < (f_c)₁₀";return;}
+      const md=prop[idx%prop.length];const r=Math.sqrt((f/md.fc)**2-1);const B=AW/st.ab,bc=Math.hypot(md.m*PI/AW,md.n*PI/B);st.mode=md;st.lg=Math.max(0.9,Math.min(14,2*PI/(bc*r)));
+      st.label=`${nmt(md)} ✓ (${idx%prop.length+1}/${prop.length})`;st.labelCol=GOOD;idx++;setTimeout(show,1600);};show();
+    const ok=cnt===N;const sc=ok?1:Math.abs(cnt-N)===1?0.35:0;const lo=L[N-1].fc/1e9,hi=L[N].fc/1e9;
+    const list=L.slice(0,Math.min(L.length,N+2)).map((q,i)=>`${nm(q)} ${sig(q.fc/1e9,4)}`).join(", ");
+    fin(sc,`At ${(f/1e9).toFixed(2)} GHz, <b>${cnt} mode${cnt===1?"":"s"}</b> propagate${cnt===1?"s":""}${ok?"":` (target ${N})`}. Window for exactly ${N}: <b>${sig(lo,4)} &lt; f &lt; ${sig(hi,4)} GHz</b>. Cutoffs (GHz): ${list}. ${ctx.M(`$(f_c)_{mn}=\\frac{c}{2\\sqrt{\\varepsilon_r}}\\sqrt{(m/a)^2+(n/b)^2}$`)}${er>1?`; the filling lowers every cutoff by √${er}`:""}. TE<sub>mn</sub> and TM<sub>mn</sub> (m, n ≥ 1) share a cutoff, so they enter in pairs.`);};}
+
+function roundImpedance(el,ctx,fin,qty,pmc){
+  const g=rnd(GUIDES);const a=g[1]/100,b=g[2]/100;const er=rnd([1,1,2.25,2.56]);
+  let md;if(pmc){md={k:"TE",m:1,n:1};}else{const [k,m,n]=rnd([["TE",1,0],["TE",1,0],["TE",1,0],["TE",2,0],["TE",0,1],["TM",1,1],["TE",1,1]]);md={k,m,n};}
+  md.fc=fcOf(md.m,md.n,a,b,er);let f=Math.round(md.fc*(1.18+0.7*Math.random())/1e8)*1e8;if(f<md.fc*1.1)f+=2e8;
+  const truth=qty==="Z"?zw(md,f,er):lamg(md,f,er)*100;const unit=qty==="Z"?"Ω":"cm";
+  // common slips, for feedback
+  const traps=[];const s=Math.sqrt(1-(md.fc/f)**2);
+  if(qty==="Z"){if(er>1)traps.push([md.k==="TE"?ETA0/s:ETA0*s,"used η₀ = 120π instead of η = η₀/√ε_r"]);traps.push([md.k==="TE"?ETA0/Math.sqrt(er)*s:ETA0/Math.sqrt(er)/s,`used the ${md.k==="TE"?"TM":"TE"} formula`]);}
+  else{if(er>1)traps.push([C0/f/s*100,"used λ₀ instead of λ = λ₀/√ε_r"]);traps.push([C0/(f*Math.sqrt(er))*s*100,"multiplied by √(1−(f_c/f)²) instead of dividing"]);}
+  if(er>1){const fa=fcOf(md.m,md.n,a,b,1);if(fa<f){const s2=Math.sqrt(1-(fa/f)**2);traps.push([qty==="Z"?(md.k==="TE"?ETA0/Math.sqrt(er)/s2:ETA0/Math.sqrt(er)*s2):C0/(f*Math.sqrt(er))/s2*100,"used the air-filled cutoff (the filling lowers f_c by √ε_r)"]);}}
+  if(pmc){const f10=fcOf(1,0,a,b,er),s3=Math.sqrt(1-(f10/f)**2);traps.push([qty==="Z"?ETA0/Math.sqrt(er)/s3:C0/(f*Math.sqrt(er))/s3*100,"used TE₁₀, which doesn't exist with PMC walls"]);}
+  if(md.m!==md.n){const fs=fcOf(md.n,md.m,a,b,er);if(fs<f){const s4=Math.sqrt(1-(fs/f)**2);traps.push([qty==="Z"?(md.k==="TE"?ETA0/Math.sqrt(er)/s4:ETA0/Math.sqrt(er)*s4):C0/(f*Math.sqrt(er))/s4*100,"swapped a and b (a is the long side, along x)"]);}}
+  const what=qty==="Z"?`the wave impedance <b>Z<sub>w</sub></b> (Ω)`:`the guide wavelength <b>λ<sub>g</sub></b> (cm)`;
+  const modeTxt=pmc?`the <b>lowest TE<sup>z</sup> mode</b> of this <b style="color:${CH}">PMC-walled</b> guide`:`<b>${nm(md)}</b>`;
+  el.innerHTML=`<div class="q" style="font-size:17px">${modeTxt} at <b style="color:${CG}">f = ${sig(f/1e9,4)} GHz</b>; a = ${g[1]} cm, b = ${g[2]} cm, ${er>1?`ε<sub>r</sub> = ${er}`:"air"}. Find ${what} within 1%. <small class="mut">c = 3×10⁸, η₀ = 120π</small></div>
+   <canvas class="viz game3d" data-g></canvas>${legendHTML}
+   <div class="form" style="grid-template-columns:1fr;margin-top:8px"><label style="display:block">${qty==="Z"?"Z<sub>w</sub> (Ω)":"λ<sub>g</sub> (cm)"}<input data-v style="width:100%;margin-top:4px" inputmode="decimal" autocomplete="off" placeholder="your answer in ${unit}" style="font-size:20px;min-height:52px"></label></div>
+   <button class="btn cta block" data-fire style="margin-top:10px">FIRE ▸</button>`;
+  const B=AW/(a/b),bc=Math.hypot(md.m*PI/AW,md.n*PI/B),r=Math.sqrt((f/md.fc)**2-1);
+  const st={ab:a/b,pmc,er,mode:pmc?null:md,lg:Math.max(0.9,Math.min(14,2*PI/(bc*r))),label:pmc?"lowest TE?":nmt(md),labelCol:CG,empty:pmc?"which TE mode comes first?":""};
+  guide3d(ctx,el.querySelector("[data-g]"),st);
+  const inp=el.querySelector("[data-v]");let done=false;
+  const fire=()=>{if(done)return;const u=parseFloat(String(inp.value).replace(",","."));if(!(u>0)){ctx.sfx.miss();inp.classList.remove("shake");void inp.offsetWidth;inp.classList.add("shake");inp.focus();return;}
+    done=true;inp.disabled=true;const rel=Math.abs(u/truth-1);const sc=rel<=0.01?1:rel<=0.02?0.6:rel<=0.05?0.3:0;
+    st.mode=md;st.label=nmt(md)+(sc>=0.7?" ✓":"");st.labelCol=sc>=0.7?GOOD:BAD;st.empty="";
+    const trap=sc<0.7&&traps.find(([v])=>Math.abs(u/v-1)<0.015);
+    const eta=ETA0/Math.sqrt(er),lam=C0/(f*Math.sqrt(er))*100;
+    const eq=qty==="Z"?(md.k==="TE"?`$Z_w^{TE}=\\frac{\\eta}{\\sqrt{1-(f_c/f)^2}}=\\frac{${sig(eta,4)}}{${sig(s,4)}}=${sig(truth,4)}\\ \\Omega$`:`$Z_w^{TM}=\\eta\\sqrt{1-(f_c/f)^2}=${sig(eta,4)}(${sig(s,4)})=${sig(truth,4)}\\ \\Omega$`)
+      :`$\\lambda_g=\\frac{\\lambda}{\\sqrt{1-(f_c/f)^2}}=\\frac{${sig(lam,4)}}{${sig(s,4)}}=${sig(truth,4)}\\ \\text{cm}$`;
+    fin(sc,`You: ${sig(u,4)} ${unit} (${(rel*100).toFixed(1)}% off). ${pmc?`With PMC walls TE is sin·sin, so TE₁₀ can't exist: the lowest TE mode is <b>TE₁₁</b>. `:""}${ctx.M(`$(f_c)_{${md.m}${md.n}}=${sig(md.fc/1e9,4)}$ GHz`)}${er>1?`, ${ctx.M(`$\\eta=\\eta_0/\\sqrt{\\varepsilon_r}=${sig(eta,4)}\\ \\Omega$`)}`:""}; ${ctx.M(eq)}.${trap?` <b>Looks like you ${trap[1]}.</b>`:""} ${qty==="Z"?(md.k==="TE"?"TE sits above η, ∞ at cutoff.":"TM sits below η, 0 at cutoff."):"λ_g is always longer than λ in the filling."}`);};
+  el.querySelector("[data-fire]").onclick=fire;inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();fire();}});}
+
+G.mini.modehunter={title:"Mode Hunter",blurb:"Identify, tune and measure waveguide modes",
+ _phys:{fcOf,exists,sinsin,modeList,countProp,shape,realAt,zw,lamg},
+ play(el,ctx,fin){const v=ctx.lesson&&ctx.lesson.viz;const r=ctx.round||0;
+  let type;const pref={hero:["id","setN"],modesTE:["id","id"],modesTM:["id","id"],zig:["lg","setN"],ladder:["setN","setN"],zw:["Z","Z"]}[typeof v==="string"?v:""];
+  if(ctx.force)type=ctx.force;else if(ctx.hard)type=rnd(["idP","ZP","setNh"]);else type=pref?pref[r%2]:["id","setN","Z","lg"][r%4];
+  if(type==="id")roundIdentify(el,ctx,fin,false);else if(type==="idP")roundIdentify(el,ctx,fin,true);
+  else if(type==="setN")roundSetN(el,ctx,fin,false);else if(type==="setNh")roundSetN(el,ctx,fin,true);
+  else if(type==="Z"||type==="lg")roundImpedance(el,ctx,fin,type,false);else if(type==="ZP")roundImpedance(el,ctx,fin,rnd(["Z","lg"]),true);}
+};
+})(window.MXG);
+
+/* Mini-game: PHASE LOCK (Ch. 4 polarization). A target wave's E-vector helix spins in 3D along +z.
+   Match it: set |Ex|, |Ey| and Δφ = φx − φy (Prather/Balanis), and call the sense. Graded on the physics, not the pixels. */
+(function(G){
+const PI=Math.PI,rad=d=>d*PI/180;
+function classify(ex,ey,dphi){const s=Math.sin(rad(dphi));if(ex<0.05||ey<0.05||Math.abs(s)<0.05)return"Linear";
+  // Δφ = φx − φy > 0 ⇒ φy − φx < 0 ⇒ right-hand (CW seen from behind) — matches slide example (4-52)
+  return s>0?"RH":"LH";}
+const TARGETS=[[1,0,0],[0.7,0.7,0],[1,1,90],[1,1,-90],[1,0.5,90],[0.5,1,-90],[1,0.6,45],[0.8,0.8,180],[1,0.4,-60],[0.6,1,135]];
+G.mini.phaselock={title:"Phase Lock",blurb:"Match a spinning 3D polarization helix",
+ play(el,ctx,fin){const T=TARGETS[Math.floor(Math.random()*TARGETS.length)];const tg={ex:T[0],ey:T[1],dp:T[2]};
+  el.innerHTML=`<div class="q" style="font-size:17px">Lock onto the target wave. Its E-tip traces the <b style="color:#F2BF4C">gold helix</b> as it travels +z. Make your <b style="color:#4FC8D8">cyan</b> wave identical, then name the polarization. <small class="mut">Drag to orbit.</small></div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl"><label class="rng">|E<sub>x</sub>|<input type="range" data-ex min="0" max="1" step="0.05" value="0.5"><output></output></label>
+   <label class="rng">|E<sub>y</sub>|<input type="range" data-ey min="0" max="1" step="0.05" value="0.5"><output></output></label>
+   <label class="rng">Δφ = φ<sub>x</sub> − φ<sub>y</sub><input type="range" data-dp min="-180" max="180" step="15" value="0"><output></output></label></div>
+   <div class="seg pick" role="group">${["Linear","RH","LH"].map(k=>`<button data-c="${k}" aria-pressed="false">${k==="RH"?"Right-hand":k==="LH"?"Left-hand":"Linear"}</button>`).join("")}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">LOCK ▸</button>`;
+  const v=n=>+el.querySelector(`[data-${n}]`).value;let call=null,locked=false;
+  const out=()=>{el.querySelectorAll(".rng").forEach(r=>{const i=r.querySelector("input");r.querySelector("output").textContent=i.dataset.dp!=null?i.value+"°":(+i.value).toFixed(2);});};out();el.addEventListener("input",out);
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{call=b.dataset.c;el.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();});
+  const cv=el.querySelector("canvas");
+  const helix=(S,ex,ey,dp,t,col,w)=>{const pts=[];for(let i=0;i<=160;i++){const z=-1.6+3.2*i/160;const ph=2.2*t-4*z;pts.push([-ex*Math.cos(ph+rad(dp)),ey*Math.cos(ph),z]);}S.poly(pts,col,w);
+    const ph=2.2*t-4*1.6;S.arrow([0,0,1.6],[-ex*Math.cos(ph+rad(dp)),ey*Math.cos(ph),1.6],col,3.2,10);};
+  // NB: x drawn as −x so that, seen from behind (looking along +z), x̂ is on the left like the polarization diagram
+  const S=ctx.scene3d(cv,900,520,(S,t)=>{S.poly([[-1.15,-1.15,1.6],[1.15,-1.15,1.6],[1.15,1.15,1.6],[-1.15,1.15,1.6]],"#262A36",1,true,"rgba(255,255,255,.02)");
+    S.arrow([0,0,-1.9],[0,0,2.1],"#FF9F5A",2.5,10);S.text([0,0,2.25],"+z (k)","#FF9F5A",12,700);S.arrow([0,0,1.6],[-1.3,0,1.6],"#FF7E6BAA",1.4,7);S.text([-1.42,0,1.6],"x","#FF7E6B",12,700);S.arrow([0,0,1.6],[0,1.3,1.6],"#78D58CAA",1.4,7);S.text([0,1.42,1.6],"y","#78D58C",12,700);
+    helix(S,tg.ex,tg.ey,tg.dp,t,"rgba(242,191,76,.85)",2.6);if(!locked||true)helix(S,v("ex"),v("ey"),v("dp"),t,"rgba(79,200,216,.9)",2.2);},{yaw:-0.5,pitch:0.3,dist:7,scale:150});
+  el.querySelector("[data-fire]").onclick=()=>{if(locked)return;if(!call){ctx.sfx.miss();el.querySelector(".pick").classList.add("shake");setTimeout(()=>el.querySelector(".pick").classList.remove("shake"),300);return;}
+    locked=true;const ex=v("ex"),ey=v("ey"),dp=v("dp");
+    // physical match: compare normalized Jones vectors up to a global phase
+    const nT=Math.hypot(tg.ex,tg.ey)||1,nU=Math.hypot(ex,ey)||1;const a=[tg.ex/nT,tg.ey/nT],b=[ex/nU,ey/nU];
+    const re=a[0]*b[0]*Math.cos(rad(tg.dp-dp))+a[1]*b[1],im=a[0]*b[0]*Math.sin(rad(tg.dp-dp));const fid=Math.hypot(re,im);// |<a|b>|
+    const truth=classify(tg.ex,tg.ey,tg.dp);const callOK=call===truth;const ampOK=Math.abs(ex/nU-tg.ex/nT)<0.12;
+    const score=Math.max(0,Math.min(1,(fid>0.97?0.6:fid>0.9?0.35:0)+(callOK?0.4:0)));
+    const AR=(()=>{const d=rad(tg.dp),A2=0.5*(tg.ex**2+tg.ey**2+Math.sqrt(tg.ex**4+tg.ey**4+2*tg.ex**2*tg.ey**2*Math.cos(2*d))),B2=Math.max(0,0.5*(tg.ex**2+tg.ey**2-Math.sqrt(tg.ex**4+tg.ey**4+2*tg.ex**2*tg.ey**2*Math.cos(2*d))));return B2>1e-6?Math.sqrt(A2/B2).toFixed(2):"∞";})();
+    fin(score,`Target: |E<sub>x</sub>| = ${tg.ex}, |E<sub>y</sub>| = ${tg.ey}, Δφ = ${tg.dp}° → <b>${truth==="RH"?"right-hand":truth==="LH"?"left-hand":"linear"}</b>${truth!=="Linear"?`, axial ratio ${AR}`:""}. Match ${Math.round(fid*100)}%${callOK?"":`, and you called it ${call}`}. ${truth==="RH"?"Δφ = φ<sub>x</sub> − φ<sub>y</sub> > 0 ⇒ clockwise seen from behind ⇒ RH (slide 4-52).":truth==="LH"?"Δφ < 0 ⇒ counter-clockwise seen from behind ⇒ LH.":"Δφ = 0 or 180°, or one component zero ⇒ linear."}`);
+    S.cam.auto=true;};}
+};
+})(window.MXG);
+
+/* Mini-game: FIELD SCULPTOR (Ch. 1 boundary conditions, L3–L5). A horizontal interface (z = 0) separates medium 1 (top)
+   from medium 2 (bottom); n̂ points from 1 into 2, so here n̂ = −ẑ. The applied field in medium 1 is given; the player builds
+   the field on the other side with E/H component sliders. Graded on the BCs (1-48a–d): tangential E (H) continuous unless
+   M_s (J_s), normal D (B) continuous unless q_es. PEC rounds: the player builds the surface field and the source it ends on. */
+(function(G){
+const PI=Math.PI,deg=r=>r*180/PI,R=a=>a[Math.floor(Math.random()*a.length)],ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const f2=v=>{const s=(Math.round(v*100)/100).toString();return s==="-0"?"0":s.replace("-","−");};
+const vec=v=>`(${v.map(f2).join(",")})`;
+const mag=v=>Math.hypot(v[0],v[1],v[2]);
+const ang=v=>deg(Math.atan2(Math.hypot(v[0],v[1]),Math.abs(v[2])));// tilt from the normal line
+/* ---- physics: exact boundary conditions, n̂ = −ẑ (from medium 1 above into medium 2 below) ---- */
+function solve(sc){const F=sc.F1;
+  switch(sc.kind){
+   case"E":case"Eq":{// −ẑ·(D2 − D1) = q_es ⇒ D2z = D1z − q_es ;  n̂×(E2−E1)=0 ⇒ E2t = E1t
+     return{F2:[F[0],F[1],(sc.e1*F[2]-(sc.q||0))/sc.e2]};}
+   case"H":case"HJ":{// n̂×(H2−H1) = J_s with n̂ = −ẑ ⇒ ΔH_t = J_s×n̂ = (−J_y, J_x) ;  B2z = B1z
+     const J=sc.J||[0,0];return{F2:[F[0]-J[1],F[1]+J[0],sc.e1*F[2]/sc.e2]};}
+   case"PEC":// PEC below, n̂ = +ẑ out of the PEC: n̂×E = 0, n̂·D = q_es ⇒ only E_z survives, q_es/ε0 = ε_r E_z
+     return{F2:[0,0,F[2]],q:sc.e1*F[2]};
+   case"PECH":// n̂×H = J_s, n̂·B = 0 ⇒ only H_t survives, J_s = ẑ×H = (−H_y, H_x)
+     return{F2:[F[0],F[1],0],q:Math.hypot(F[0],F[1]),Jv:[-F[1],F[0]]};}}
+function scenario(round,hard){
+  const kinds=hard||round>=2?["Eq","HJ","PEC","PECH","Eq","HJ"]:round===1?["H","Eq","PEC","H"]:["E","E","H"];
+  const kind=R(kinds);
+  for(let tries=0;tries<400;tries++){const e1=R([1,2,4]),e2=R([1,2,4,8]);if(kind[0]!=="P"&&e1===e2)continue;
+    let F1=[ri(-3,3),ri(-3,3),-ri(1,4)];if(!F1[0]&&!F1[1])continue;
+    const sc={kind,e1,e2,F1,q:0,J:null};
+    if(kind==="Eq")sc.q=R([-4,-3,-2,-1,1,2,3,4]);
+    if(kind==="HJ"){const m=R([1,2,3]),s=R([1,-1]);sc.J=Math.random()<.5?[s*m,0]:[0,s*m];}
+    if(kind==="PEC"){F1[2]=R([-1,1])*ri(1,3);}
+    if(kind==="PECH"){const p=R([[3,4],[4,3],[0,2],[2,0],[0,3],[3,0],[0,4],[4,0]]);F1=[p[0]*R([1,-1]),p[1]*R([1,-1]),-ri(1,3)];sc.F1=F1;}
+    const s=solve(sc);sc.T=s;
+    if(Math.max(...s.F2.map(Math.abs))>7.5)continue;
+    if(s.F2.some(v=>Math.abs(v*4-Math.round(v*4))>1e-9))continue;// answers land on the 0.25 grid
+    if(kind==="Eq"&&Math.abs(s.F2[2])<0.25)continue;
+    if((kind==="E"||kind==="H")&&Math.abs(s.F2[2]-F1[2])<0.3)continue;
+    return sc;}
+  return{kind:"E",e1:1,e2:4,F1:[2,0,-4],q:0,J:null,T:{F2:[2,0,-1]}};}
+
+G.mini.sculptor={title:"Field Sculptor",blurb:"Bend a 3D field across an interface by the boundary conditions",
+ _phys:{solve,scenario},
+ play(el,ctx,fin){const sc=scenario(ctx.round||0,!!ctx.hard);G.mini.sculptor._last=sc;const K=sc.kind,isH=K[0]==="H"||K==="PECH",pec=K.startsWith("PEC");
+  const F=isH?"H":"E",col=isH?"#C7B6FF":"#4FC8D8",D=isH?"B":"D",eps=isH?"μ":"ε";
+  const sub=s=>`<sub>${s}</sub>`;
+  const prompt={E:`Medium 1 above, medium 2 below, <b>no surface charge</b>. Build ${F}${sub(2)} just below the interface.`,
+   Eq:`A surface charge <b style="color:#FF9F5A">q${sub("es")}</b> sits on the interface. Build ${F}${sub(2)} just below it.`,
+   H:`Magnetic interface, <b>no surface current</b>. Build ${F}${sub(2)} just below it.`,
+   HJ:`A surface current <b style="color:#FF9F5A">J${sub("s")}</b> flows on the interface. Build ${F}${sub(2)} just below it.`,
+   PEC:`The lower half is a <b>PEC</b>. The applied field reaches its surface. Build the field that survives right at the surface, and the charge it ends on.`,
+   PECH:`The lower half is a <b>PEC</b>. Build the H that survives right at the surface, and the surface current it drives.`}[K];
+  const tiles=[];
+  if(pec){tiles.push([`${eps}${sub("r")} above`,sc.e1]);tiles.push([`applied ${F} (${isH?"A":"V"}/m)`,vec(sc.F1)]);}
+  else{tiles.push([`${eps}${sub("r1")} · ${eps}${sub("r2")}`,`${sc.e1} · ${sc.e2}`]);tiles.push([`${F}${sub(1)} (${isH?"A":"V"}/m)`,vec(sc.F1)]);
+    if(K==="Eq")tiles.push([`q${sub("es")}`,`${sc.q}ε₀ C/m²`]);
+    if(K==="HJ")tiles.push([`J${sub("s")} (A/m)`,`${sc.J[0]?sc.J[0]+"x̂":sc.J[1]+"ŷ"}`]);}
+  const sl=(k,lab,mn,mx,st)=>`<label class="rng">${lab}<input type="range" data-${k} min="${mn}" max="${mx}" step="${st}" value="0"><output></output></label>`;
+  const nm=pec?F:F+"₂";
+  el.innerHTML=`<div class="q" style="font-size:17px;margin-bottom:8px">${prompt} <small class="mut">Drag to orbit.</small></div>
+   <div class="readout" style="margin:0 0 8px;grid-template-columns:repeat(${tiles.length},minmax(0,1fr))">${tiles.map(([a,b])=>`<div style="padding:6px 8px"><small style="white-space:nowrap">${a}</small><b style="white-space:nowrap;font-size:14px">${b}</b></div>`).join("")}</div>
+   <canvas class="viz game3d"></canvas>
+   <div class="gctl">${sl("x",`${nm}${sub("x")}`,-6,6,0.25)}${sl("y",`${nm}${sub("y")}`,-6,6,0.25)}${sl("z",`${nm}${sub("z")}`,-8,8,0.25)}
+    ${K==="PEC"?sl("q",`q${sub("es")}/ε₀`,-12,12,0.25):K==="PECH"?sl("q",`|J${sub("s")}|`,0,8,0.25):""}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">SCULPT ▸</button>`;
+  const inp=k=>el.querySelector(`[data-${k}]`),v=k=>inp(k)?+inp(k).value:0;
+  const user=()=>[v("x"),v("y"),v("z")];
+  const out=()=>{el.querySelectorAll(".rng").forEach(r=>{r.querySelector("output").textContent=f2(+r.querySelector("input").value);});
+};
+  out();el.addEventListener("input",out);
+  let locked=false,tLock=0;const truth=sc.T.F2;
+  // ---- scene: physics (x,y,z), z up  →  world (x, z, y) keeps it right-handed on screen ----
+  const W=p=>[p[0],p[2],p[1]];
+  const scale=1.75/Math.max(4,mag(sc.F1),mag(truth));
+  const half=(Fv,s,lift)=>{const p=Fv.map(a=>a*scale);if(Math.abs(p[2])<1e-6){const o=[0,0,s*(lift||0.06)];return[[o[0]-p[0]/2,o[1]-p[1]/2,o[2]],[o[0]+p[0]/2,o[1]+p[1]/2,o[2]]];}
+    return p[2]*s>0?[[0,0,0],p]:[p.map(a=>-a),[0,0,0]];};
+  const cv=el.querySelector("canvas");const L=2.1,dep=1.5;
+  const mtop=pec?"rgba(79,200,216,.05)":`rgba(${isH?"199,182,255":"79,200,216"},${0.02+sc.e1*0.012})`;
+  const mbot=pec?"rgba(170,180,200,.22)":`rgba(${isH?"199,182,255":"79,200,216"},${0.02+sc.e2*0.012})`;
+  const charges=K==="Eq"||K==="PEC"?Array.from({length:18},()=>[(Math.random()*2-1)*L*0.9,(Math.random()*2-1)*L*0.9]):[];
+  const drawArrow=(S,ab,c,w,lab)=>{S.arrow(W(ab[0]),W(ab[1]),c,w,12);if(lab){const h=ab[1],t=ab[0];const m=mag(h)>mag(t)?h:t;S.text(W([m[0]*1.08+0.08,m[1]*1.08,m[2]*1.08+(m[2]>=0?0.12:-0.05)]),lab,c,14,800);}};
+  const shadow=(S,ab,c)=>{const p=ab[0][2]!==0?ab[0]:ab[1];if(Math.hypot(p[0],p[1])<1e-3)return;S.c().setLineDash([5,5]);S.line(W([p[0],p[1],0]),W([0,0,0]),c,1.4);S.line(W(p),W([p[0],p[1],0]),c+"66",1);S.c().setLineDash([]);};
+  const flow=(S,ab,c,t)=>{for(let i=0;i<3;i++){const f=(t*0.45+i/3)%1;const a=ab[0],b=ab[1];S.dot(W([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f]),c,2.6);}};
+  let lastT=0;const S=ctx.scene3d(cv,640,560,(S,t)=>{lastT=t;const c=S.c();
+    // lower medium block + interface plane
+    const B=[[-L,-L],[L,-L],[L,L],[-L,L]];
+    S.poly(B.map(p=>W([p[0],p[1],-dep])),"#1C2030",1,true);B.forEach(p=>S.line(W([p[0],p[1],0]),W([p[0],p[1],-dep]),"#1C2030",1));
+    [[0,1],[1,2]].forEach(([i,j])=>S.poly([W([...B[i],0]),W([...B[j],0]),W([...B[j],-dep]),W([...B[i],-dep])],null,1,true,mbot));
+    S.poly(B.map(p=>W([p[0],p[1],0])),pec?"#8A93A8":"#3A4058",1.4,true,pec?"rgba(160,170,190,.18)":"rgba(255,255,255,.035)");
+    for(let i=-2;i<=2;i++){S.line(W([i*L/2.5,-L,0]),W([i*L/2.5,L,0]),"rgba(255,255,255,.04)",1);S.line(W([-L,i*L/2.5,0]),W([L,i*L/2.5,0]),"rgba(255,255,255,.04)",1);}
+    // labels
+    const px=c.px,fnt=(w,z)=>`${w} ${px(z)}px ui-monospace,"SF Mono",Menlo,monospace`;c.textAlign="left";
+    c.font=fnt(700,12);c.fillStyle="#9AA3B8";c.fillText(pec?`▲ dielectric  ${eps}r = ${sc.e1}`:`▲ medium 1  ${eps}r1 = ${sc.e1}`,px(10),px(20));
+    c.fillStyle=pec?"#B9C1D3":"#9AA3B8";c.fillText(pec?"▼ PEC  σ = ∞":`▼ medium 2  ${eps}r2 = ${sc.e2}`,px(10),S.LH-px(12));
+    const u0=user(),m0=mag(u0);c.textAlign="right";c.font=fnt(800,13);c.fillStyle="#F2BF4C";c.fillText(m0?`|${pec?F:F+"₂"}| ${f2(m0)}  θ ${ang(u0).toFixed(1)}°`:`set ${pec?F:F+"₂"} ▾`,S.LW-px(10),px(20));
+    if(!pec){c.fillStyle=col;c.font=fnt(700,12);c.fillText(`θ₁ ${ang(sc.F1).toFixed(1)}°`,S.LW-px(10),px(38));}
+    c.fillStyle="#FF9F5A";c.fillText(`n̂ = ${pec?"+ẑ":"−ẑ"}`,S.LW-px(10),S.LH-px(12));c.textAlign="left";
+    // axes (small, at a corner) and n̂
+    const o=[L*0.78,-L*0.78,0];S.arrow(W(o),W([o[0]+0.45,o[1],0]),"#FF7E6BAA",1.4,6);S.text(W([o[0]+0.55,o[1],0]),"x","#FF7E6B",11,700);
+    S.arrow(W(o),W([o[0],o[1]+0.45,0]),"#78D58CAA",1.4,6);S.text(W([o[0],o[1]+0.55,0]),"y","#78D58C",11,700);
+    S.arrow(W(o),W([o[0],o[1],0.45]),"#6FA8FFAA",1.4,6);S.text(W([o[0],o[1],0.55]),"z","#6FA8FF",11,700);
+    const nz=pec?0.6:-0.6;S.arrow(W([-L*0.7,L*0.7,0]),W([-L*0.7,L*0.7,nz]),"#FF9F5A",2.4,9);S.text(W([-L*0.7+0.08,L*0.7,nz*1.15]),"n̂","#FF9F5A",15,800);
+    // normal line through the origin
+    c.setLineDash([3,6]);S.line(W([0,0,1.7]),W([0,0,-dep]),"rgba(255,255,255,.18)",1);c.setLineDash([]);
+    // surface sources
+    const qShow=K==="Eq"?sc.q:K==="PEC"&&locked?sc.T.q:0;
+    if(qShow){charges.forEach(p=>{const P=S.P(...W([p[0],p[1],0]));c.fillStyle=qShow>0?"#F2668A":"#6FA8FF";c.font=`800 ${c.px(13)}px ui-monospace,monospace`;c.fillText(qShow>0?"+":"−",P[0]-c.px(4),P[1]+c.px(4));});}
+    const Jv=K==="HJ"?sc.J:K==="PECH"&&locked?sc.T.Jv:null;
+    if(Jv){const n=Math.hypot(...Jv),u=[Jv[0]/n,Jv[1]/n];for(let k=-1;k<=1;k++){const off=[-u[1]*k*0.7,u[0]*k*0.7];const ph=(t*0.6)%1*0.5;S.arrow(W([off[0]-u[0]*(1-ph),off[1]-u[1]*(1-ph),0.01]),W([off[0]+u[0]*(0.4+ph),off[1]+u[1]*(0.4+ph),0.01]),"#FF9F5A",2.2,9);}
+      S.text(W([-u[1]*0.7+u[0]*0.9,u[0]*0.7+u[1]*0.9,0.12]),"Js","#FF9F5A",13,800);}
+    // fields
+    if(pec){// applied field drawn up high, surface field at the origin
+      const ap=sc.F1.map(a=>a*scale*0.8),c0=[-1.35,1.2,1.05];const a0=c0.map((x,i)=>x-ap[i]/2),a1=c0.map((x,i)=>x+ap[i]/2);
+      S.arrow(W(a0),W(a1),col+"88",2.4,10);S.text(W([a1[0]+0.1,a1[1],a1[2]+0.1]),"applied","#7E8699",11,700);
+      const u=half(user(),1,0.05);if(mag(user())>1e-3){shadow(S,u,col);drawArrow(S,u,col,3.4,F);flow(S,u,"#fff",t);}
+      if(locked){const tr=half(truth,1,0.09);if(mag(truth)>1e-3){c.setLineDash([7,5]);drawArrow(S,tr,"#F2BF4C",2.6,"true");c.setLineDash([]);}}}
+    else{const a=half(sc.F1,1);shadow(S,a,col);drawArrow(S,a,col,3.6,F+"₁");flow(S,a,"#fff",t);
+      const u=half(user(),-1);if(mag(user())>1e-3){shadow(S,u,"#F2BF4C");drawArrow(S,u,"#F2BF4C",3.2,F+"₂");flow(S,u,"#fff",t+0.5);}
+      if(locked){const tr=half(truth,-1);c.setLineDash([7,5]);drawArrow(S,tr,"#78D58C",2.6,"true");c.setLineDash([]);}}
+    if(locked&&t-tLock<1.2){const k=(t-tLock)/1.2;c.globalAlpha=1-k;S.poly(B.map(p=>W([p[0]*(0.3+k),p[1]*(0.3+k),0])),"#F2BF4C",3,true);c.globalAlpha=1;}
+  },{yaw:-0.62,pitch:0.42,dist:8,scale:80,dy:4});
+  el.querySelector("[data-fire]").onclick=()=>{if(locked)return;locked=true;tLock=lastT;
+    el.querySelectorAll("input").forEach(i=>i.disabled=true);
+    const u=user(),T=truth,tol=0.13;let score=0,why=[];
+    const tanOK=Math.abs(u[0]-T[0])<=tol&&Math.abs(u[1]-T[1])<=tol;
+    const tanClose=Math.hypot(u[0]-T[0],u[1]-T[1])<=Math.max(0.3,0.15*Math.hypot(T[0],T[1]));
+    const nOK=Math.abs(u[2]-T[2])<=tol,nClose=Math.abs(u[2]-T[2])<=Math.max(0.3,0.1*Math.abs(T[2]));
+    const fmtV=a=>`(${a.map(f2).join(", ")})`;
+    let detail="";
+    if(!pec){score=(tanOK?0.4:tanClose?0.2:0)+(nOK?0.6:nClose?0.3:0);
+      const z1=sc.F1[2];
+      if(!nOK){if(Math.abs(u[2]-z1)<=tol&&Math.abs(T[2]-z1)>tol)why.push(`you kept ${F}<sub>n</sub> continuous; it's ${D}<sub>n</sub> that is`);
+        else if(Math.abs(u[2]-z1*sc.e2/sc.e1)<=tol)why.push(`the ${eps} ratio is upside down (that's tangential ${D} continuous)`);
+        else if(K==="Eq"&&Math.abs(u[2]-(sc.e1*z1+sc.q)/sc.e2)<=tol)why.push(`sign of q<sub>es</sub>: n̂ = −ẑ, so −(D<sub>2z</sub> − D<sub>1z</sub>) = q<sub>es</sub>`);}
+      if(!tanOK){if(K==="HJ"&&Math.abs(u[0]-sc.F1[0])<=tol&&Math.abs(u[1]-sc.F1[1])<=tol)why.push("J<sub>s</sub> makes tangential H jump by J<sub>s</sub> × n̂");
+        else if(K==="HJ"&&Math.abs(u[0]-(sc.F1[0]+sc.J[1]))<=tol&&Math.abs(u[1]-(sc.F1[1]-sc.J[0]))<=tol)why.push("the jump has the wrong sign: ΔH<sub>t</sub> = J<sub>s</sub> × n̂ with n̂ = −ẑ");
+        else if(Math.abs(u[0]-sc.F1[0]*sc.e2/sc.e1)<=tol&&Math.abs(u[1]-sc.F1[1]*sc.e2/sc.e1)<=tol)why.push(`you scaled the tangential part; tangential ${F} carries straight across`);}
+      const th1=ang(sc.F1),th2=ang(T);
+      const rule=({E:()=>`n̂×(E₂−E₁)=0 keeps (E<sub>x</sub>, E<sub>y</sub>); n̂·(D₂−D₁)=0 ⇒ ε<sub>r1</sub>E<sub>1z</sub> = ε<sub>r2</sub>E<sub>2z</sub> ⇒ E<sub>2z</sub> = ${sc.e1}(${f2(z1)})/${sc.e2} = ${f2(T[2])}. θ₁ = ${th1.toFixed(1)}° → θ₂ = ${th2.toFixed(1)}°: tanθ₂/tanθ₁ = ε₂/ε₁ = ${f2(sc.e2/sc.e1)}.`,
+        Eq:()=>`Tangential E carries over. −ẑ·(D₂−D₁) = q<sub>es</sub> ⇒ D<sub>2z</sub> = D<sub>1z</sub> − q<sub>es</sub> ⇒ E<sub>2z</sub> = (${sc.e1}·${f2(z1)} − (${sc.q}))/${sc.e2} = ${f2(T[2])}. With n̂ = −ẑ the charge enters with a minus sign.`,
+        H:()=>`n̂×(H₂−H₁)=0 keeps (H<sub>x</sub>, H<sub>y</sub>); B<sub>n</sub> continuous ⇒ μ<sub>r1</sub>H<sub>1z</sub> = μ<sub>r2</sub>H<sub>2z</sub> ⇒ H<sub>2z</sub> = ${f2(T[2])}. θ₁ = ${th1.toFixed(1)}° → θ₂ = ${th2.toFixed(1)}°: tanθ₂/tanθ₁ = μ₂/μ₁ = ${f2(sc.e2/sc.e1)}.`,
+        HJ:()=>`n̂×(H₂−H₁) = J<sub>s</sub> with n̂ = −ẑ ⇒ H<sub>2t</sub> − H<sub>1t</sub> = J<sub>s</sub> × n̂ = (${f2(-(sc.J[1]))}, ${f2(sc.J[0])}); B<sub>n</sub> continuous ⇒ H<sub>2z</sub> = μ<sub>r1</sub>H<sub>1z</sub>/μ<sub>r2</sub> = ${f2(T[2])}.`})[K]();
+      detail=`True ${F}₂ = <b>${fmtV(T)}</b>${isH?" A/m":" V/m"}; you built ${fmtV(u)}.${why.length?" <b>"+why.join("; ")+".</b>":""} ${rule}`;}
+    else{const qv=v("q"),qT=sc.T.q;const qOK=Math.abs(qv-qT)<=tol;const t0K=Math.hypot(u[0]-T[0],u[1]-T[1])<=tol;
+      score=(t0K?0.3:0)+(nOK?0.35:0)+(qOK?0.35:Math.abs(qv-qT)<=Math.max(0.3,0.1*Math.abs(qT))?0.15:0);
+      if(K==="PEC"){if(Math.hypot(u[0],u[1])>tol)why.push("tangential E must vanish on a PEC: the free charges short it out");
+        if(!qOK&&Math.abs(qv+qT)<=tol)why.push("sign of q<sub>es</sub>: field pointing into the PEC ends on negative charge");
+        else if(!qOK&&Math.abs(qv-sc.F1[2])<=tol&&sc.e1!==1)why.push("q<sub>es</sub> = ẑ·D = ε<sub>r</sub>ε₀E<sub>z</sub>, not ε₀E<sub>z</sub>");
+        detail=`Surface field = <b>${fmtV(T)}</b> V/m, q<sub>es</sub> = <b>${f2(qT)}ε₀</b> C/m²; you built ${fmtV(u)}, ${f2(qv)}ε₀.${why.length?" <b>"+why.join("; ")+".</b>":""} PEC (Table 1-3): n̂×E = 0 kills E<sub>t</sub>; n̂·D = q<sub>es</sub> with n̂ = +ẑ out of the PEC ⇒ q<sub>es</sub> = ${sc.e1}ε₀(${f2(sc.F1[2])}). Charges cancel a tangential field; a normal field just piles up surface charge.`;}
+      else{if(Math.abs(u[2])>tol)why.push("normal B must vanish on a PEC (eddy currents cancel it)");
+        if(!t0K)why.push("tangential H survives on a PEC");
+        detail=`Surface H = <b>${fmtV(T)}</b> A/m, |J<sub>s</sub>| = <b>${f2(qT)}</b> A/m (J<sub>s</sub> = ẑ×H = (${f2(sc.T.Jv[0])}, ${f2(sc.T.Jv[1])})); you built ${fmtV(u)}, ${f2(qv)}.${why.length?" <b>"+why.join("; ")+".</b>":""} PEC (Table 1-3): n̂·B = 0 kills H<sub>n</sub>; n̂×H = J<sub>s</sub>: "J<sub>s</sub> is not going away."`;}}
+    score=Math.round(Math.max(0,Math.min(1,score))*100)/100;
+    el.querySelector("[data-fire]").textContent=score>=0.7?"SCULPTED ✓":"MISSED ✕";
+    S.cam.auto=true;fin(score,detail);};}
+};
+})(window.MXG);
+
+/* Mini-game: SKIN DIVER (Ch. 2 L8 loss tangent + Ch. 4 L13 lossy propagation). A uniform plane wave enters a lossy block and
+   decays as e^{−αz}. Three goals: tune f so the field is 1/e at a marked depth; classify σ/ωε and dial in δ; find the
+   −X dB depth. Always graded against the exact α of (4-28c), so the approximations only win when the regime says they may. */
+(function(G){
+const PI=Math.PI,E0=8.854e-12,MU0=4*PI*1e-7,NP2DB=20/Math.LN10;
+const R=a=>a[Math.floor(Math.random()*a.length)],U=(a,b)=>a+(b-a)*Math.random();
+/* exact (4-28c,d); √(1+r²)−1 written as r²/(√(1+r²)+1) so tiny r doesn't cancel */
+function prop(sig,er,f){const w=2*PI*f,e=er*E0,r=sig/(w*e),k=w*Math.sqrt(MU0*e),q=Math.sqrt(1+r*r);
+  return{a:k*Math.sqrt(0.5*r*r/(q+1)),b:k*Math.sqrt(0.5*(q+1)),r};}
+const approx={diel:(sig,er)=>sig/2*Math.sqrt(MU0/(er*E0)),cond:(sig,f)=>Math.sqrt(PI*f*MU0*sig)};
+function fForAlpha(sig,er,a){let lo=-2,hi=14;if(prop(sig,er,10**hi).a<a)return NaN;for(let i=0;i<200;i++){const m=(lo+hi)/2;if(prop(sig,er,10**m).a<a)lo=m;else hi=m;}return 10**((lo+hi)/2);}
+const MATS=[{n:"copper",s:5.8e7,er:1,m:1,c:"184,115,51"},{n:"aluminum",s:3.5e7,er:1,m:1,c:"170,180,200"},{n:"brass",s:1.5e7,er:1,m:1,c:"200,170,80"},{n:"stainless steel",s:1.4e6,er:1,m:1,c:"150,160,175"},
+ {n:"seawater",s:4,er:81,c:"60,130,210"},{n:"moist earth",s:0.1,er:4,c:"150,110,70"},{n:"dry earth",s:1e-3,er:4,c:"190,150,100"},{n:"fresh water",s:1e-2,er:80,c:"90,170,220"}];
+const sig2=v=>+v.toPrecision(2);
+const fC=(m,r)=>m.s/(2*PI*m.er*E0*r);// f that gives σ/ωε = r
+function scenario(round,hard){const mode=hard?R(["freq","dB","class"]):round===0?"class":R(["freq","dB"]);
+  for(let tries=0;tries<500;tries++){
+    if(mode==="freq"){const m=hard?R(MATS.filter(x=>!x.m)):R(MATS);
+      let f=m.m?10**U(2,10):fC(m,hard?10**U(0,1):10**U(1.6,4));if(f<10||f>1e11)continue;
+      const d=sig2(1/prop(m.s,m.er,f).a);const fs=fForAlpha(m.s,m.er,1/d);if(!(fs>10&&fs<1e11))continue;
+      const r=prop(m.s,m.er,fs).r;if(!hard&&r<30)continue;
+      return{mode,m,d,fs,r,lo:Math.log10(fs)-U(0.8,3.2)};}
+    const zone=mode==="class"?R(["diel","mid","cond"]):R(["diel","cond"]);
+    const m=zone==="cond"?R(MATS):R(MATS.filter(x=>!x.m));
+    const rT=zone==="diel"?10**U(-3,-1.5):zone==="mid"?10**U(-0.5,0.5):10**U(1.5,m.m?9:5);
+    let f=sig2(fC(m,rT));if(f<10||f>1e11)continue;
+    const P=prop(m.s,m.er,f);const zt=P.r<0.05?"diel":P.r>20?"cond":P.r>0.3&&P.r<3.3?"mid":null;if(zt!==zone)continue;
+    if(mode==="class")return{mode,m,f,P,zone,delta:1/P.a,lo:Math.log10(1/P.a)-U(0.6,2.4)};
+    const X=R([10,20,30,40,60]);const zs=X/(NP2DB*P.a);const zmax=sig2(zs*U(1.35,2.3));
+    return{mode,m,f,P,zone,X,zs,zmax};}
+  return scenario(0,false);}
+const si=(v,u,d)=>{d=d||3;const P=[[1e9,"G"],[1e6,"M"],[1e3,"k"],[1,""],[1e-3,"m"],[1e-6,"µ"],[1e-9,"n"]];const a=Math.abs(v);for(const[m,p]of P)if(a>=m*0.99995)return`${+(v/m).toPrecision(d)} ${p}${u}`;return`${+(v/1e-9).toPrecision(d)} n${u}`;};
+const SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"};
+const sci=(v,d)=>{d=d||2;if(v>=0.01&&v<1000)return String(+v.toPrecision(d));const e=Math.floor(Math.log10(v)),mm=+(v/10**e).toPrecision(d);return(mm===1?"":mm+"×")+"10"+String(e).split("").map(c=>SUP[c]).join("");};
+
+G.mini.skindiver={title:"Skin Diver",blurb:"Dive a plane wave into a lossy block and read its decay",
+ _phys:{prop,approx,fForAlpha,scenario,MATS},
+ play(el,ctx,fin){const sc=scenario(ctx.round||0,!!ctx.hard);G.mini.skindiver._last=sc,m=sc.m,mode=sc.mode;
+  const tiles=[["σ (S/m)",sci(m.s)],["ε<sub>r</sub>",m.er]];
+  if(mode!=="freq")tiles.push(["f",si(sc.f,"Hz",2)]);else tiles.push(["1/e depth",si(sc.d,"m",2)]);
+  const prompt={freq:`Pick the frequency that makes the field fall to <b style="color:#F2BF4C">1/e exactly at the gold plane</b>, d = ${si(sc.d,"m",2)} deep. μ = μ₀.`,
+   class:`Classify the medium by σ/ωε, then dial in the <b style="color:#F2BF4C">skin depth δ</b> (field down to 1/e). μ = μ₀.`,
+   dB:`How deep before the field is <b style="color:#F2BF4C">down ${sc.X} dB</b>? Drag the plane there. μ = μ₀.`}[mode];
+  const rng=(k,lab)=>`<label class="rng">${lab}<input type="range" data-${k} min="0" max="1000" step="1" value="500"><output></output></label>`;
+  el.innerHTML=`<div class="q" style="font-size:17px;margin-bottom:8px">${prompt} <small class="mut">Drag to orbit.</small></div>
+   <div class="readout" style="margin:0 0 8px;grid-template-columns:repeat(3,minmax(0,1fr))">${tiles.map(([a,b])=>`<div style="padding:6px 8px;min-width:0"><small style="white-space:nowrap">${a}</small><b style="white-space:nowrap;font-size:13.5px;display:block;overflow:hidden;text-overflow:ellipsis">${b}</b></div>`).join("")}</div>
+   <canvas class="viz game3d"></canvas>
+   ${mode==="class"?`<div class="seg pick" role="group" style="margin-top:8px">${[["diel","Good dielectric","σ/ωε ≪ 1"],["mid","Neither","σ/ωε ≈ 1"],["cond","Good conductor","σ/ωε ≫ 1"]].map(([k,a,b])=>`<button data-c="${k}" aria-pressed="false" style="display:flex;flex-direction:column;line-height:1.15;padding:6px 4px"><span>${a}</span><small style="font-size:11px;opacity:.75">${b}</small></button>`).join("")}</div>`:""}
+   <div class="gctl">${mode==="freq"?rng("v","f"):mode==="class"?rng("v","δ"):rng("v","z")}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">DIVE ▸</button>`;
+  const inp=el.querySelector("[data-v]");const x01=()=>+inp.value/1000;
+  // slider → physical value
+  const val=()=>mode==="freq"?10**(sc.lo+4*x01()):mode==="class"?10**(sc.lo+3*x01()):sc.zmax*x01();
+  if(mode==="dB")inp.value=200;
+  let call=null;el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{if(locked)return;call=b.dataset.c;el.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();});
+  const out=()=>{const v=val();el.querySelector(".rng output").textContent=mode==="freq"?si(v,"Hz"):si(v,"m");};out();el.addEventListener("input",out);
+  let locked=false,tLock=0,lastT=0,res=null;
+  // world: depth along X, E (x̂) along Y, H (ŷ) along −Z so E×H points into the block on screen
+  const X0=3.2,Hh=1.05,Dz=0.75,shift=-0.55;const w=(x,y,z)=>[x+shift,y,z];
+  // world-units → metres for this round
+  let L=mode==="freq"?sc.d:mode==="class"?10**(sc.lo+1.5)/1.2:sc.zmax/3;
+  const marker=()=>mode==="freq"?1:val()/L;
+  const cv=el.querySelector("canvas");
+  const S=ctx.scene3d(cv,720,470,(S,t)=>{lastT=t;const c=S.c(),px=c.px,fnt=(wt,z)=>`${wt} ${px(z)}px ui-monospace,"SF Mono",Menlo,monospace`;
+    const mc=m.c;
+    // block
+    const corners=[];for(const x of[0,X0])for(const y of[-Hh,Hh])for(const z of[-Dz,Dz])corners.push([x,y,z]);
+    const face=(pts,a)=>S.poly(pts.map(p=>w(...p)),`rgba(${mc},.35)`,1,true,`rgba(${mc},${a})`);
+    face([[0,-Hh,-Dz],[X0,-Hh,-Dz],[X0,-Hh,Dz],[0,-Hh,Dz]],0.06);
+    face([[0,-Hh,-Dz],[X0,-Hh,-Dz],[X0,Hh,-Dz],[0,Hh,-Dz]],0.05);
+    // ground line of the wave axis
+    c.setLineDash([3,6]);S.line(w(-2.1,0,0),w(X0+0.3,0,0),"rgba(255,255,255,.16)",1);c.setLineDash([]);
+    // incident wave (cosmetic k; in freq mode it shortens as f rises)
+    const kv=mode==="freq"?3+5*x01():6,om=3.2;
+    const tips=[],htips=[];for(let x=-2.1;x<=0.001;x+=0.105){const A=0.85*Math.cos(om*t-kv*x);tips.push([x,A,0]);htips.push([x,0,-A*0.6]);if(Math.abs(A)>0.08)S.arrow(w(x,0,0),w(x,A,0),"rgba(79,200,216,.55)",1.3,5);}
+    S.poly(htips.map(p=>w(...p)),"rgba(199,182,255,.55)",1.4);S.poly(tips.map(p=>w(...p)),"#4FC8D8",2.2);
+    S.arrow(w(-2.1,1.25,0),w(-1.35,1.25,0),"#FF9F5A",2.2,8);S.text(w(-2.1,1.38,0),"k  (+z)","#FF9F5A",12,800);
+    // inside: hidden until the dive
+    const p=locked?Math.min(1,(t-tLock)/1.4):0;
+    if(locked&&res){const aL=res.aDraw,bL=Math.min(12,Math.max(res.bDraw,aL)),xe=p*X0;
+      const env=x=>0.85*Math.exp(-aL*x);
+      const ins=[],hins=[];for(let x=0;x<=xe+1e-9;x+=0.05){const A=env(x)*Math.cos(om*t-bL*x);ins.push([x,A,0]);hins.push([x,0,-A*0.6]);if(Math.abs(A)>0.05&&Math.round(x/0.05)%2===0)S.arrow(w(x,0,0),w(x,A,0),"rgba(79,200,216,.45)",1.1,4);}
+      if(ins.length>1){S.poly(hins.map(q=>w(...q)),"rgba(199,182,255,.45)",1.2);S.poly(ins.map(q=>w(...q)),"#4FC8D8",2);}
+      c.setLineDash([6,5]);const ep=[],en=[];for(let x=0;x<=xe+1e-9;x+=0.05){ep.push([x,env(x),0]);en.push([x,-env(x),0]);}
+      if(ep.length>1){S.poly(ep.map(q=>w(...q)),"#FF9F5A",2);S.poly(en.map(q=>w(...q)),"#FF9F5A",2);}
+      if(res.ghost){const gp=[];for(let x=0;x<=xe+1e-9;x+=0.05)gp.push([x,0.85*Math.exp(-res.ghost*x),0]);if(gp.length>1)S.poly(gp.map(q=>w(...q)),"#78D58C",1.6);}
+      // reference level line (1/e or 10^(−X/20))
+      const lev=0.85*res.level;S.line(w(0,lev,Dz),w(X0,lev,Dz),"rgba(242,191,76,.55)",1.2);c.setLineDash([]);
+      S.text(w(X0-0.75,lev+0.1,Dz),res.levelTxt,"#F2BF4C",12,800);
+      if(xe>0.6)S.text(w(0.25,-env(0.25)-0.28,Dz),"±e⁻ᵅᶻ","#FF9F5A",12,800);}
+    else{// frosted entry face + question mark
+      S.poly([[0,-Hh,-Dz],[0,Hh,-Dz],[0,Hh,Dz],[0,-Hh,Dz]].map(q=>w(...q)),`rgba(${mc},.6)`,1.2,true,`rgba(${mc},.16)`);
+      S.text(w(X0*0.55,0.1,Dz),"?","rgba(255,255,255,.35)",34,800);}
+    // planes: target (gold) / player (white)
+    const plane=(x,col,fill,lab,dash)=>{if(x>X0+0.02){S.text(w(X0+0.1,-Hh+0.2,Dz),"→ deeper","#7E8699",11,700);return;}if(dash)c.setLineDash([6,5]);S.poly([[x,-Hh,-Dz],[x,Hh,-Dz],[x,Hh,Dz],[x,-Hh,Dz]].map(q=>w(...q)),col,2,true,fill);c.setLineDash([]);if(lab)S.text(w(x-0.05,Hh+(dash?0.4:0.14),Dz),lab,col,12,800);};
+    if(mode==="freq")plane(1,"#F2BF4C","rgba(242,191,76,.07)","d");
+    else{plane(Math.max(0,marker()),"#E8ECF4","rgba(255,255,255,.05)",mode==="class"?"δ?":"z");
+      if(locked&&p>=1&&res.truthX!=null)plane(res.truthX,"#F2BF4C","rgba(242,191,76,.08)",mode==="class"?"δ":"−"+sc.X+" dB",true);}
+    // remaining block edges on top
+    [[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j])=>S.line(w(...corners[i]),w(...corners[j]),`rgba(${mc},.55)`,1.1));
+    // ruler along the front bottom edge
+    for(let k=0;k<=3;k++){const xx=k;if(xx>X0)break;S.line(w(xx,-Hh,Dz),w(xx,-Hh-0.1,Dz),"#7E8699",1.2);
+      S.text(w(xx-0.12,-Hh-0.32,Dz),mode==="freq"?(k?k+"d":"0"):k?si(k*L,"m",2):"0","#7E8699",11,700);}
+    // HUD
+    c.textAlign="left";c.font=fnt(700,12);c.fillStyle="#9AA3B8";c.fillText(`${m.n}`,px(10),px(20));
+    c.textAlign="right";c.font=fnt(800,13);c.fillStyle="#F2BF4C";
+    if(mode==="freq"){const v=val(),r=prop(m.s,m.er,v).r;c.fillText(`f ${si(v,"Hz")}`,S.LW-px(10),px(20));c.font=fnt(700,12);c.fillStyle="#9AA3B8";c.fillText(`σ/ωε ${sci(r)}`,S.LW-px(10),px(38));}
+    else if(mode==="class")c.fillText(`δ ${si(val(),"m")}`,S.LW-px(10),px(20));
+    else c.fillText(`z ${si(val(),"m")}`,S.LW-px(10),px(20));
+    if(locked&&res&&p>=1){c.textAlign="left";c.font=fnt(800,13);c.fillStyle=res.ok?"#78D58C":"#F2668A";c.fillText(res.hud,px(10),S.LH-px(12));}
+    c.textAlign="left";
+  },{yaw:-0.42,pitch:0.32,dist:9,scale:112,dy:4});
+  el.querySelector("[data-fire]").onclick=()=>{if(locked)return;
+    if(mode==="class"&&!call){ctx.sfx.miss();const pk=el.querySelector(".pick");pk.classList.add("shake");setTimeout(()=>pk.classList.remove("shake"),300);return;}
+    locked=true;tLock=lastT;inp.disabled=true;const v=val();let score=0,detail="";
+    if(mode==="freq"){const P=prop(m.s,m.er,v),e=P.a*sc.d;const Pt=prop(m.s,m.er,sc.fs);
+      score=Math.abs(e-1)<=0.08?1:Math.abs(e-1)<=0.2?0.4:0;
+      const fa=1/(PI*MU0*m.s*sc.d*sc.d),err=(fa/sc.fs-1)*100;
+      res={aDraw:e,bDraw:P.b*sc.d,ghost:1,level:Math.exp(-1),levelTxt:"1/e",ok:score>=0.7,hud:`|E(d)|/E₀ = ${Math.exp(-e).toFixed(3)}  (target 0.368)`};
+      detail=`Exact f = <b>${si(sc.fs,"Hz")}</b> (σ/ωε = ${sci(Pt.r)}); you picked ${si(v,"Hz")}, so αd = ${e.toFixed(2)} and |E(d)|/E₀ = ${Math.exp(-e).toFixed(3)} instead of e⁻¹ = 0.368. `+
+        (Pt.r>=20?`Good conductor: α ≈ √(πfμσ) = 1/d ⇒ f = 1/(πμσd²) = ${si(fa,"Hz")} (${Math.abs(err)<1?"agrees with (4-28c)":"off "+err.toFixed(1)+"% from (4-28c)"}).`
+         :`σ/ωε = ${sci(Pt.r)} is not ≫ 1, so the shortcut f = 1/(πμσd²) = ${si(fa,"Hz")} is off by ${err.toFixed(0)}%: solve the exact (4-28c) α = ω√(με){½[√(1+(σ/ωε)²) − 1]}<sup>½</sup> = 1/d.`);}
+    else if(mode==="class"){const P=sc.P,dl=sc.delta,cOK=call===sc.zone,lr=Math.abs(Math.log(v/dl));
+      {const hi=Math.max(dl,v);if(hi>3.0*L||dl<0.3*L)L=hi/2.7;}
+      score=(cOK?0.4:0)+(lr<=0.08?0.6:lr<=0.2?0.3:0);
+      const nm={diel:"good dielectric",mid:"neither (quasi-conductor)",cond:"good conductor"}[sc.zone];
+      const ap=sc.zone==="diel"?approx.diel(m.s,m.er):sc.zone==="cond"?approx.cond(m.s,sc.f):null;
+      res={aDraw:P.a*L,bDraw:P.b*L,level:Math.exp(-1),levelTxt:"1/e",truthX:dl/L,ok:score>=0.7,hud:`δ = ${si(dl,"m")} · you ${si(v,"m")}`};
+      detail=`σ/ωε = ${m.s}/(2π·${si(sc.f,"Hz",2)}·${m.er}ε₀) = <b>${sci(P.r)}</b> ⇒ <b>${nm}</b>${cOK?"":` (you called it ${({diel:"a good dielectric",mid:"neither",cond:"a good conductor"})[call]})`}. Exact α = ${sci(P.a,3)} Np/m ⇒ δ = 1/α = <b>${si(dl,"m")}</b>; you set ${si(v,"m")}. `+
+        (sc.zone==="diel"?`Here α ≈ (σ/2)√(μ/ε) = ${sci(ap,3)} Np/m (4-38): independent of f.`:sc.zone==="cond"?`Here α ≈ √(πfμσ) = ${sci(ap,3)} Np/m, δ = 1/√(πfμσ) (4-43).`:`Neither limit applies: the dielectric form would give ${sci(approx.diel(m.s,m.er),3)} and the conductor form ${sci(approx.cond(m.s,sc.f),3)} Np/m; only (4-28c) is right.`);}
+    else{const P=sc.P,dB=NP2DB*P.a*v,dd=Math.abs(dB-sc.X);score=dd<=1?1:dd<=2.5?0.4:0;
+      const ratio=v/sc.zs;let why="";if(Math.abs(ratio-2)<0.12)why=" You used 4.34 dB/Np (10 log of a field ratio); field dB is 20 log.";else if(Math.abs(ratio-0.5)<0.06)why=" You used 17.4 dB/Np: the field (not power) envelope is e<sup>−αz</sup>.";
+      res={aDraw:P.a*L,bDraw:P.b*L,level:10**(-sc.X/20),levelTxt:`−${sc.X} dB`,truthX:sc.zs/L,ok:score>=0.7,hud:`your z: −${dB.toFixed(1)} dB`};
+      detail=`σ/ωε = ${sci(P.r)} (${sc.zone==="cond"?"good conductor":"good dielectric"}), exact α = ${sci(P.a,3)} Np/m. 20 log₁₀ e<sup>−αz</sup> = −8.686 αz ⇒ z = ${sc.X}/(8.686α) = <b>${si(sc.zs,"m")}</b>. Your ${si(v,"m")} gives −${dB.toFixed(1)} dB.${why}`;}
+    el.querySelector("[data-fire]").textContent=score>=0.7?"SURFACED ✓":"OUT OF AIR ✕";
+    S.cam.auto=false;fin(Math.max(0,Math.min(1,score)),detail);};}
+};
+})(window.MXG);
+
+/* Mini-game: SNELL SNIPER (Ch. 5 oblique reflection & transmission). A laser hits a planar interface (z = 0, medium 2 below).
+   Aim θ_i, fire, and the reflected / transmitted beams light up with the exact Fresnel powers (5-17a,b), (5-24c,d).
+   Prather's names: ⊥ (E along y, out of the plane of incidence) = TM^y; ∥ (E in the plane of incidence) = TE^y. μ₁ = μ₂ = μ₀. */
+(function(G){
+const PI=Math.PI,rad=d=>d*PI/180,deg=r=>r*180/PI,ETA0=120*PI;
+/* ---- complex helpers ---- */
+const cx=(re,im)=>({re,im:im||0}),cadd=(a,b)=>cx(a.re+b.re,a.im+b.im),csub=(a,b)=>cx(a.re-b.re,a.im-b.im),
+  cmul=(a,b)=>cx(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re),cdiv=(a,b)=>{const d=b.re*b.re+b.im*b.im;return cx((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d);},
+  cabs=a=>Math.hypot(a.re,a.im),carg=a=>Math.atan2(a.im,a.re);
+/* ---- exact Fresnel, nonmagnetic, lossless (same as widgets2 `oblique`) ---- */
+function fresnel(e1,e2,thDeg){const th=rad(thDeg),n1=ETA0/Math.sqrt(e1),n2=ETA0/Math.sqrt(e2),ci=Math.cos(th);
+  const st=Math.sqrt(e1/e2)*Math.sin(th);const tir=st>=1;
+  const cT=tir?cx(0,-Math.sqrt(st*st-1)):cx(Math.sqrt(1-st*st));// TIR: cos θt = −j√(…) (decaying branch)
+  const N1=cx(n1),N2=cx(n2),Ci=cx(ci);
+  const Gp=cdiv(csub(cmul(N2,Ci),cmul(N1,cT)),cadd(cmul(N2,Ci),cmul(N1,cT)));            // Γ⊥ (5-17a)
+  const Tp=cdiv(cx(2*n2*ci),cadd(cmul(N2,Ci),cmul(N1,cT)));                              // T⊥ (5-17b)
+  const Gl=cdiv(csub(cmul(N2,cT),cmul(N1,Ci)),cadd(cmul(N2,cT),cmul(N1,Ci)));            // Γ∥ (5-24c)
+  const Tl=cdiv(cx(2*n2*ci),cadd(cmul(N1,Ci),cmul(N2,cT)));                              // T∥ (5-24d)
+  // time-average power through the interface: P_t/P_i = |T|² (η₁/η₂)(cos θt / cos θi); zero (evanescent) past θc
+  const pw=T=>tir?0:cabs(T)**2*(n1/n2)*(cT.re/ci);
+  return{Gp,Gl,Tp,Tl,tir,st,tt:tir?90:deg(Math.asin(st)),Rp:cabs(Gp)**2,Rl:cabs(Gl)**2,Pp:pw(Tp),Pl:pw(Tl),n1,n2,
+    alpha:tir?Math.sqrt(st*st-1):0};}// α₂/β₂ past critical (5-43a)
+const thB=(e1,e2)=>deg(Math.atan(Math.sqrt(e2/e1))),thC=(e1,e2)=>e1>e2?deg(Math.asin(Math.sqrt(e2/e1))):null;
+const R=(f,pol)=>pol==="perp"?f.Rp:f.Rl,Pt=(f,pol)=>pol==="perp"?f.Pp:f.Pl,Gam=(f,pol)=>pol==="perp"?f.Gp:f.Gl,Tco=(f,pol)=>pol==="perp"?f.Tp:f.Tl;
+/* ---- media ---- */
+const MED={air:1,Teflon:2.1,glass:2.25,polystyrene:2.56,quartz:3.8,sapphire:9.4,silicon:11.7,water:81};
+const pick=a=>a[Math.floor(Math.random()*a.length)],rnd=(a,b)=>a+(b-a)*Math.random();
+const BREW=[["air","glass"],["air","quartz"],["air","Teflon"],["air","sapphire"],["air","water"],["Teflon","silicon"],["polystyrene","sapphire"]];
+const BREW_H=[["glass","air"],["silicon","air"],["sapphire","Teflon"],["quartz","air"],["water","air"]];
+const TRAP=[["glass","air"],["quartz","air"],["silicon","air"],["sapphire","glass"],["silicon","quartz"],["quartz","Teflon"],["sapphire","polystyrene"]];
+const ANY=[["air","glass"],["air","quartz"],["air","sapphire"],["glass","air"],["quartz","air"],["Teflon","silicon"],["air","silicon"],["polystyrene","air"]];
+function scenario(ctx){const r=ctx.round||0,hard=!!ctx.hard;
+  const pool=hard?["brewster","percent","trap","target"]:r===0?["target","brewster","percent"]:["trap","brewster","percent","target"];
+  const kind=pick(pool);let S={kind,choose:false,pol:"perp"};
+  if(kind==="brewster"){const [a,b]=pick(hard&&Math.random()<0.6?BREW_H:BREW);Object.assign(S,{m1:a,m2:b,pol:"par",choose:hard||Math.random()<0.5});}
+  if(kind==="trap"){const [a,b]=pick(TRAP);Object.assign(S,{m1:a,m2:b,pol:Math.random()<0.5?"perp":"par",steep:hard});}
+  if(kind==="target"){const [a,b]=pick(ANY);Object.assign(S,{m1:a,m2:b,pol:Math.random()<0.5?"perp":"par"});
+    const e1=MED[a],e2=MED[b];let tt,ti;for(let k=0;k<40;k++){tt=Math.round(rnd(12,hard?62:50));ti=deg(Math.asin(Math.sqrt(e2/e1)*Math.sin(rad(tt))));if(ti>8&&ti<78&&Math.abs(ti-tt)>3)break;}S.tt=tt;S.ti=ti;}
+  if(kind==="percent"){for(let k=0;k<80;k++){const [a,b]=pick(ANY);const pol=hard?pick(["perp","par"]):"perp";const e1=MED[a],e2=MED[b];
+      const tc=thC(e1,e2);const th=rnd(15,tc?Math.min(75,tc-4):78);const f=fresnel(e1,e2,th);const X=Math.round(100*R(f,pol));
+      if(X>=3&&X<=60){Object.assign(S,{m1:a,m2:b,pol,X,thTrue:th});break;}}
+    if(S.X==null)Object.assign(S,{m1:"air",m2:"glass",pol:"perp",X:15,thTrue:60.9});}
+  S.e1=MED[S.m1];S.e2=MED[S.m2];if(S.choose)S.pol=null;return S;}
+/* ---- grading ---- */
+const ramp=(d,pts)=>{for(const [x,s] of pts)if(d<=x)return s;return Math.max(0,pts[pts.length-1][1]-(d-pts[pts.length-1][0])*0.08);};
+const f1=x=>x.toFixed(1),f2=x=>x.toFixed(2),pc=x=>(100*x<0.1&&x>0?(100*x).toFixed(2):(100*x).toFixed(1))+"%";
+const POLN={perp:"⊥ (TM<sup>y</sup>, E out of the plane)",par:"∥ (TE<sup>y</sup>, E in the plane)"};
+const eps=(S)=>`ε<sub>r1</sub> = ${S.e1}, ε<sub>r2</sub> = ${S.e2}`;
+function grade(S,th,pol){const f=fresnel(S.e1,S.e2,th);const Rr=R(f,pol),Tt=Pt(f,pol);let s=0,d="";
+  const pw=`At θ<sub>i</sub> = ${f1(th)}° (${pol==="perp"?"⊥":"∥"}): ${f.tir?"θ<sub>t</sub> complex (TIR)":`θ<sub>t</sub> = ${f1(f.tt)}°`}, |Γ|² = ${pc(Rr)} reflected, P<sub>t</sub>/P<sub>i</sub> = |T|²(η₁/η₂)(cos θ<sub>t</sub>/cos θ<sub>i</sub>) = ${pc(Tt)} transmitted${f.tir?"":` (|T| = ${f2(cabs(Tco(f,pol)))}; the cosine and η factors make the powers add to 100%)`}.`;
+  if(S.kind==="brewster"){const B=thB(S.e1,S.e2),dd=Math.abs(th-B);s=ramp(dd,[[0.6,1],[1.5,0.85],[2.5,0.72],[4,0.5]]);
+    const other=fresnel(S.e1,S.e2,B);
+    if(pol!=="par"){s=Math.min(s,0.2);d=`<b>Wrong polarization.</b> With μ₁ = μ₂ only <b>∥ (TE<sup>y</sup>)</b> has a Brewster angle: setting the numerator of Γ⊥ to zero gives sin θ<sub>i</sub> = ∞ (5-29b). Even at θ<sub>B</sub> the ⊥ wave reflects ${pc(other.Rp)}. `;}
+    d+=`θ<sub>B</sub> = tan⁻¹√(ε₂/ε₁) = tan⁻¹√(${S.e2}/${S.e1}) = <b>${f2(B)}°</b> (5-33). `+pw+(pol==="par"?` Γ∥ changes sign through θ<sub>B</sub>; that zero is why Brewster windows make lasers polarized.`:"");
+    if(S.e1>S.e2)d+=` Dense → less dense: θ<sub>B</sub> sits just below θ<sub>c</sub> = ${f2(thC(S.e1,S.e2))}°.`;}
+  if(S.kind==="trap"){const C=thC(S.e1,S.e2),m=th-C;
+    if(f.tir){s=S.steep?(m<=2?1:Math.max(0.7,1-(m-2)*0.02)):(m<=0.15?0.9:1);d=`<b>Trapped.</b> `;}else{s=m>-0.6?0.35:0;d=`<b>It leaked.</b> `;}
+    d+=`θ<sub>c</sub> = sin⁻¹√(ε₂/ε₁) = sin⁻¹√(${S.e2}/${S.e1}) = <b>${f2(C)}°</b> (5-36), the same for both polarizations. `;
+    d+=f.tir?`At ${f1(th)}°, √(ε₁/ε₂) sin θ<sub>i</sub> = ${f2(f.st)} > 1, so cos θ<sub>t</sub> is imaginary, Γ = (R − jX)/(R + jX) has |Γ| = 1, and medium 2 holds only an evanescent field decaying as e<sup>−α₂z</sup>, α₂ = ${f2(f.alpha)}β₂ (5-43a).${S.steep?` Margin past θ<sub>c</sub>: ${f1(m)}° (a fiber wants every bounce just past θ<sub>c</sub>).`:""}`:pw;}
+  if(S.kind==="target"){const dd=Math.abs(f.tir?90:f.tt-S.tt);s=f.tir?0:ramp(dd,[[0.8,1],[2,0.85],[3.5,0.72],[5,0.5]]);
+    d=`${s>=0.7?"<b>Hit.</b> ":"<b>Missed.</b> "}The target sits at θ<sub>t</sub> = ${S.tt}°. Snell (5-15b): √ε₁ sin θ<sub>i</sub> = √ε₂ sin θ<sub>t</sub> ⇒ θ<sub>i</sub> = sin⁻¹(√(ε₂/ε₁) sin θ<sub>t</sub>) = sin⁻¹(√(${S.e2}/${S.e1}) sin ${S.tt}°) = <b>${f2(S.ti)}°</b>. `+pw;}
+  if(S.kind==="percent"){const dd=Math.abs(100*Rr-S.X);s=ramp(dd,[[1.5,1],[3.5,0.85],[6,0.72],[10,0.5]]);
+    const sols=[];let prev=null;for(let a=0;a<=89.9;a+=0.05){const v=100*R(fresnel(S.e1,S.e2,a),pol)-S.X;if(prev!=null&&Math.sign(v)!==Math.sign(prev.v))sols.push(prev.a+0.025);prev={a,v};}
+    d=`Goal ${S.X}% reflected (${pol==="perp"?"⊥":"∥"}). You got <b>${pc(Rr)}</b>. Exact answer: θ<sub>i</sub> = ${sols.length?sols.map(x=>"<b>"+f1(x)+"°</b>").join(" or "):"—"} from Γ${pol==="perp"?"⊥ (5-17a)":"∥ (5-24c)"}, |Γ|² = power reflected. `+pw+(pol==="par"?` Note |Γ∥| dips to 0 at θ<sub>B</sub> = ${f1(thB(S.e1,S.e2))}° before rising to 1, so ∥ can have two answers.`:` |Γ⊥| rises monotonically from the normal-incidence value to 1 at grazing (Fig. 5-3).`);}
+  return{s:Math.max(0,Math.min(1,s)),d,f};}
+/* ---- game ---- */
+const COL={E:"#4FC8D8",H:"#C7B6FF",k:"#FF9F5A",gold:"#F2BF4C",good:"#78D58C",bad:"#F2668A"};
+G.mini.sniper={title:"Snell Sniper",blurb:"Aim a laser at an interface: kill, trap or steer the beam",_phys:{fresnel,thB,thC,grade,scenario,MED},
+ play(el,ctx,fin){const S=scenario(ctx);const n1=Math.sqrt(S.e1),n2=Math.sqrt(S.e2);
+  const R0=((n1-n2)/(n1+n2))**2;
+  const GOAL={brewster:["KILL THE REFLECTION",`Fire so that <b>nothing reflects</b>: every watt into the ${S.m2}.${S.choose?" Pick the polarization too.":""}`],
+   trap:["TRAP THE BEAM",`Fire so that <b>no power escapes</b> into the ${S.m2}: total internal reflection.${S.steep?" Stay as close to the normal as you can.":""}`],
+   target:["HIT THE TARGET",`Steer the <b>transmitted</b> beam into the <b style="color:${COL.gold}">gold target</b> in the ${S.m2}, ${S.tt}° from the normal.`],
+   percent:["REFLECT EXACTLY "+S.X+"%",`Fire so that exactly <b>${S.X}%</b> of the power reflects. <small class="mut">(At normal incidence it would be ${(100*R0).toFixed(1)}%.)</small>`]}[S.kind];
+  el.innerHTML=`<div class="q" style="font-size:17px"><span class="tag" style="color:${COL.gold};border-color:${COL.gold}66;margin-right:6px">${GOAL[0]}</span>${GOAL[1]}
+   <small class="mut" style="display:block;margin-top:4px;font-size:13px">${S.m1} ε<sub>r1</sub> = ${S.e1} (n = ${n1.toFixed(2)}) → ${S.m2} ε<sub>r2</sub> = ${S.e2} (n = ${n2.toFixed(2)}), μ₁ = μ₂ = μ₀. Drag the scene to orbit.</small></div>
+   <canvas class="viz game3d"></canvas>
+   ${S.choose?`<div class="seg pick" role="group" style="display:flex;margin-top:8px">${[["perp","E ⊥ plane · TM<sup>y</sup>"],["par","E ∥ plane · TE<sup>y</sup>"]].map(([k,t])=>`<button data-c="${k}" aria-pressed="false" style="flex:1">${t}</button>`).join("")}</div>`
+     :`<div class="mut" style="font:600 13px var(--fn);margin-top:8px">Beam polarization: <b style="color:${COL.E}">${S.pol==="perp"?"E ⊥ plane of incidence · TM<sup>y</sup> (s)":"E ∥ plane of incidence · TE<sup>y</sup> (p)"}</b></div>`}
+   <div class="gctl" style="flex-direction:row;align-items:center;gap:6px">
+    <button class="btn sm ghost" data-nud="-0.1" aria-label="decrease angle" style="min-width:44px;padding:8px 0">−</button>
+    <label class="rng">θ<sub>i</sub><input type="range" data-th min="0" max="89.5" step="0.1" value="${(S.kind==="trap"?20:30)}"><output style="min-width:58px"></output></label>
+    <button class="btn sm ghost" data-nud="0.1" aria-label="increase angle" style="min-width:44px;padding:8px 0">+</button></div>
+   <button class="btn cta block" data-fire style="margin-top:8px">FIRE ▸</button>`;
+  const inp=el.querySelector("[data-th]"),outp=el.querySelector("output");let pol=S.pol,fired=null,tF=null,res=null;
+  const th=()=>+inp.value;const out=()=>{outp.textContent=th().toFixed(1)+"°";};out();inp.addEventListener("input",out);
+  el.querySelectorAll("[data-nud]").forEach(b=>b.onclick=()=>{if(fired)return;inp.value=Math.max(0,Math.min(89.5,th()+ +b.dataset.nud)).toFixed(1);out();ctx.sfx.tap();});
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{if(fired)return;pol=b.dataset.c;el.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();});
+  const cv=el.querySelector("canvas");
+  // physics (x along interface, z into medium 2, y out of plane) → world (x, −z, y): medium 2 below
+  const L1=1.55,X0=2.15,ZW=1.05,DEP=1.45;
+  const dash=(S3,on)=>{const c=S3.c();c.setLineDash(on?[c.px(5),c.px(5)]:[]);};
+  function beam(S3,A,B,P,frac){if(P<=0.0005||frac<=0)return;const Bp=[A[0]+(B[0]-A[0])*frac,A[1]+(B[1]-A[1])*frac,A[2]+(B[2]-A[2])*frac];const a=Math.min(1,P);
+    const c=S3.c();c.lineCap="round";S3.line(A,Bp,`rgba(255,159,90,${0.10*a+0.03})`,4+16*Math.sqrt(a));S3.line(A,Bp,`rgba(255,159,90,${0.55*a+0.1})`,1.5+6*Math.sqrt(a));S3.line(A,Bp,`rgba(255,236,214,${0.9*a+0.1})`,1+1.6*Math.sqrt(a));c.lineCap="butt";}
+  // E ribbon: field vector along the beam, phase continuous through the interface
+  function ribbon(S3,A,dir,len,e,amp,beta,ph0,t,alpha,frac){if(amp<0.01||frac<=0)return;const pts=[],N=60,Lr=len*frac;const w=6;
+    for(let i=0;i<=N;i++){const s=Lr*i/N,v=amp*Math.cos(w*t-beta*s+ph0);pts.push([A[0]+dir[0]*s+e[0]*v,A[1]+dir[1]*s+e[1]*v,A[2]+dir[2]*s+e[2]*v]);}
+    S3.poly(pts,`rgba(79,200,216,${alpha})`,1.8);
+    for(let i=1;i<N;i+=5){const s=Lr*i/N,v=amp*Math.cos(w*t-beta*s+ph0),p0=[A[0]+dir[0]*s,A[1]+dir[1]*s,A[2]+dir[2]*s];S3.line(p0,[p0[0]+e[0]*v,p0[1]+e[1]*v,p0[2]+e[2]*v],`rgba(79,200,216,${alpha*0.7})`,1.3);}}
+  function arc(S3,a0,a1,r,down,col,lab){const pts=[];for(let i=0;i<=24;i++){const a=rad(a0+(a1-a0)*i/24);pts.push([down?r*Math.sin(a):r*Math.sin(a),down?-r*Math.cos(a):r*Math.cos(a),0]);}S3.poly(pts,col,1.5);
+    if(lab){const am=rad((a0+a1)/2),q=r+0.13,p=S3.P(q*Math.sin(am),down?-q*Math.cos(am):q*Math.cos(am),0),c=S3.c();c.textAlign="center";c.fillStyle=col;c.font=`700 ${c.px(12)}px ui-monospace,Menlo,monospace`;c.fillText(lab,p[0],p[1]+c.px(4));c.textAlign="start";}}
+  const tgt=S.kind==="target"?(()=>{const r=1.2,a=rad(S.tt);return[r*Math.sin(a),-r*Math.cos(a),0];})():null;
+  const S3=ctx.scene3d(cv,900,560,(S3,t)=>{const c=S3.c();const ang=th(),a=rad(ang);
+    // medium-2 block and interface
+    const tint=Math.min(0.16,0.03+0.025*Math.sqrt(S.e2)),tint1=Math.min(0.12,0.025*(Math.sqrt(S.e1)-1));
+    S3.poly([[-X0,-DEP,ZW],[X0,-DEP,ZW],[X0,0,ZW],[-X0,0,ZW]],null,1,true,`rgba(111,168,255,${tint*0.6})`);
+    S3.poly([[-X0,0,-ZW],[X0,0,-ZW],[X0,0,ZW],[-X0,0,ZW]],"rgba(111,168,255,.55)",1.2,true,`rgba(111,168,255,${tint})`);
+    if(tint1>0)S3.poly([[-X0,0,ZW],[X0,0,ZW],[X0,1.55,ZW],[-X0,1.55,ZW]],null,1,true,`rgba(111,168,255,${tint1})`);
+    [[-X0,ZW],[X0,ZW],[X0,-ZW],[-X0,-ZW]].forEach(([x,z])=>S3.line([x,0,z],[x,-DEP,z],"rgba(111,168,255,.18)",1));
+    S3.poly([[-X0,-DEP,-ZW],[X0,-DEP,-ZW],[X0,-DEP,ZW],[-X0,-DEP,ZW]],"rgba(111,168,255,.18)",1,true);
+    // plane of incidence
+    S3.poly([[-X0,-DEP,0],[X0,-DEP,0],[X0,1.6,0],[-X0,1.6,0]],null,1,true,"rgba(255,159,90,.035)");
+    dash(S3,true);S3.poly([[-X0,-DEP,0],[X0,-DEP,0],[X0,1.6,0],[-X0,1.6,0]],"rgba(255,159,90,.35)",1,true);S3.line([0,-DEP,0],[0,1.6,0],"rgba(201,206,218,.45)",1.2);dash(S3,false);
+    S3.text([-X0+0.05,1.45,0],"plane of incidence","rgba(255,159,90,.8)",11,650);
+    S3.text([X0-1.0,1.12,ZW*0.2],`ε_r1 = ${S.e1}`,"#C9CEDA",12,700);S3.text([X0-0.95,-0.35,ZW*0.2],`ε_r2 = ${S.e2}`,"#6FA8FF",12,700);
+    // target
+    if(tgt){const hitNow=res&&res.s>=0.7&&tF!=null&&t-tF>0.7;dash(S3,true);S3.line([0,0,0],tgt,"rgba(242,191,76,.55)",1.2);dash(S3,false);
+      arc(S3,0,S.tt,0.5,true,"rgba(242,191,76,.85)",null);S3.text([-2.0,-0.25,0],`θt = ${S.tt}°`,COL.gold,12,700);
+      [0.13,0.085,0.04].forEach((r,i)=>{const pts=[];for(let k=0;k<=28;k++){const q=2*PI*k/28;pts.push([tgt[0]+r*Math.cos(q),tgt[1]+r*Math.sin(q),0]);}
+        S3.poly(pts,COL.gold,1.6,true,i===1?"rgba(7,8,12,.9)":hitNow?"rgba(242,191,76,.95)":"rgba(242,191,76,.55)");});}
+    // beams
+    const src=[-L1*Math.sin(a),L1*Math.cos(a),0],O=[0,0,0];const kin=[Math.sin(a),-Math.cos(a),0];
+    const eI=pol==="perp"?[0,0,1]:[Math.cos(a),Math.sin(a),0];const amp=0.2,b1=2*PI/0.42*n1/Math.max(n1,n2)*0.75;
+    // emitter
+    const ep=[src[0]-0.12*kin[0],src[1]-0.12*kin[1],0];S3.line(ep,src,"#5A6178",9);S3.dot(src,"#FF9F5A",4);
+    if(!fired){dash(S3,true);S3.line(src,O,"rgba(255,159,90,.55)",1.6);dash(S3,false);if(pol)ribbon(S3,src,kin,L1,eI,amp,b1,0,t,0.45,1);
+      arc(S3,-ang,0,0.42,false,"#FF9F5A","θi");}
+    else{if(tF==null)tF=t;const p=t-tF,f=res.f,P=pol;const fi=Math.min(1,p/0.35),fo=Math.max(0,Math.min(1,(p-0.35)/0.35));
+      const Rr=R(f,P),Tp=Pt(f,P),g=Gam(f,P),T=Tco(f,P);
+      beam(S3,src,O,1,fi);ribbon(S3,src,kin,L1,eI,amp,b1,0,t,0.95,fi);
+      const kr=[Math.sin(a),Math.cos(a),0],er=pol==="perp"?[0,0,1]:[-Math.cos(a),Math.sin(a),0];
+      beam(S3,O,[L1*kr[0],L1*kr[1],0],Rr,fo);ribbon(S3,O,kr,L1,er,amp*Math.sqrt(Rr),b1,carg(g)-b1*L1,t,0.95,fo);
+      if(!f.tir){const at=rad(f.tt),kt=[Math.sin(at),-Math.cos(at),0],et=pol==="perp"?[0,0,1]:[Math.cos(at),Math.sin(at),0],Lt=tgt?1.2:DEP/Math.max(0.3,Math.cos(at))*0.98;
+        const Lc=Math.min(Lt,1.9);beam(S3,O,[Lc*kt[0],Lc*kt[1],0],Tp,fo);ribbon(S3,O,kt,Lc,et,amp*Math.sqrt(Tp),b1*n2/n1,carg(T)-b1*L1,t,0.95,fo);
+        if(fo>0.3)arc(S3,0,f.tt,0.5,true,"#C9CEDA",tgt?null:"θt");}
+      else if(fo>0){// evanescent sheet: phase along x, decay along z
+        for(let i=0;i<7;i++){const z=-0.06*i-0.02,al=Math.exp(-f.alpha*6*0.06*i)*0.5*fo;const pts=[];for(let k=0;k<=40;k++){const x=-0.2+1.8*k/40;pts.push([x,z+0.025*Math.cos(6*t-9*x)*Math.exp(-f.alpha*6*0.06*i),0]);}S3.poly(pts,`rgba(255,159,90,${al})`,1.4);}
+        S3.text([0.15,-0.62,0],"evanescent: e^(−α₂z)","rgba(255,159,90,.9)",11,700);}
+      arc(S3,-ang,0,0.42,false,"#FF9F5A","θi");arc(S3,0,ang,0.42,false,"rgba(255,159,90,.6)",null);
+      // HUD
+      if(fo>0.5){const hud=[[`θi = ${ang.toFixed(1)}°   θt = ${f.tir?"complex":f.tt.toFixed(1)+"°"}`,"#C9CEDA"],[`reflected  |Γ|² = ${pc(Rr)}`,Rr<0.002&&S.kind==="brewster"?COL.good:"#FFD2B0"],[f.tir?"transmitted  0% (TIR)":`transmitted  ${pc(Tp)}`,"#9CC2FF"]];
+        c.font=`700 ${c.px(12)}px ui-monospace,Menlo,monospace`;const y0=S3.LH-c.px(73);hud.forEach(([s,col],i)=>{const y=y0+i*c.px(23);c.fillStyle="rgba(7,8,12,.75)";c.fillRect(12,y,c.measureText(s).width+c.px(12),c.px(20));c.fillStyle=col;c.fillText(s,12+c.px(6),y+c.px(14.5));});
+        const ok=res.s>=0.7;c.font=`800 ${c.px(15)}px ui-monospace,Menlo,monospace`;c.fillStyle=ok?COL.good:COL.bad;const msg=ok?(res.s>=0.95?"BULLSEYE":"HIT"):"MISS";c.fillText(msg,S3.LW-c.measureText(msg).width-c.px(10),c.px(22));}}
+    // polarization badge
+    c.font=`700 ${c.px(11)}px ui-monospace,Menlo,monospace`;c.fillStyle=COL.E;c.fillText(pol?(pol==="perp"?"E ⊥ plane · TMʸ":"E ∥ plane · TEʸ"):"polarization ?",16,c.px(16)+6);
+  },{yaw:-0.42,pitch:0.2,dist:7,scale:150,auto:false,dy:-6});
+  el.querySelector("[data-fire]").onclick=()=>{if(fired)return;if(!pol){ctx.sfx.miss();const p=el.querySelector(".pick");p.classList.add("shake");setTimeout(()=>p.classList.remove("shake"),300);return;}
+    fired=true;res=grade(S,th(),pol);inp.disabled=true;el.querySelector("[data-fire]").disabled=true;ctx.sfx.tap();
+    setTimeout(()=>{fin(res.s,res.d);},850);};}
+};
+})(window.MXG);
+
+/* Mini-game: WAVE BUILDER (Ch. 3 separation of variables). A geometry sits in 3D: rectangular guide/cavity, circular
+   cylinder (inside / outside / coax), or sphere (inside / outside). Assemble ψ = f·g·h by picking one function per
+   coordinate; graded by Prather's rules (bounded → cos/sin, unbounded → e^{−jβ}, axis → J not Y, outgoing → H⁽²⁾, poles → P). */
+(function(G){
+const PI=Math.PI;
+const SP=()=>(typeof W8!=="undefined"&&W8.special)||(window.W8&&window.W8.special);
+const cm=(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]];
+/* Q_n^m(x): m = 0 by the Legendre recurrence; m ≥ 1 by Ferrers' form (−1)^m (1−x²)^{m/2} d^m Q_n/dx^m (numerical). Singular at x = ±1. */
+function Q0n(n,x){let q0=0.5*Math.log((1+x)/(1-x));if(n===0)return q0;let q1=x*q0-1;for(let k=1;k<n;k++){const q2=((2*k+1)*x*q1-k*q0)/(k+1);q0=q1;q1=q2;}return q1;}
+function Qnm(n,m,x){x=Math.max(-0.9995,Math.min(0.9995,x));if(m===0)return Q0n(n,x);const h=1e-4;let d=(Q0n(n,x+h)-Q0n(n,x-h))/(2*h);
+  if(m===2)d=(Q0n(n,x+h)-2*Q0n(n,x)+Q0n(n,x-h))/(h*h);return (m%2?-1:1)*Math.pow(1-x*x,m/2)*d;}
+/* ---------- option factories: each returns {id, h (button html), tex, f(u,p) → complex} ---------- */
+const O={
+ cos:(v,k,b)=>({id:"cos",h:`cos β<sub>${b}</sub>${v}`,tex:`\\cos(\\beta_${b}${v})`,f:(u,p)=>[Math.cos(p[k]*u),0]}),
+ sin:(v,k,b)=>({id:"sin",h:`sin β<sub>${b}</sub>${v}`,tex:`\\sin(\\beta_${b}${v})`,f:(u,p)=>[Math.sin(p[k]*u),0]}),
+ em:(v,k,b)=>({id:"em",h:`e<sup>−jβ<sub>${b}</sub>${v}</sup>`,tex:`e^{-j\\beta_${b}${v}}`,f:(u,p)=>[Math.cos(p[k]*u),-Math.sin(p[k]*u)]}),
+ ep:(v,k,b)=>({id:"ep",h:`e<sup>+jβ<sub>${b}</sub>${v}</sup>`,tex:`e^{+j\\beta_${b}${v}}`,f:(u,p)=>[Math.cos(p[k]*u),Math.sin(p[k]*u)]}),
+ J:()=>({id:"J",h:"J<sub>m</sub>",tex:"J_m(\\beta_\\rho\\rho)",f:(u,p)=>[SP().besselJ(p.m,p.br*u),0]}),
+ Y:()=>({id:"Y",h:"Y<sub>m</sub>",tex:"Y_m(\\beta_\\rho\\rho)",f:(u,p)=>[SP().besselY(p.m,Math.max(1e-3,p.br*u)),0]}),
+ H1:()=>({id:"H1",h:"H<sub>m</sub><sup>(1)</sup>",tex:"H^{(1)}_m(\\beta_\\rho\\rho)",f:(u,p)=>[SP().besselJ(p.m,p.br*u),SP().besselY(p.m,Math.max(1e-3,p.br*u))]}),
+ H2:()=>({id:"H2",h:"H<sub>m</sub><sup>(2)</sup>",tex:"H^{(2)}_m(\\beta_\\rho\\rho)",f:(u,p)=>[SP().besselJ(p.m,p.br*u),-SP().besselY(p.m,Math.max(1e-3,p.br*u))]}),
+ JY:()=>({id:"JY",h:"AJ<sub>m</sub>+BY<sub>m</sub>",tex:"\\left[AJ_m+BY_m\\right](\\beta_\\rho\\rho)",f:(u,p)=>{const s=SP();const x=Math.max(1e-3,p.br*u);return[s.besselY(p.m,p.br*p.a)*s.besselJ(p.m,x)-s.besselJ(p.m,p.br*p.a)*s.besselY(p.m,x),0];}}),
+ cm:()=>({id:"cm",h:"cos mφ",tex:"\\cos(m\\phi)",f:(u,p)=>[Math.cos(p.m*u),0]}),
+ ejm:()=>({id:"ejm",h:"e<sup>−jmφ</sup>",tex:"e^{-jm\\phi}",f:(u,p)=>[Math.cos(p.m*u),-Math.sin(p.m*u)]}),
+ cnu:()=>({id:"cnu",h:"cos(m+½)φ",tex:"\\cos\\left(m+\\tfrac12\\right)\\phi",f:(u,p)=>[Math.cos((p.m+0.5)*u),0]}),
+ jn:()=>({id:"jn",h:"j<sub>n</sub>",tex:"j_n(\\beta r)",f:(u,p)=>[SP().sphJY(p.n,Math.max(1e-3,p.br*u))[0],0]}),
+ yn:()=>({id:"yn",h:"y<sub>n</sub>",tex:"y_n(\\beta r)",f:(u,p)=>[SP().sphJY(p.n,Math.max(0.05,p.br*u))[1],0]}),
+ h1:()=>({id:"h1",h:"h<sub>n</sub><sup>(1)</sup>",tex:"h^{(1)}_n(\\beta r)",f:(u,p)=>{const v=SP().sphJY(p.n,Math.max(0.05,p.br*u));return[v[0],v[1]];}}),
+ h2:()=>({id:"h2",h:"h<sub>n</sub><sup>(2)</sup>",tex:"h^{(2)}_n(\\beta r)",f:(u,p)=>{const v=SP().sphJY(p.n,Math.max(0.05,p.br*u));return[v[0],-v[1]];}}),
+ P:()=>({id:"P",h:"P<sub>n</sub><sup>m</sup>(cos θ)",tex:"P_n^m(\\cos\\theta)",f:(u,p)=>[SP().legendre(p.n,p.m,Math.cos(u)),0]}),
+ Q:()=>({id:"Q",h:"Q<sub>n</sub><sup>m</sup>(cos θ)",tex:"Q_n^m(\\cos\\theta)",f:(u,p)=>[Qnm(p.n,p.m,Math.cos(u)),0]})};
+/* ---------- Prather's rules (the "why" for each row) ---------- */
+const RULE={
+ bounded:"Bounded direction ⇒ standing wave: “If things are bounded, I tend to use sines and cosines” (L9). An exponential can’t vanish on both walls.",
+ open:"Unbounded / open direction ⇒ traveling wave: “If I look at things that are unbounded, I tend to use exponentials” (L9). With e<sup>jωt</sup>, e<sup>−jβ<sub>z</sub>z</sup> goes toward +z; e<sup>+jβ<sub>z</sub>z</sup> toward −z.",
+ axis:"Region contains the axis: Y<sub>m</sub> (and H<sub>m</sub><sup>(1,2)</sup> = J<sub>m</sub> ± jY<sub>m</sub>) blow up at ρ = 0, so keep J<sub>m</sub> only (L10, B₁ = 0 in (3-70a)).",
+ out:"Unbounded with the source inside: outgoing only (radiation condition). With e<sup>jωt</sup>, H<sub>m</sub><sup>(2)</sup> = J<sub>m</sub> − jY<sub>m</sub> diverges (his rock-in-the-lake, played forward); H<sup>(1)</sup> converges, J or Y alone is a standing (in + out) wave (L10, C₁ = 0 in (3-70b)).",
+ coax:"Axis excluded but bounded at ρ = a and ρ = b: a standing wave in ρ needs both J<sub>m</sub> and Y<sub>m</sub> (two walls, two constants), like cos and sin between two plates.",
+ phi:"φ is periodic: g(φ + 2π) = g(φ) forces integer m. “It’s not β<sub>φ</sub>, it’s m, an integer, telling you how many times you’ve gone around this circle” (L10). cos mφ and e<sup>−jmφ</sup> both qualify.",
+ origin:"Region contains the origin: y<sub>n</sub> (and h<sub>n</sub><sup>(1,2)</sup> = j<sub>n</sub> ± jy<sub>n</sub>) blow up at r = 0, so keep j<sub>n</sub> (3.15).",
+ sout:"Radiating to r → ∞ with e<sup>jωt</sup>: keep h<sub>n</sub><sup>(2)</sup> = j<sub>n</sub> − jy<sub>n</sub> (h<sub>0</sub><sup>(2)</sup> = je<sup>−jβr</sup>/βr, the outgoing point-source wave).",
+ poles:"θ runs over both poles: Q<sub>n</sub><sup>m</sup>(cos θ) → ∞ at θ = 0, π, “non-physical, discard” (3-88b). Keep P<sub>n</sub><sup>m</sup>(cos θ)."};
+/* ---------- scenarios ---------- */
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function wallWhy(comp,dir,tang){return tang?`${comp} is <b>tangential</b> to the PEC walls ${dir} ⇒ it must vanish there ⇒ <b>sin</b> (cos 0 = 1 ≠ 0).`:`${comp} is <b>normal</b> to the walls ${dir}: it ends on surface charge and need not vanish; with ∇·E = 0 coupling it to the tangential components it is the <b>cos</b> partner.`;}
+const SCN={
+ rectEz:()=>{const m=pick([1,2]),n=1;return{geo:"rect",name:"E_z",title:`E<sub>z</sub> of the TM<sub>${m}${n}</sub> mode in a PEC rectangular waveguide (0 ≤ x ≤ a, 0 ≤ y ≤ b), traveling toward <b>+z</b>.`,p:{m,n,a:2.2,b:1.1,L:3.2,bz:2*PI/1.3,closed:false},
+   rows:[["x",[O.cos("x","bx","x"),O.sin("x","bx","x"),O.em("x","bx","x")],["sin"],wallWhy("E<sub>z</sub>","x = 0, a",true)+" β<sub>x</sub> = mπ/a."],
+         ["y",[O.cos("y","by","y"),O.sin("y","by","y"),O.em("y","by","y")],["sin"],wallWhy("E<sub>z</sub>","y = 0, b",true)+" β<sub>y</sub> = nπ/b."],
+         ["z",[O.cos("z","bz","z"),O.sin("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["em"],"open guide toward +z ⇒ e<sup>−jβ<sub>z</sub>z</sup>."]]};},
+ rectEx:()=>{const m=pick([1,2]),n=1;return{geo:"rect",name:"E_x",title:`E<sub>x</sub> of the TE<sub>${m}${n}</sub> mode in a PEC rectangular waveguide (0 ≤ x ≤ a, 0 ≤ y ≤ b), traveling toward <b>+z</b>.`,p:{m,n,a:2.2,b:1.1,L:3.2,bz:2*PI/1.3,closed:false},
+   rows:[["x",[O.cos("x","bx","x"),O.sin("x","bx","x"),O.em("x","bx","x")],["cos"],wallWhy("E<sub>x</sub>","x = 0, a",false)+" His board result: E<sub>x</sub> = E<sub>mn</sub> cos(mπx/a) sin(nπy/b) e<sup>−jβ<sub>z</sub>z</sup>."],
+         ["y",[O.cos("y","by","y"),O.sin("y","by","y"),O.em("y","by","y")],["sin"],wallWhy("E<sub>x</sub>","y = 0, b",true)+" (C₂ = 0, sin β<sub>y</sub>b = 0.)"],
+         ["z",[O.cos("z","bz","z"),O.sin("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["em"],"open guide toward +z ⇒ e<sup>−jβ<sub>z</sub>z</sup>."]]};},
+ cavEy:()=>({geo:"rect",name:"E_y",title:`E<sub>y</sub> of the TE<sub>111</sub> field in a closed PEC <b>box cavity</b> (0 ≤ x ≤ a, 0 ≤ y ≤ b, 0 ≤ z ≤ c): walls on every side.`,p:{m:1,n:1,a:2.2,b:1.1,L:3.2,bz:PI/3.2,closed:true},
+   rows:[["x",[O.cos("x","bx","x"),O.sin("x","bx","x"),O.em("x","bx","x")],["sin"],wallWhy("E<sub>y</sub>","x = 0, a",true)],
+         ["y",[O.cos("y","by","y"),O.sin("y","by","y"),O.em("y","by","y")],["cos"],wallWhy("E<sub>y</sub>","y = 0, b",false)],
+         ["z",[O.cos("z","bz","z"),O.sin("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["sin"],"Closed at z = 0, c: z is now <b>bounded</b> ⇒ standing; E<sub>y</sub> is tangential to the end walls ⇒ sin(pπz/c)."]]}),
+ cylIn:()=>{const m=pick([0,1,2]);const X=[2.4048,3.8317,5.1356][m];return{geo:"cyl",region:"in",name:"E_z",title:`E<sub>z</sub> of the TM<sub>${m}1</sub> mode <b>inside</b> a PEC circular waveguide (ρ ≤ a, the axis is in the region), traveling toward <b>+z</b>.`,p:{m,a:1,br:X,bz:2*PI/1.3,rmin:0,rmax:1},
+   rows:[["ρ",[O.J(),O.Y(),O.H1(),O.H2()],["J"],RULE.axis+` Then E<sub>z</sub>(a) = 0 ⇒ β<sub>ρ</sub>a = χ<sub>${m}1</sub> = ${X}.`],
+         ["φ",[O.cm(),O.ejm(),O.cnu()],["cm","ejm"],RULE.phi],
+         ["z",[O.cos("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["em"],RULE.open]]};},
+ cylOut:()=>{const m=pick([0,1,2]);return{geo:"cyl",region:"out",name:"ψ",title:`ψ <b>outside</b> a long cylinder (ρ ≥ a) that radiates into unbounded space, with the field also progressing toward <b>+z</b> along it. Time convention e<sup>jωt</sup>.`,p:{m,a:1,br:4.2,bz:2*PI/1.8,rmin:1,rmax:2.7},
+   rows:[["ρ",[O.J(),O.Y(),O.H1(),O.H2()],["H2"],RULE.out],["φ",[O.cm(),O.ejm(),O.cnu()],["cm","ejm"],RULE.phi],["z",[O.cos("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["em"],RULE.open]]};},
+ coax:()=>{const m=pick([0,1]);return{geo:"cyl",region:"coax",name:"E_z",title:`E<sub>z</sub> of a TM mode <b>between the conductors of a coax</b> (a ≤ ρ ≤ b: axis excluded, outer wall closes it), traveling toward <b>+z</b>.`,p:{m,a:0.38,b:1.15,br:null,bz:2*PI/1.3,rmin:0.38,rmax:1.15},
+   rows:[["ρ",[O.J(),O.Y(),O.H2(),O.JY()],["JY"],RULE.coax],["φ",[O.cm(),O.ejm(),O.cnu()],["cm","ejm"],RULE.phi],["z",[O.cos("z","bz","z"),O.em("z","bz","z"),O.ep("z","bz","z")],["em"],RULE.open]]};},
+ sphIn:()=>{const [n,m]=pick([[1,0],[1,1],[2,0],[2,1]]);const X={1:4.4934,2:5.7635}[n];return{geo:"sph",region:"in",name:"ψ",title:`ψ <b>inside</b> a sphere (r ≤ a) containing the origin and both poles (θ = 0 to π), n = ${n}, m = ${m}.`,p:{n,m,br:X,rmin:0,rmax:1},
+   rows:[["r",[O.jn(),O.yn(),O.h1(),O.h2()],["jn"],RULE.origin],["θ",[O.P(),O.Q()],["P"],RULE.poles],["φ",[O.cm(),O.ejm(),O.cnu()],["cm","ejm"],RULE.phi]]};},
+ sphOut:()=>{const [n,m]=pick([[1,0],[1,1],[2,0],[2,1]]);return{geo:"sph",region:"out",name:"ψ",title:`ψ <b>outside</b> a sphere (r ≥ a), radiating to r → ∞ with e<sup>jωt</sup>, all θ from 0 to π, n = ${n}, m = ${m}.`,p:{n,m,br:4,rmin:1,rmax:2.6},
+   rows:[["r",[O.jn(),O.yn(),O.h1(),O.h2()],["h2"],RULE.sout],["θ",[O.P(),O.Q()],["P"],RULE.poles],["φ",[O.cm(),O.ejm(),O.cnu()],["cm","ejm"],RULE.phi]]};}};
+function coaxRoot(m,a,b){const s=SP();const F=k=>s.besselY(m,k*a)*s.besselJ(m,k*b)-s.besselJ(m,k*a)*s.besselY(m,k*b);let k0=0.5,f0=F(k0);for(let k=0.55;k<40;k+=0.05){const f=F(k);if(Math.sign(f)!==Math.sign(f0)){let lo=k-0.05,hi=k;for(let i=0;i<50;i++){const mid=(lo+hi)/2;Math.sign(F(mid))===Math.sign(F(lo))?lo=mid:hi=mid;}return(lo+hi)/2;}f0=f;}return 4;}
+function scenario(ctx){const r=ctx.round||0;const pool=ctx.hard?["cavEy","coax","sphOut","cylOut","rectEx"]:r===0?["rectEz","rectEx","cylIn"]:["cylIn","cylOut","sphIn","sphOut"];
+  const S=SCN[pick(pool)]();if(S.region==="coax")S.p.br=coaxRoot(S.p.m,S.p.a,S.p.b);if(S.geo==="rect"){S.p.bx=S.p.m*PI/S.p.a;S.p.by=S.p.n*PI/S.p.b;}return S;}
+function grade(S,ch){let tot=0;const lines=S.rows.map(([v,opts,ok,why],i)=>{const o=opts.find(x=>x.id===ch[i]);const good=ok.includes(ch[i]);tot+=good?1:0;
+  const right=ok.map(id=>opts.find(x=>x.id===id).h).join(" or ");
+  return `<div style="margin:6px 0"><b style="color:${good?"#78D58C":"#F2668A"}">${good?"✓":"✗"} ${v}:</b> ${o?o.h:"—"}${good?"":` → <b>${right}</b>`}. <span class="mut">${why}</span></div>`;});
+  return{s:tot/S.rows.length,lines};}
+/* ---------- sample points per geometry: [world xyz, coords for each row] ---------- */
+function samples(S){const p=S.p,pts=[];
+  if(S.geo==="rect"){const nz=S.p.closed?6:7;for(let k=0;k<nz;k++){const z=-p.L/2+p.L*(k+0.5)/nz;for(let i=0;i<=8;i++)for(let j=0;j<=4;j++){const x=p.a*i/8,y=p.b*j/4;
+      pts.push({w:[z,y-p.b/2,x-p.a/2],c:[x,y,p.closed?z+p.L/2:z],wall:i===0||i===8||j===0||j===4});}}}
+  if(S.geo==="cyl"){const hs=S.region==="out"?[-0.5]:[-1.1,-0.37,0.37,1.1];const nr=S.region==="out"?9:5,nf=S.region==="out"?36:20;
+    hs.forEach(h=>{if(p.rmin===0)pts.push({w:[0,h,0],c:[0.001,0,h]});for(let i=1;i<=nr;i++){const r=p.rmin+(p.rmax-p.rmin)*(p.rmin===0?i/nr:(i-0.5)/nr);for(let j=0;j<nf;j++){const f=2*PI*j/nf;pts.push({w:[r*Math.cos(f),h,r*Math.sin(f)],c:[r,f,h]});}}});}
+  if(S.geo==="sph"){const nr=S.region==="out"?8:6;for(let i=1;i<=nr;i++){const r=p.rmin+(p.rmax-p.rmin)*(p.rmin===0?i/nr:(i-0.5)/nr);const nt=Math.round(8+6*r);
+      for(let j=0;j<=nt;j++){const th=PI*j/nt;[0,PI].forEach(f=>{if((j===0||j===nt)&&f)return;pts.push({w:[r*Math.sin(th)*Math.cos(f),r*Math.cos(th),r*Math.sin(th)*Math.sin(f)],c:[r,th,f]});});}}
+    // equatorial ring of points too (θ = 90°), shows the φ dependence
+    for(let i=1;i<=nr;i++){const r=p.rmin+(p.rmax-p.rmin)*(p.rmin===0?i/nr:(i-0.5)/nr);for(let j=0;j<24;j++){const f=2*PI*j/24;if(j===0||j===12)continue;pts.push({w:[r*Math.cos(f),0,r*Math.sin(f)],c:[r,PI/2,f]});}}}
+  return pts;}
+const SYM={x:"x",y:"y",z:"z","ρ":"ρ","φ":"φ",r:"r","θ":"θ"};
+G.mini.waveform={title:"Wave Builder",blurb:"Assemble a separated solution, one function per coordinate",_t:{scenario,grade,samples,SCN,Qnm,coaxRoot,O},
+ play(el,ctx,fin){const S=scenario(ctx);const ch=S.rows.map(()=>null);let built=false,F=null,norm=1;
+  const nameTex={E_z:"E_z",E_x:"E_x",E_y:"E_y","ψ":"\\psi"}[S.name];
+  el.innerHTML=`<div class="q" style="font-size:17px"><span class="tag" style="color:#F2BF4C;border-color:#F2BF4C66;margin-right:6px">BUILD THE FIELD</span>${S.title}
+    <small class="mut" style="display:block;margin-top:4px;font-size:13px">Pick one function per coordinate. Drag the scene to orbit.</small></div>
+   <canvas class="viz game3d"></canvas>
+   <div class="wf-eq" style="margin:8px 0 2px;min-height:30px;overflow-x:auto;font-size:15px;text-align:center"></div>
+   <div class="wf-rows">${S.rows.map(([v,opts],i)=>`<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><b style="min-width:20px;font:700 16px var(--fn);color:#FF9F5A;text-align:center">${v}</b>
+     <div class="seg" role="group" data-row="${i}" style="flex:1;display:flex">${shuffle(opts.slice()).map(o=>`<button data-o="${o.id}" aria-pressed="false" style="flex:1;padding:6px 6px;font-size:14px;white-space:nowrap">${o.h}</button>`).join("")}</div></div>`).join("")}</div>
+   <button class="btn cta block" data-fire style="margin-top:10px">BUILD ▸</button>`;
+  const eq=el.querySelector(".wf-eq");
+  const showEq=()=>{const parts=S.rows.map(([v,opts],i)=>{const o=opts.find(x=>x.id===ch[i]);return o?o.tex:"\\square";});eq.innerHTML=ctx.M(`$${nameTex}=${parts.join("\\;")}$`);};showEq();
+  el.querySelectorAll("[data-row]").forEach(row=>row.addEventListener("click",e=>{const b=e.target.closest("[data-o]");if(!b||built)return;const i=+row.dataset.row;ch[i]=b.dataset.o;
+    row.querySelectorAll("[data-o]").forEach(x=>x.setAttribute("aria-pressed",x===b));ctx.sfx.tap();showEq();}));
+  const pts=samples(S);const p=S.p;
+  const evalAll=()=>{F=pts.map(q=>{let v=[1,0];S.rows.forEach(([n,opts],i)=>{const o=opts.find(x=>x.id===ch[i]);v=cm(v,o.f(q.c[i],p));});return v;});
+    const mags=F.map(v=>Math.hypot(v[0],v[1])).filter(isFinite).sort((a,b)=>a-b);norm=mags[Math.floor(mags.length*0.93)]||1;if(norm<1e-9)norm=1;};
+  // singularities to flag after build
+  const flags=()=>{const out=[];const txt=t=>out.push({k:"txt",t});S.rows.forEach(([v,opts,ok],i)=>{const id=ch[i];if(ok.includes(id))return;
+    if(v==="ρ"){if(S.region==="in")out.push({k:"inf",at:[0,1.45,0],t:"∞ at ρ = 0"});else if(S.region==="coax")txt(id==="H2"?"ρ: bounded by b, so standing":"ρ: can't vanish at both a and b");else txt(id==="H1"?"ρ: H⁽¹⁾ converges (comes IN)":"ρ: standing = in + out");}
+    else if(v==="r"){if(S.region==="in")out.push({k:"inf",at:[0.05,0.08,0],t:"∞ at r = 0"});else txt(id==="h1"?"r: h⁽¹⁾ converges (comes IN)":"r: standing = in + out");}
+    else if(v==="θ"){const z=S.region==="out"?p.rmax:1;out.push({k:"inf",at:[0,z+0.02,0],t:"∞ at θ = 0, π"},{k:"inf",at:[0,-z-0.02,0],t:""});}
+    else if(v==="φ")out.push({k:"seam",t:"φ: jump at 2π"});
+    else if(v==="z"){if(p.closed)txt(id==="em"||id==="ep"?"z: closed cavity ⇒ standing":"z: wrong end-wall condition");else txt(id==="ep"?"z: e^{+jβz} runs toward −z":"z: open guide ⇒ traveling");}
+    else out.push({k:"wall",t:id==="em"?`${v}: nonzero on the walls`:`${v}: wrong wall condition`});});return out;};
+  const cv=el.querySelector("canvas");let res=null,tB=null;
+  const dash=(S3,on)=>{const c=S3.c();c.setLineDash(on?[c.px(4),c.px(4)]:[]);};
+  const ring=(S3,r,h,col,w,fill)=>{const q=[];for(let k=0;k<=48;k++){const f=2*PI*k/48;q.push([r*Math.cos(f),h,r*Math.sin(f)]);}S3.poly(q,col,w,true,fill);};
+  const S3=ctx.scene3d(cv,900,560,(S3,t)=>{const c=S3.c();const W="rgba(201,206,218,.5)";
+    // geometry
+    if(S.geo==="rect"){const a=p.a/2,b=p.b/2,L=p.L/2;const V=[[-L,-b,-a],[L,-b,-a],[L,b,-a],[-L,b,-a],[-L,-b,a],[L,-b,a],[L,b,a],[-L,b,a]];
+      [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([i,j])=>S3.line(V[i],V[j],W,1.3));
+      S3.poly([V[0],V[1],V[5],V[4]],null,1,true,"rgba(201,206,218,.05)");
+      if(p.closed){S3.poly([V[0],V[3],V[7],V[4]],null,1,true,"rgba(201,206,218,.10)");S3.poly([V[1],V[2],V[6],V[5]],null,1,true,"rgba(201,206,218,.10)");}
+      else{S3.arrow([L,0,0],[L+0.75,0,0],"#FF9F5A",2.2,9);S3.text([L+0.82,0.05,0],"+z","#FF9F5A",13,700);}
+      S3.text([-L,-b-0.22,-a],"x=0","#8A90A2",11,600);S3.text([-L,-b-0.22,a],"x=a","#8A90A2",11,600);S3.text([-L-0.05,b+0.12,-a],"y=b","#8A90A2",11,600);
+      if(p.closed){S3.text([-L-0.2,-b-0.45,0],"z=0","#8A90A2",11,600);S3.text([L,-b-0.45,0],"z=c","#8A90A2",11,600);}}
+    if(S.geo==="cyl"){const H=1.35;
+      if(S.region==="in"){ring(S3,1,-H,W,1.3);ring(S3,1,H,W,1.3);[0,PI/2,PI,1.5*PI].forEach(f=>S3.line([Math.cos(f),-H,Math.sin(f)],[Math.cos(f),H,Math.sin(f)],"rgba(201,206,218,.25)",1));dash(S3,true);S3.line([0,-H-0.2,0],[0,H+0.2,0],"rgba(255,159,90,.7)",1.3);dash(S3,false);S3.text([0.06,-H-0.32,0],"axis ρ = 0","#FF9F5A",11,650);}
+      if(S.region==="coax"){ring(S3,p.b,-H,W,1.3);ring(S3,p.b,H,W,1.3);ring(S3,p.a,-H,W,1.3,"rgba(201,206,218,.12)");ring(S3,p.a,H,W,1.3,"rgba(201,206,218,.22)");
+        [0,PI/2,PI,1.5*PI].forEach(f=>{S3.line([p.b*Math.cos(f),-H,p.b*Math.sin(f)],[p.b*Math.cos(f),H,p.b*Math.sin(f)],"rgba(201,206,218,.22)",1);S3.line([p.a*Math.cos(f),-H,p.a*Math.sin(f)],[p.a*Math.cos(f),H,p.a*Math.sin(f)],"rgba(201,206,218,.5)",1.2);});
+        S3.text([p.a+0.02,-H-0.25,0],"a","#8A90A2",11,600);S3.text([p.b+0.02,-H-0.25,0],"b","#8A90A2",11,600);}
+      if(S.region==="out"){ring(S3,1,-H,W,1.4,"rgba(201,206,218,.10)");ring(S3,1,H,W,1.4,"rgba(201,206,218,.18)");[0,PI/2,PI,1.5*PI].forEach(f=>S3.line([Math.cos(f),-H,Math.sin(f)],[Math.cos(f),H,Math.sin(f)],"rgba(201,206,218,.5)",1.2));
+        dash(S3,true);ring(S3,p.rmax+0.15,-0.5,"rgba(201,206,218,.18)",1);dash(S3,false);S3.text([p.rmax+0.1,-0.5,0],"→ ∞","#8A90A2",12,700);}
+      S3.arrow([0,H+0.1,0],[0,H+0.7,0],"#FF9F5A",2.2,9);S3.text([0.08,H+0.75,0],"+z","#FF9F5A",13,700);}
+    if(S.geo==="sph"){const r=1;ring(S3,r,0,W,1.3);const mer=f=>{const q=[];for(let k=0;k<=48;k++){const th=PI*k/24;q.push([r*Math.sin(th)*Math.cos(f),r*Math.cos(th),r*Math.sin(th)*Math.sin(f)]);}S3.poly(q,"rgba(201,206,218,.35)",1.1);};mer(0);mer(PI/2);
+      if(S.region==="out"){S3.dot([0,0,0],"rgba(255,159,90,.9)",4);S3.text([0.08,-0.1,0],"source","#FF9F5A",11,650);S3.text([p.rmax*0.72,p.rmax*0.72,0],"→ ∞","#8A90A2",12,700);}
+      else{S3.dot([0,0,0],"rgba(255,159,90,.9)",3);S3.text([0.06,-0.14,0],"r = 0","#FF9F5A",11,650);}
+      dash(S3,true);const zt=S.region==="out"?p.rmax+0.15:1.25;S3.line([0,-zt,0],[0,zt,0],"rgba(255,159,90,.55)",1.2);dash(S3,false);S3.text([0.05,zt+0.08,0],"θ = 0","#FF9F5A",11,650);S3.text([0.05,-zt-0.16,0],"θ = π","#FF9F5A",11,650);}
+    // field dots
+    if(!built){pts.forEach(q=>S3.dot(q.w,"rgba(138,144,162,.28)",1.6));}
+    else{if(tB==null)tB=t;const grow=Math.min(1,(t-tB)/0.6);const wt=3*t;const cw=Math.cos(wt),sw=Math.sin(wt);
+      // painter: far first
+      const order=pts.map((q,i)=>[S3.P(...q.w)[3],i]).sort((a,b)=>b[0]-a[0]);
+      order.forEach(([,i])=>{const v=F[i];let re=(v[0]*cw-v[1]*sw)/norm;if(!isFinite(re))re=Math.sign(v[0])||1;const a=Math.min(1,Math.abs(re))*grow;
+        const col=re>=0?`rgba(79,200,216,${0.18+0.82*a})`:`rgba(199,182,255,${0.18+0.82*a})`;S3.dot(pts[i].w,col,1+(S.region==="out"?3.4:4.6)*a);});
+      if(grow>=1&&res){const fl=flags();let ty=c.px(36);const pulse=0.6+0.4*Math.sin(6*t);
+        fl.forEach(f=>{if(f.k==="inf"){S3.dot(f.at,`rgba(242,102,138,${0.5*pulse})`,14);S3.dot(f.at,"#F2668A",4);if(f.t)S3.text([f.at[0]+0.1,f.at[1]+0.05,f.at[2]],f.t,"#F2668A",12,800);}
+          else if(f.k==="seam"){const R=S.geo==="sph"?(p.rmax):p.rmax;S3.line([p.rmin,S.geo==="cyl"?0.37:0,0],[R+0.1,S.geo==="cyl"?0.37:0,0],`rgba(242,102,138,${pulse})`,3);S3.text([R+0.15,0.05,0],f.t,"#F2668A",12,800);}
+          else if(f.k==="wall"&&S.geo==="rect"){const a=p.a/2,b=p.b/2,L=p.L/2;const side=f.t[0]==="x"?[[[-L,-b,-a],[L,-b,-a],[L,b,-a],[-L,b,-a]],[[-L,-b,a],[L,-b,a],[L,b,a],[-L,b,a]]]:[[[-L,-b,-a],[L,-b,-a],[L,-b,a],[-L,-b,a]],[[-L,b,-a],[L,b,-a],[L,b,a],[-L,b,a]]];
+            side.forEach(q=>S3.poly(q,`rgba(242,102,138,${pulse})`,2,true,`rgba(242,102,138,${0.08*pulse})`));c.font=`800 ${c.px(12)}px ui-monospace,Menlo,monospace`;c.fillStyle="#F2668A";c.fillText(f.t,c.px(10),ty);ty+=c.px(17);}
+          else{c.font=`800 ${c.px(12)}px ui-monospace,Menlo,monospace`;c.fillStyle="#F2668A";c.fillText(f.t,c.px(10),ty);ty+=c.px(17);}});
+        c.font=`800 ${c.px(15)}px ui-monospace,Menlo,monospace`;const ok=res.s>=0.7;c.fillStyle=ok?"#78D58C":"#F2668A";const msg=ok?"PHYSICAL ✓":"UNPHYSICAL";c.fillText(msg,S3.LW-c.measureText(msg).width-c.px(10),c.px(22));}}
+    c.font=`700 ${c.px(11)}px ui-monospace,Menlo,monospace`;c.fillStyle="#8A90A2";c.fillText(built?"Re{ψe^{jωt}}: ● +  ● −":"region (field not built yet)",c.px(10),c.px(16));if(built){c.fillStyle="#4FC8D8";c.fillText("●",c.px(10)+c.measureText("Re{ψe^{jωt}}: ").width,c.px(16));c.fillStyle="#C7B6FF";c.fillText("●",c.px(10)+c.measureText("Re{ψe^{jωt}}: ● +  ").width,c.px(16));}
+  },{yaw:S.geo==="rect"?-0.55:-0.5,pitch:S.geo==="sph"?0.18:S.geo==="cyl"?0.3:0.38,dist:S.geo==="rect"?6.5:7,scale:S.geo==="rect"?132:S.geo==="sph"?(S.region==="out"?86:185):(S.region==="out"?98:160),auto:false,dy:S.geo==="cyl"?18:0});
+  el.querySelector("[data-fire]").onclick=()=>{if(built)return;const miss=ch.findIndex(x=>!x);if(miss>=0){ctx.sfx.miss();const r=el.querySelector(`[data-row="${miss}"]`);r.classList.add("shake");setTimeout(()=>r.classList.remove("shake"),300);return;}
+    built=true;evalAll();res=grade(S,ch);ctx.sfx.tap();el.querySelector("[data-fire]").disabled=true;
+    el.querySelectorAll("[data-row]").forEach((row,i)=>{const ok=S.rows[i][2];row.querySelectorAll("[data-o]").forEach(b=>{if(b.getAttribute("aria-pressed")==="true")b.style.boxShadow=`inset 0 0 0 2px ${ok.includes(b.dataset.o)?"#78D58C":"#F2668A"}`;else if(ok.includes(b.dataset.o))b.style.boxShadow="inset 0 0 0 1px #78D58C88";});});
+    const right=S.rows.map(([v,opts,ok])=>opts.find(x=>x.id===ok[0]).tex).join("\\;");
+    const d=`${res.s>=0.7?"<b>Physical.</b>":"<b>Not physical.</b>"} Prather's build: ${ctx.M(`$${nameTex}=${right}$`)}${res.lines.join("")}`;
+    S3.cam.auto=true;setTimeout(()=>fin(res.s,d),900);};}
+};
+})(window.MXG);
 </script>
 <script>/* MAXWELL app. Rendering and logic only; all course content lives in window.MAXWELL_DATA. */
 (function(){
@@ -754,6 +2212,7 @@ function queue(){const q=[],used=new Set();let t=0;const cap=15;
 
 /* ---------------- UI chrome ---------------- */
 const ICON={
+ play:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="13.5" r=".6" fill="currentColor"/></svg>',
  today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
  learn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c2.2-5 4.4-5 6.6 0s4.4 5 6.6 0 3.3-3.4 4.8-2"/></svg>',
  drill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg>',
@@ -765,8 +2224,8 @@ const ICON={
  back:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg>',
  gear:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
  search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>'};
-const TABS=[["today","Today"],["learn","Learn"],["drill","Drill"],["vault","Vault"],["exam","Exam"]];
-let NAV={tab:"today",stack:[]};   // stack of {v:viewName, ...params}
+const TABS=[["play","Play"],["learn","Learn"],["drill","Drill"],["vault","Vault"],["exam","Exam"]];
+let NAV={tab:"play",stack:[]};   // stack of {v:viewName, ...params}
 let SESSION=null, EXAM=null, keyHandler=null;
 
 function chrome(){document.body.innerHTML=`
@@ -776,12 +2235,12 @@ function chrome(){document.body.innerHTML=`
  <main id="main"></main>
  <nav class="tabs" id="tabs" aria-label="Sections">${TABS.map(([k,l])=>`<button data-tab="${k}">${ICON[k]}<span>${l}</span></button>`).join("")}</nav>`;
  $("#tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)go(b.dataset.tab);});
- $("#back").addEventListener("click",back);$("#home").addEventListener("click",()=>go("today"));$("#gear").addEventListener("click",settings);
+ $("#back").addEventListener("click",back);$("#home").addEventListener("click",()=>go("play"));$("#gear").addEventListener("click",settings);
  addEventListener("scroll",()=>$("#top").classList.toggle("scrolled",scrollY>4),{passive:true});
  document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea"))return;if(keyHandler&&keyHandler(e)){e.preventDefault();}});}
 function go(tab){NAV={tab,stack:[]};SESSION=null;if(tab!=="exam")EXAM=null;render();scrollTo(0,0);}
 function push(v){NAV.stack.push(v);render();scrollTo(0,0);}
-function back(){if(NAV.stack.length){NAV.stack.pop();SESSION=null;render();scrollTo(0,0);}else go(NAV.tab==="today"?"today":NAV.tab);}
+function back(){if(NAV.stack.length){NAV.stack.pop();SESSION=null;render();scrollTo(0,0);}else go(NAV.tab);}
 function render(){W8.stopAll();keyHandler=null;const top=NAV.stack[NAV.stack.length-1];
   $$("#tabs [data-tab]").forEach(b=>b.setAttribute("aria-current",b.dataset.tab===NAV.tab?"page":"false"));
   document.body.classList.toggle("has-back",!!top);
@@ -803,8 +2262,8 @@ function settings(){sheet(`<span class="lab">Backup</span><p class="mut">Progres
   <button class="btn ghost block" data-x="reset" style="color:var(--bad)">Reset all progress</button>`,(sh,close)=>{
   sh.addEventListener("click",e=>{const x=e.target.closest("[data-x]");if(!x)return;
     if(x.dataset.x==="exp"){const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`maxwell-backup-${dkey()}.json`;document.body.appendChild(a);a.click();a.remove();toast("↓","Backup exported");}
-    if(x.dataset.x==="reset"){if(x.dataset.sure){S=fresh();save();close();go("today");toast("↺","Progress reset");}else{x.dataset.sure=1;x.textContent="Tap again to erase everything";}}});
-  sh.querySelector("input[type=file]").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(o.v!==1)throw 0;S=Object.assign(fresh(),o);save();close();go("today");toast("↑","Backup restored");}catch(err){toast("!","That file isn't a MAXWELL backup");}});});}
+    if(x.dataset.x==="reset"){if(x.dataset.sure){S=fresh();save();close();go("play");toast("↺","Progress reset");}else{x.dataset.sure=1;x.textContent="Tap again to erase everything";}}});
+  sh.querySelector("input[type=file]").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(o.v!==1)throw 0;S=Object.assign(fresh(),o);save();close();go("play");toast("↑","Backup restored");}catch(err){toast("!","That file isn't a MAXWELL backup");}});});}
 
 /* ---------------- shared bits ---------------- */
 function ringSVG(p,col,size){const r=28,C=2*Math.PI*r;return `<span class="rp"><svg viewBox="0 0 68 68" style="width:${size||68}px;height:${size||68}px"><circle class="trk" cx="34" cy="34" r="${r}"/><circle class="val" cx="34" cy="34" r="${r}" stroke="${col}" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${C*(1-p/100)}"/></svg><b>${p}</b></span>`;}
@@ -1003,12 +2462,13 @@ function examReview(v){const E=EXAM;const T=Object.assign({},...CH.map(c=>c.topi
     ${!ok?`<p style="margin:6px 0 0;color:var(--bad);font-size:14px">You: ${a?TX(opts[a.pick][0]):"no answer"}</p>`:""}<p style="margin:4px 0 0;color:var(--good);font-size:14px">Answer: ${TX(opts[it.o.a][0])}</p><p class="mut" style="font-size:14px;margin:4px 0 0">${TX(it.kind==="fm"?it.o.opts[it.o.a][1]:it.o.why)}</p></div></div></div>`;}).join("")}
   <div class="grid2"><button class="btn" data-again>New exam</button><button class="btn cta" data-home>Done</button></div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>$$("[data-w]",v).forEach(i=>i.style.width=i.dataset.w+"%")));
-  v.addEventListener("click",e=>{if(e.target.closest("[data-again]")){EXAM=null;render();}if(e.target.closest("[data-home]")){EXAM=null;go("today");}});}
+  v.addEventListener("click",e=>{if(e.target.closest("[data-again]")){EXAM=null;render();}if(e.target.closest("[data-home]")){EXAM=null;go("play");}});}
 
 /* ---------------- boot ---------------- */
+if(window.__MXGAME)window.__MXGAME({get S(){return S;},save,ITEMS,ORDER,CH,grade,M,TX,tex,block,stepsHTML,esc,$,$$,push,go,back,render,VIEWS,toast,confetti,award,ringSVG,animateRings,setAcc,chOf,mastery,shuffle,markDay,order,ICON,get NAV(){return NAV;},setKey:f=>{keyHandler=f;},queue,troubleIds,streak,nextEvent,until,itemTitle,RM});
 chrome();render();fitObs.observe(document.body,{childList:true,subtree:true});let rzT;addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(()=>{$$(".mathbox[data-fit]").forEach(b=>{delete b.dataset.fit;b.innerHTML=tex(b.dataset.t,true);});fitMath(document);},200);});
 if(/^https?:/.test(location.protocol)&&"serviceWorker" in navigator&&window.self===window.top){navigator.serviceWorker.register("sw.js").catch(()=>{});}
-setInterval(()=>{if(NAV.tab==="today"&&!NAV.stack.length&&!document.hidden)render();},60000);
+setInterval(()=>{if(NAV.tab==="play"&&!NAV.stack.length&&!document.hidden&&!document.querySelector(".battle"))render();},60000);
 window.MAXWELL={state:()=>S,items:ITEMS};
 })();
 </script>

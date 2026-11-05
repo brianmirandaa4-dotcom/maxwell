@@ -1,4 +1,4 @@
-const V="maxwell-202611051416";const CORE=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","katex.min.js","data.js"];
+const V="maxwell-202611051505";const CORE=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","katex.min.js","data.js"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 // Network-first for everything on this origin (so new content shows up right away), cache fallback when offline.

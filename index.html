@@ -2571,6 +2571,294 @@ L.push({id:"1.2",like:2,min:12,why:"Six laws to convert. The ideas are quick (St
 G.hw.ch1=L;
 })(window.MXG);
 
+/* QUIZ ARENA · HW 10 = "Chapter 11: Lecture Notes" (scattering, L17 with the L15 motivation and the L18 recap).
+   There are no textbook problems, so each game is a lectured example or procedure from content/ch11.js (lessons 11.1–11.8,
+   Examples 6-4 and 6-6). Example 6-5 is on the slides but was never lectured, so it ranks last (like 1). The near-field
+   equations (11.10) were never lectured either and get no game. Every number is computed from the params with the real
+   formulas: λ = c/f (λ[cm] = 30/f[GHz]), X = (βa/2)sinθcosφ, Y = (βb/2)sinθsinφ, first null sinθ = λ/d,
+   |C| = βabE0/(2πr) = abE0/(λr), R_ff = 2D²/λ, J1 first zero 3.8317, η0 = 120π. Ordering = estimated quiz likelihood. */
+(function(G){const U=G.hwU,{C0,ETA0,pick}=U,f=U.f3;const R=String.raw,PI=Math.PI;
+const D2R=PI/180,R2D=180/PI,asind=x=>Math.asin(x)*R2D,sinc=x=>Math.abs(x)<1e-9?1:Math.sin(x)/x;
+const lamcm=fG=>30/fG;                                    // λ in cm for f in GHz (c = 3e8)
+const FREQS=[5,6,10,12,15];                               // λ = 6, 5, 3, 2.5, 2 cm
+const two=(A,B)=>{const a=pick(A);let b=pick(B);while(b===a)b=pick(B);return[a,b];};
+const L=[];
+
+/* ---- 11.A E- and H-plane first nulls ---- */
+L.push({id:"11.A",like:5,min:8,tag:"E/H-plane first nulls · Fig. 6-7",
+ why:R`The one number he drew on the board for Example 6-4: $a=3\lambda$, $b=2\lambda$, which plane is narrower and where its null sits. One arcsine per plane, the cleanest quiz in the chapter.`,
+ pic:R`The aperture is a rect in space, so its far field is a sinc in angle. Slice through the plane containing $\mathbf E_a$ and only $b$ matters; slice the other way and only $a$ matters. The wider side gives the narrower beam.`,
+ trap:R`Pairing the E-plane with $a$ (the E-plane contains $\mathbf E_a=\hat yE_0$, so it is $\phi=90^\circ$ and uses $b$), or dropping the ½ in the sinc argument and getting $\sin\theta=\lambda/2d$.`,
+ orig:{f:10,a:9,b:6},
+ gen(){const fG=pick(FREQS),l=lamcm(fG);const [ra,rb]=two([1.5,2,2.5,3,4,5],[1.25,1.5,2,2.5,3]);return{f:fG,a:+(ra*l).toFixed(2),b:+(rb*l).toFixed(2)};},
+ st:p=>R`A rectangular aperture (not on a ground plane) lies in the $xy$-plane with $a=${p.a}$ cm along $x$ and $b=${p.b}$ cm along $y$, and carries the uniform field of Example 6-4, $\mathbf E_a=\hat a_yE_0$, $\mathbf H_a=-\hat a_xE_0/\eta$. At ${p.f} GHz find: (a) the wavelength; (b) the first null of the E-plane pattern; (c) the first null of the H-plane pattern (angles from broadside, the $z$ axis); (d) which plane has the narrower main beam.`,
+ first:{ok:R`Name the planes first: the E-plane contains $\mathbf E_a$ ($\hat y$), so it's $\phi=90^\circ$ and its sinc uses $b$; the H-plane is $\phi=0^\circ$ and uses $a$. Then set each sinc argument to $\pi$.`,
+   bad:[R`Set $\beta a\sin\theta=\pi$ in both planes, since $a$ is the long side.`,R`The E-plane is $\phi=0^\circ$ (the $xz$-plane), so it uses $a$.`]},
+ solve(p){const l=lamcm(p.f),tE=asind(l/p.b),tH=asind(l/p.a),nar=p.a>p.b?0:1;
+  const st=[["Which plane is which",R`\text{E-plane}:\ \phi=90^\circ\ (yz),\ \ \frac{\sin\left(\frac{\beta b}{2}\sin\theta\right)}{\frac{\beta b}{2}\sin\theta};\qquad \text{H-plane}:\ \phi=0^\circ\ (xz),\ \ \frac{\sin\left(\frac{\beta a}{2}\sin\theta\right)}{\frac{\beta a}{2}\sin\theta}`,R`At $\phi=90^\circ$, $X=0$ and that sinc is 1 (L'Hôpital). The other dimension drops out.`,R`The E-plane contains $\mathbf E_a$.`],
+   ["(a) Wavelength",R`\lambda=\frac{c}{f}=\frac{3\times10^{10}\ \text{cm/s}}{${p.f}\times10^9}=${f(l)}\ \text{cm}`,R`So $a=${f(p.a/l)}\lambda$, $b=${f(p.b/l)}\lambda$.`,R`$\lambda[\text{cm}]=30/f[\text{GHz}]$.`],
+   ["(b) E-plane null",R`\frac{\beta b}{2}\sin\theta=\pi\ \Rightarrow\ \sin\theta=\frac{\lambda}{b}=\frac{${f(l)}}{${p.b}}=${f(l/p.b)}\ \Rightarrow\ \theta=${f(tE)}^\circ`,"",R`$\frac{\beta b}{2}=\frac{\pi b}{\lambda}$, so the null is at $\sin\theta=\lambda/b$.`],
+   ["(c) H-plane null",R`\sin\theta=\frac{\lambda}{a}=\frac{${f(l)}}{${p.a}}=${f(l/p.a)}\ \Rightarrow\ \theta=${f(tH)}^\circ`,"",R`Same formula with $a$.`],
+   ["(d) Narrower beam",R`${p.a>p.b?R`a>b\ \Rightarrow\ \theta_H<\theta_E:\ \text{the H-plane beam is narrower}`:R`b>a\ \Rightarrow\ \theta_E<\theta_H:\ \text{the E-plane beam is narrower}`}`,"Bigger aperture in wavelengths, narrower beam: a short pulse has a wide spectrum, and vice versa.",""]];
+  return{steps:st,stages:[
+   {q:R`The E-plane cut for $\mathbf E_a=\hat yE_0$ is:`,opts:[R`$\phi=90^\circ$ (the $yz$-plane), and its pattern depends only on $b$`,R`$\phi=0^\circ$ (the $xz$-plane), and its pattern depends only on $a$`,R`$\phi=90^\circ$, and its pattern depends only on $a$`],a:0,s:0,why:R`The E-plane contains $\mathbf E_a$ and the $z$ axis. At $\phi=90^\circ$ the $x$-sinc is 1, so only $b$ survives.`},
+   {k:"(a) λ",q:"(a) Wavelength?",u:R`\text{cm}`,v:l,s:1},
+   {k:"(b) θ_E",q:"(b) First null of the E-plane pattern?",u:R`^\circ`,v:tE,s:2},
+   {k:"(c) θ_H",q:"(c) First null of the H-plane pattern?",u:R`^\circ`,v:tH,s:3},
+   {q:"(d) Which plane has the narrower main beam?",opts:[R`The H-plane ($\phi=0^\circ$)`,R`The E-plane ($\phi=90^\circ$)`,"They are the same"],a:nar,s:4,why:p.a>p.b?R`$a>b$, so the H-plane null comes first: the wider side gives the narrower beam.`:R`$b>a$, so the E-plane null comes first: the wider side gives the narrower beam.`}]};}});
+
+/* ---- 11.B equivalent currents ---- */
+L.push({id:"11.B",like:5,min:6,tag:"equivalence principle · image theory",
+ why:R`Step one of every scattering problem, and his most-repeated rule: tangential H gives $\mathbf J_s$, tangential E gives $\mathbf M_s$, and a ground plane doubles $\mathbf M_s$ and kills $\mathbf J_s$. Short, all setup, easy to ask.`,
+ pic:R`Fields in an opening are replaced by the currents that would produce them. Off a ground plane both currents radiate; on an infinite PEC the image of $\mathbf J_s$ cancels it and the image of $\mathbf M_s$ doubles it.`,
+ trap:R`The minus in $\mathbf M_s=-\hat n\times\mathbf E_a$, and using the ground-plane rule ($-2\hat n\times\mathbf E_a$, no $\mathbf J_s$) on an aperture that is not on a ground plane, or the reverse.`,
+ orig:{pol:"y",E0:10},
+ gen(){return{pol:pick(["x","y"]),E0:pick([1,2,5,10,20,50])};},
+ st:p=>{const E=p.pol==="y"?R`\hat a_yE_0`:R`\hat a_xE_0`,H=p.pol==="y"?R`-\hat a_x\frac{E_0}{\eta}`:R`\hat a_y\frac{E_0}{\eta}`;
+  return R`An aperture in the $xy$-plane radiates into $z>0$ ($\hat n=\hat z$) with the uniform fields $\mathbf E_a=${E}$, $\mathbf H_a=${H}$ (free space). (a) With no ground plane, what equivalent currents replace the opening? (b) Repeat with the aperture cut in an infinite PEC ground plane. <i>(MAXWELL adds: $E_0=${p.E0}$ V/m.)</i>`;},
+ first:{ok:R`Equivalence: $\mathbf J_s=\hat n\times\mathbf H_a$ and $\mathbf M_s=-\hat n\times\mathbf E_a$ over the opening, zero elsewhere, with $\hat n=\hat z$.`,
+   bad:[R`$\mathbf M_s=-2\hat n\times\mathbf E_a$ and $\mathbf J_s=0$; every aperture is treated that way.`,R`Integrate $\mathbf E_a$ directly with $e^{-j\beta R}/R$; the fields are already the sources.`]},
+ solve(p){const y=p.pol==="y",J=-p.E0/ETA0*1000,M2=(y?1:-1)*2*p.E0;
+  const Ms=y?R`-\hat z\times\hat yE_0=+\hat xE_0`:R`-\hat z\times\hat xE_0=-\hat yE_0`,Js=y?R`\hat z\times\left(-\hat x\frac{E_0}{\eta}\right)=-\hat y\frac{E_0}{\eta}`:R`\hat z\times\hat y\frac{E_0}{\eta}=-\hat x\frac{E_0}{\eta}`;
+  const jc=y?"y":"x",mc=y?"x":"y";
+  const st=[["Equivalence (no ground plane)",R`\mathbf J_s=\hat n\times\mathbf H_a,\qquad \mathbf M_s=-\hat n\times\mathbf E_a\qquad(\text{over the opening only})`,"Tangential H gives an electric current, tangential E a magnetic one.",""],
+   ["(a) Magnetic current",R`\mathbf M_s=${Ms}`,y?R`$-\hat z\times\hat y=+\hat x$: $E_y$ gives $M_x$, exactly his Example 6-4.`:R`$-\hat z\times\hat x=-\hat y$.`,R`Cross $\hat z$ into $\mathbf E_a$, then flip the sign.`],
+   ["(a) Electric current",R`\mathbf J_s=${Js}\ \Rightarrow\ J_${jc}=-\frac{${p.E0}}{120\pi}=${f(J)}\ \text{mA/m}`,"Note $\\mathbf J_s=-\\mathbf E_a/\\eta$ here: the sign survives.",R`$\hat z\times\mathbf H_a$, then divide $E_0$ by $\eta_0=377\ \Omega$.`],
+   ["(b) On an infinite PEC ground plane",R`\mathbf J_s=0,\qquad \mathbf M_s=-2\hat n\times\mathbf E_a\ \Rightarrow\ M_${mc}=${f(M2)}\ \text{V/m}`,"Image theory: the image of a tangential J on a PEC cancels it, the image of a tangential M doubles it.",R`Twice the (a) magnetic current, and no electric current.`]];
+  return{steps:st,stages:[
+   {q:R`(a) The magnetic current $\mathbf M_s$ over the opening is:`,opts:y?[R`$+\hat xE_0$`,R`$-\hat xE_0$`,R`$+\hat yE_0$`]:[R`$-\hat yE_0$`,R`$+\hat yE_0$`,R`$+\hat xE_0$`],a:0,s:1,why:y?R`$-\hat z\times\hat y=+\hat x$.`:R`$-\hat z\times\hat x=-\hat y$.`},
+   {k:`(a) J_${jc}`,q:`(a) Signed electric current component $J_${jc}$ (no ground plane)?`,u:R`\text{mA/m}`,v:J,s:2,hint:R`$\mathbf J_s=\hat z\times\mathbf H_a$. Mind the sign, then $E_0/\eta_0$ with $\eta_0=120\pi$.`},
+   {q:"(b) Now the aperture sits in an infinite PEC ground plane. The sources become:",opts:[R`$\mathbf M_s=-2\hat n\times\mathbf E_a$, $\mathbf J_s=0$`,R`The same $\mathbf J_s$ and $\mathbf M_s$ as in (a)`,R`$\mathbf J_s=2\hat n\times\mathbf H_a$, $\mathbf M_s=0$`],a:0,s:3,why:"Image theory on a PEC: tangential J is cancelled by its image, tangential M is doubled."},
+   {k:`(b) M_${mc}`,q:`(b) Signed magnetic current component $M_${mc}$ on the ground plane?`,u:R`\text{V/m}`,v:M2,s:3}]};}});
+
+/* ---- 11.C far field from N and L, with numbers ---- */
+L.push({id:"11.C",like:4,min:12,tag:"(6-122) far fields · Example 6-4 numbers",
+ why:R`Example 6-4's answer put to work: check the far-field distance, then read field strength off $E_\theta=\frac C2\sin\phi(1+\cos\theta)\frac{\sin X}{X}\frac{\sin Y}{Y}$. Uses the L17 far-field condition and the summary formulas.`,
+ pic:R`Once you have $\mathbf N$ and $\mathbf L$, the far field is bookkeeping: $E_\theta$ pairs $N_\theta$ with $L_\phi$, $E_\phi$ pairs $N_\phi$ with $L_\theta$. On axis everything adds up to $|C|=\frac{abE_0}{\lambda r}$.`,
+ trap:R`Pairing $L_\theta$ with $E_\theta$, using the long side instead of the diagonal for $D$ in $2D^2/\lambda$, or forgetting $(1+\cos\theta)/2$ off axis.`,
+ orig:{f:10,a:9,b:6,E0:10,r:5,th:15},
+ gen(){for(;;){const fG=pick(FREQS),l=lamcm(fG);const [ra,rb]=two([2,2.5,3,4],[1.5,2,2.5,3]);const a=+(ra*l).toFixed(2),b=+(rb*l).toFixed(2);
+   const Rff=2*(a*a+b*b)/l/100;const r=Math.ceil(Rff*pick([2,3,4]));const th=pick([5,10,15,20,25]);const Y=PI*b/l*Math.sin(th*D2R);if(Math.abs(sinc(Y))>0.12)return{f:fG,a,b,E0:pick([1,5,10,20]),r,th};}},
+ st:p=>R`The Example 6-4 aperture ($a=${p.a}$ cm along $x$, $b=${p.b}$ cm along $y$, $\mathbf E_a=\hat a_yE_0$, $E_0=${p.E0}$ V/m, no ground plane) radiates at ${p.f} GHz. You have $N_\theta,N_\phi,L_\theta,L_\phi$. (a) Write $E_\theta$ and $E_\phi$ from them. (b) What is the minimum far-field distance? (c) At $r=${p.r}$ m, find $|\mathbf E|$ on axis. (d) Find $|E_\theta|$ at $r=${p.r}$ m in the E-plane at $\theta=${p.th}^\circ$.`,
+ first:{ok:R`Use the summary (6-122): $E_\theta\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\phi+\eta N_\theta)$. For Example 6-4 that collapses to $\frac C2\sin\phi(1+\cos\theta)\frac{\sin X}{X}\frac{\sin Y}{Y}$ with $|C|=\frac{\beta abE_0}{2\pi r}$.`,
+   bad:[R`$E_\theta\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\theta+\eta N_\theta)$: each component pairs with its own.`,R`$E_\theta\simeq-j\omega N_\theta$, and drop $\mathbf L$ because it's magnetic.`]},
+ solve(p){const l=lamcm(p.f),lm=l/100,D=Math.hypot(p.a,p.b),Rff=2*D*D/l/100,C=(p.a/100)*(p.b/100)*p.E0/(lm*p.r),Y=PI*p.b/l*Math.sin(p.th*D2R),ob=(1+Math.cos(p.th*D2R))/2,Et=C*ob*Math.abs(sinc(Y));
+  const st=[["(a) Summary (6-122b)",R`E_\theta\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}\left(L_\phi+\eta N_\theta\right)=\frac C2\sin\phi(1+\cos\theta)\frac{\sin X}{X}\frac{\sin Y}{Y},\quad C=j\frac{\beta abE_0e^{-j\beta r}}{2\pi r}`,R`$L_\phi=-abE_0\sin\phi\,S$ and $\eta N_\theta=-abE_0\cos\theta\sin\phi\,S$ add, which is where $(1+\cos\theta)$ comes from.`,""],
+   ["(b) Far-field distance",R`\lambda=${f(l)}\ \text{cm},\quad D=\sqrt{a^2+b^2}=${f(D)}\ \text{cm},\quad R_{ff}=\frac{2D^2}{\lambda}=\frac{2(${f(D*D)})}{${f(l)}}=${f(Rff*100)}\ \text{cm}=${f(Rff)}\ \text{m}`,R`$r=${p.r}$ m is past it, so (6-122) holds.`,R`$D$ is the diagonal, the largest dimension.`],
+   ["(c) On axis",R`|\mathbf E(\theta=0)|=|C|=\frac{\beta abE_0}{2\pi r}=\frac{abE_0}{\lambda r}=\frac{(${f(p.a/100)})(${f(p.b/100)})(${p.E0})}{(${f(lm)})(${p.r})}=${f(C*1000)}\ \text{mV/m}`,R`At $\theta=0$: $(1+\cos\theta)/2=1$ and both sincs are 1.`,R`$\beta/2\pi=1/\lambda$, so $|C|=abE_0/(\lambda r)$ in meters.`],
+   ["(d) E-plane, off axis",R`\phi=90^\circ:\ Y=\frac{\pi b}{\lambda}\sin\theta=${f(Y)},\quad |E_\theta|=|C|\frac{1+\cos\theta}{2}\left|\frac{\sin Y}{Y}\right|=${f(C*1000)}(${f(ob)})(${f(Math.abs(sinc(Y)))})=${f(Et*1000)}\ \text{mV/m}`,R`$X=0$ in this plane, so that sinc is 1.`,R`E-plane uses $b$; keep the $(1+\cos\theta)/2$ obliquity factor.`]];
+  return{steps:st,stages:[
+   {q:R`(a) Which pairing gives $E_\phi$?`,opts:[R`$E_\phi\simeq+\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\theta-\eta N_\phi)$`,R`$E_\phi\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\phi+\eta N_\phi)$`,R`$E_\phi\simeq+\frac{j\beta e^{-j\beta r}}{4\pi r}(L_\phi-\eta N_\theta)$`],a:0,s:0,why:R`Cross-pairing: $E_\theta$ goes with $(L_\phi,N_\theta)$, $E_\phi$ with $(L_\theta,N_\phi)$. Derivation gives $+j$ (one L17 slide misprints $-j$).`},
+   {k:"(b) R_ff",q:"(b) Minimum far-field distance $2D^2/\\lambda$?",u:R`\text{m}`,v:Rff,s:1},
+   {k:"(c) |E| axis",q:`(c) $|\\mathbf E|$ on axis at $r=${p.r}$ m?`,u:R`\text{mV/m}`,v:C*1000,s:2},
+   {k:"(d) |E_θ|",q:`(d) $|E_\\theta|$ in the E-plane at $\\theta=${p.th}^\\circ$, $r=${p.r}$ m?`,u:R`\text{mV/m}`,v:Et*1000,s:3},
+   {q:R`And $H_\phi$ out there is:`,opts:[R`$E_\theta/\eta$`,R`$-E_\theta/\eta$`,R`$E_\phi/\eta$`],a:0,s:0,why:R`Far field is a local plane wave going out along $\hat r$: $\hat a_\theta\times\hat a_\phi=\hat a_r$, so $H_\phi=E_\theta/\eta$ and $H_\theta=-E_\phi/\eta$.`}]};}});
+
+/* ---- 11.D N and L for the uniform rectangular aperture ---- */
+L.push({id:"11.D",like:4,min:12,tag:"N, L and the sinc integral · Example 6-4",
+ why:R`The heart of Example 6-4: the right $r'\cos\psi$, the one integral he highlighted ("an exponential integrated over some limitation of an aperture"), and the sinc × sinc it builds. Cartesian, which he said to know.`,
+ pic:R`Uniform currents on a rectangle: the $x'$ and $y'$ integrals separate, and each is $\int e^{jcz}dz$ over a finite width, a sinc. So every component of $\mathbf N$ and $\mathbf L$ is a projection factor times $ab\frac{\sin X}{X}\frac{\sin Y}{Y}$.`,
+ trap:R`Using the $yz$- or $xz$-plane phase for an aperture in the $xy$-plane, dropping the ½ in $X=\frac{\beta a}{2}\sin\theta\cos\phi$, or putting $\cos\theta$ in $N_\phi$.`,
+ orig:{f:10,a:9,b:6,th:20,ph:45},
+ gen(){for(;;){const fG=pick(FREQS),l=lamcm(fG);const [ra,rb]=two([1,1.5,2,2.5,3],[1,1.5,2,2.5]);const th=pick([10,15,20,25,30]),ph=pick([30,45,60]);
+   const X=PI*ra*Math.sin(th*D2R)*Math.cos(ph*D2R),Y=PI*rb*Math.sin(th*D2R)*Math.sin(ph*D2R);if(Math.abs(sinc(X)*sinc(Y))>0.08&&X>0.2&&Y>0.2)return{f:fG,a:+(ra*l).toFixed(2),b:+(rb*l).toFixed(2),th,ph};}},
+ st:p=>R`Example 6-4: an $a\times b$ aperture in the $xy$-plane ($-a/2\le x'\le a/2$, $-b/2\le y'\le b/2$), no ground plane, with $\mathbf M_s=\hat xE_0$ and $\mathbf J_s=-\hat yE_0/\eta$ over the opening. Set up $\mathbf N$ and $\mathbf L$. <i>(MAXWELL adds: $a=${p.a}$ cm, $b=${p.b}$ cm, ${p.f} GHz. Evaluate $X$, $Y$ and the pattern factor $S=\frac{\sin X}{X}\frac{\sin Y}{Y}$ in the direction $\theta=${p.th}^\circ$, $\phi=${p.ph}^\circ$.)</i>`,
+ first:{ok:R`For the $xy$-plane: $r'\cos\psi=x'\sin\theta\cos\phi+y'\sin\theta\sin\phi$, $ds'=dx'dy'$. Then project $J_y$ and $M_x$ with (6-125) and integrate.`,
+   bad:[R`Use $r'\cos\psi=y'\sin\theta\sin\phi+z'\cos\theta$ and $ds'=dy'dz'$.`,R`Use $R\approx r$ in the phase too, so $\mathbf N=ab\,\mathbf J_s$.`]},
+ solve(p){const l=lamcm(p.f),s=Math.sin(p.th*D2R),X=PI*p.a/l*s*Math.cos(p.ph*D2R),Y=PI*p.b/l*s*Math.sin(p.ph*D2R),S=sinc(X)*sinc(Y);
+  const st=[["Phase and area, xy-plane (6-127c), (6-128c)",R`r'\cos\psi=\mathbf r'\cdot\hat a_r=x'\sin\theta\cos\phi+y'\sin\theta\sin\phi,\qquad ds'=dx'dy'`,R`$z'=0$ on the aperture.`,""],
+   ["The one integral",R`\int_{-a/2}^{a/2}e^{jcx'}dx'=\frac{e^{jca/2}-e^{-jca/2}}{jc}=a\,\frac{\sin(ca/2)}{ca/2}`,R`With $c=\beta\sin\theta\cos\phi$ this is $a\frac{\sin X}{X}$; with $c=\beta\sin\theta\sin\phi$ and width $b$, $b\frac{\sin Y}{Y}$.`,""],
+   ["N and L (6-125)",R`N_\theta=-\frac{abE_0}{\eta}\cos\theta\sin\phi\,S,\quad N_\phi=-\frac{abE_0}{\eta}\cos\phi\,S,\quad L_\theta=abE_0\cos\theta\cos\phi\,S,\quad L_\phi=-abE_0\sin\phi\,S`,R`$N$ from $J_y$ only, $L$ from $M_x$ only.`,""],
+   ["X and Y",R`X=\frac{\beta a}{2}\sin\theta\cos\phi=\frac{\pi a}{\lambda}\sin\theta\cos\phi=\frac{\pi(${p.a})}{${f(l)}}(${f(s)})(${f(Math.cos(p.ph*D2R))})=${f(X)},\qquad Y=\frac{\pi b}{\lambda}\sin\theta\sin\phi=${f(Y)}`,R`$\lambda=${f(l)}$ cm.`,R`$\frac{\beta a}{2}=\frac{\pi a}{\lambda}$.`],
+   ["Pattern factor",R`S=\frac{\sin X}{X}\frac{\sin Y}{Y}=(${f(sinc(X))})(${f(sinc(Y))})=${f(S)}`,"Radians mode on the calculator.",R`Sine in radians.`]];
+  return{steps:st,stages:[
+   {q:R`$\int_{-a/2}^{a/2}e^{jcx'}dx'$ equals:`,opts:[R`$a\frac{\sin(ca/2)}{ca/2}$`,R`$\frac{2\cos(ca/2)}{c}$`,R`$a\frac{\sin(ca)}{ca}$`],a:0,s:1,why:R`$\frac{e^{jca/2}-e^{-jca/2}}{jc}=\frac{2\sin(ca/2)}{c}=a\frac{\sin(ca/2)}{ca/2}$.`},
+   {q:R`Which projection gives $N_\phi$ (only $J_y$ is present)?`,opts:[R`$N_\phi=-\frac{abE_0}{\eta}\cos\phi\,S$`,R`$N_\phi=-\frac{abE_0}{\eta}\cos\theta\cos\phi\,S$`,R`$N_\phi=+\frac{abE_0}{\eta}\sin\phi\,S$`],a:0,s:2,why:R`(6-125b): $N_\phi=\iint[-J_x\sin\phi+J_y\cos\phi]e^{j\beta r'\cos\psi}ds'$, and $J_y=-E_0/\eta$. No $\cos\theta$ in the $\phi$ projection.`},
+   {k:"X",q:`$X$ at $\\theta=${p.th}^\\circ$, $\\phi=${p.ph}^\\circ$?`,u:R`\text{rad}`,v:X,s:3},
+   {k:"Y",q:"$Y$ in that direction?",u:R`\text{rad}`,v:Y,s:3},
+   {k:"S",q:R`Pattern factor $S=\frac{\sin X}{X}\frac{\sin Y}{Y}$?`,u:"",v:S,s:4}]};}});
+
+/* ---- 11.E beamwidth vs aperture size ---- */
+L.push({id:"11.E",like:3,min:8,tag:"beamwidth vs aperture size",
+ why:R`The Fourier picture as a design question: first-null beamwidth in each plane and the size you need for a target null. A natural twist on 11.A, but he only described "narrow" vs "wider" in words.`,
+ pic:R`A rect in space gives a sinc in angle, so beamwidth and aperture size trade off like pulse width and bandwidth: $\sin\theta_{null}=\lambda/d$. Double the size in wavelengths and the null moves in (sine halves).`,
+ trap:R`Giving the null angle when he asks for the first-null beamwidth (it's $2\theta_{null}$), or thinking higher frequency spreads the beam (it narrows: the aperture is more wavelengths wide).`,
+ orig:{f:10,a:12,b:7.5,th0:10},
+ gen(){const fG=pick(FREQS),l=lamcm(fG);const [ra,rb]=two([2,2.5,3,4,5],[1.25,1.5,2,2.5]);return{f:fG,a:+(ra*l).toFixed(2),b:+(rb*l).toFixed(2),th0:pick([8,10,12,15,20])};},
+ st:p=>R`A uniform rectangular aperture ($\mathbf E_a=\hat yE_0$, no ground plane) has $a=${p.a}$ cm along $x$ and $b=${p.b}$ cm along $y$, at ${p.f} GHz. Find: (a) the first-null beamwidth in the H-plane; (b) in the E-plane; (c) what happens to both beams if the frequency is doubled; (d) the $b$ that would put the E-plane first null at $${p.th0}^\circ$.`,
+ first:{ok:R`Get $\lambda$, then $\sin\theta_{null}=\lambda/d$ in each plane (H-plane $d=a$, E-plane $d=b$), and the first-null beamwidth is $2\theta_{null}$.`,
+   bad:[R`$\theta_{null}=\lambda/d$ in degrees, and that is the beamwidth.`,R`$\sin\theta_{null}=\lambda/2d$, from $\beta d\sin\theta=\pi$.`]},
+ solve(p){const l=lamcm(p.f),tH=asind(l/p.a),tE=asind(l/p.b),bn=l/Math.sin(p.th0*D2R);
+  const st=[["Wavelength",R`\lambda=\frac{30}{${p.f}}=${f(l)}\ \text{cm}`,"",""],
+   ["(a) H-plane (uses a)",R`\sin\theta_H=\frac{\lambda}{a}=${f(l/p.a)}\Rightarrow\theta_H=${f(tH)}^\circ,\qquad \text{FNBW}_H=2\theta_H=${f(2*tH)}^\circ`,"The main lobe runs null to null, across broadside.",R`$\frac{\beta a}{2}\sin\theta=\pi$.`],
+   ["(b) E-plane (uses b)",R`\sin\theta_E=\frac{\lambda}{b}=${f(l/p.b)}\Rightarrow\theta_E=${f(tE)}^\circ,\qquad \text{FNBW}_E=${f(2*tE)}^\circ`,"",R`Same with $b$.`],
+   ["(c) Double the frequency",R`\lambda\to\frac\lambda2\ \Rightarrow\ \sin\theta_{null}\to\frac12\sin\theta_{null}:\ \text{both beams narrow}`,"Same metal, twice as many wavelengths across.",""],
+   ["(d) Size for a target null",R`b=\frac{\lambda}{\sin\theta_0}=\frac{${f(l)}}{\sin${p.th0}^\circ}=${f(bn)}\ \text{cm}\ \ (${f(bn/l)}\lambda)`,"Narrow beams cost aperture.",R`Invert $\sin\theta_0=\lambda/b$.`]];
+  return{steps:st,stages:[
+   {k:"(a) FNBW_H",q:"(a) First-null beamwidth in the H-plane?",u:R`^\circ`,v:2*tH,s:1},
+   {k:"(b) FNBW_E",q:"(b) First-null beamwidth in the E-plane?",u:R`^\circ`,v:2*tE,s:2},
+   {q:"(c) Double the frequency, same aperture. Both main beams:",opts:[R`Narrow: $\sin\theta_{null}$ halves`,"Widen: a higher frequency spreads more","Stay the same: the nulls depend only on the geometry"],a:0,s:3,why:R`The aperture is now twice as many wavelengths across. Bigger $d/\lambda$, narrower beam.`},
+   {k:"(d) b",q:`(d) $b$ for an E-plane first null at $${p.th0}^\\circ$?`,u:R`\text{cm}`,v:bn,s:4}]};}});
+
+/* ---- 11.F the rectangular procedure on a plate ---- */
+const PL={xy:{n:"z",c:"x",ph:R`x'\sin\theta\cos\phi+y'\sin\theta\sin\phi`,ds:R`dx'dy'`,inc:"z"},yz:{n:"x",c:"y",ph:R`y'\sin\theta\sin\phi+z'\cos\theta`,ds:R`dy'dz'`,inc:"x"},xz:{n:"y",c:"z",ph:R`x'\sin\theta\cos\phi+z'\cos\theta`,ds:R`dx'dz'`,inc:"y"}};
+const PROJ={x:{t:R`\cos\theta\cos\phi`,p:R`-\sin\phi`},y:{t:R`\cos\theta\sin\phi`,p:R`\cos\phi`},z:{t:R`-\sin\theta`,p:"0"}};
+L.push({id:"11.F",like:3,min:10,tag:"scattering-plate procedure · steps 1–5",
+ why:R`He walked the five-step rectangular procedure on a plate ("that $E_x$ is gonna hit that plate and generate a $J_x$"). A setup quiz: current, projection, $r'\cos\psi$, $ds'$, and one phase number. Remixes move the plate to other planes.`,
+ pic:R`The metal must cancel tangential E, so the incident wave drives a current along $\mathbf E^i$, and that current re-radiates. "It really just matters on the orientation of the plate relative to the coordinates": the plane picks $r'\cos\psi$ and $ds'$.`,
+ trap:R`Using the $xy$-plane phase for a plate in another plane, or projecting a Cartesian current with the wrong row of (6-125) ($N_\phi$ never has a $\cos\theta$, and $J_z$ gives no $N_\phi$).`,
+ orig:{pl:"xy",u:0.4,v:0.25,th:30,ph:60},
+ gen(){for(;;){const pl=pick(["xy","yz","xz"]),u=pick([0.2,0.25,0.3,0.4,0.5,-0.25,-0.4]),v=pick([0.15,0.25,0.3,0.4,-0.2,-0.3]),th=pick([20,30,40,45,60]),ph=pick([30,45,60,120]);
+   const q={pl,u,v,th,ph};if(Math.abs(ph11F(q))>0.3)return q;}},
+ st:p=>{const P=PL[p.pl],c=P.c,ax=p.pl.split("");return R`A thin PEC plate lies in the $${p.pl}$-plane, centered on the origin. A plane wave arrives along the $${P.inc}$ axis (normal incidence) with $\mathbf E^i$ along $\hat ${c}$. Outline the far-field scattering calculation: the induced current, its projections, $r'\cos\psi$ and $ds'$. <i>(MAXWELL adds: evaluate the phase $\beta r'\cos\psi$ for the plate point $${ax[0]}'=${p.u}\lambda$, $${ax[1]}'=${p.v}\lambda$ toward $\theta=${p.th}^\circ$, $\phi=${p.ph}^\circ$.)</i>`;},
+ first:{ok:R`Step 1, specify the currents: the plate must cancel tangential $\mathbf E^i$, so it carries $\mathbf J_s$ along the direction of $\mathbf E^i$ (physical optics $\mathbf J_s=2\hat n\times\mathbf H^i$), and $\mathbf M_s=0$ on a PEC.`,
+   bad:[R`Compute the Fresnel reflection coefficient and multiply the incident field by it.`,R`Start from (6-122) with $\mathbf L$ only, since a plate is like an aperture.`]},
+ solve(p){const P=PL[p.pl],c=P.c,ax=p.pl.split(""),pr=PROJ[c],val=ph11F(p);
+  const all=["x","y","z"],opsT=[pr.t,...all.filter(k=>k!==c).map(k=>PROJ[k].t)];
+  const st=[["1. Currents",R`\mathbf J_s=\hat n\times\mathbf H\big|_{\text{plate}}\ \Rightarrow\ \mathbf J_s=\hat a_${c}J_${c},\qquad \mathbf M_s=0`,R`Tangential E must vanish on the metal; the current that does it lies along $\mathbf E^i$. (Physical optics: $2\hat n\times\mathbf H^i$.)`,""],
+   ["2. Projections (6-125)",R`N_\theta=\iint_SJ_${c}\,${pr.t}\,e^{j\beta r'\cos\psi}ds',\qquad N_\phi=\iint_SJ_${c}\,(${pr.p})\,e^{j\beta r'\cos\psi}ds'`,"The Cartesian-to-spherical transformation matrix, row by row.",""],
+   ["3–4. Phase and area for this plane",R`${p.pl}\text{-plane}:\ r'\cos\psi=${P.ph},\qquad ds'=${P.ds}`,R`$r'\cos\psi=\mathbf r'\cdot\hat a_r$ with the third coordinate zero.`,""],
+   ["The number",R`\beta r'\cos\psi=2\pi\frac{r'\cos\psi}{\lambda}=2\pi\left(${ph11Ftex(p)}\right)=${f(val)}\ \text{rad}`,"Coordinates are in wavelengths, so $\\beta r'=2\\pi(r'/\\lambda)$.",R`Plug the point into the plane's $r'\cos\psi$, then multiply by $2\pi$.`],
+   ["5. Fields (6-122) with L = 0",R`E_\theta\simeq-\frac{j\beta\eta e^{-j\beta r}}{4\pi r}N_\theta,\qquad E_\phi\simeq-\frac{j\beta\eta e^{-j\beta r}}{4\pi r}N_\phi`,"",""]];
+  const sh=[0,1,2];
+  return{steps:st,stages:[
+   {q:`Projection factor of $J_${c}$ into $N_\\theta$:`,opts:opsT.map(t=>"$"+t+"$"),a:0,s:1,why:R`(6-125a): $N_\theta$ uses $J_x\cos\theta\cos\phi+J_y\cos\theta\sin\phi-J_z\sin\theta$.`},
+   {q:`$r'\\cos\\psi$ for the plate in the $${p.pl}$-plane:`,opts:[P.ph,...Object.keys(PL).filter(k=>k!==p.pl).map(k=>PL[k].ph)].map(t=>"$"+t+"$"),a:0,s:2,why:R`$\mathbf r'\cdot\hat a_r$ with the out-of-plane coordinate set to zero (6-127).`},
+   {q:"And $ds'$:",opts:[P.ds,...Object.keys(PL).filter(k=>k!==p.pl).map(k=>PL[k].ds)].map(t=>"$"+t+"$"),a:0,s:2,why:"The area element of the plane the plate lies in (6-128)."},
+   {k:"βr'cosψ",q:"Phase $\\beta r'\\cos\\psi$ for the given point and direction?",u:R`\text{rad}`,v:val,s:3}]};}});
+function ph11F(p){const t=p.th*D2R,h=p.ph*D2R,st=Math.sin(t),ct=Math.cos(t);const e={xy:[st*Math.cos(h),st*Math.sin(h)],yz:[st*Math.sin(h),ct],xz:[st*Math.cos(h),ct]}[p.pl];return 2*PI*(p.u*e[0]+p.v*e[1]);}
+function ph11Ftex(p){const t=p.th,h=p.ph;const e={xy:[R`\sin${t}^\circ\cos${h}^\circ`,R`\sin${t}^\circ\sin${h}^\circ`],yz:[R`\sin${t}^\circ\sin${h}^\circ`,R`\cos${t}^\circ`],xz:[R`\sin${t}^\circ\cos${h}^\circ`,R`\cos${t}^\circ`]}[p.pl];
+ const v=p.v<0?R`-${-p.v}`:R`+${p.v}`;return R`${p.u}\,${e[0]}${v}\,${e[1]}`;}
+
+/* ---- 11.G circular aperture ---- */
+const J1Z=3.8317;
+L.push({id:"11.G",like:2,min:8,tag:"circular aperture · sombrero · Example 6-6",
+ why:R`Lectured quickly at the end of L17, and he said "I won't hold you accountable for a lot of this stuff on the exam, especially this [Bessel] stuff." Know the setup and the first null; skip the integrals.`,
+ pic:R`Same recipe, round opening on a ground plane: only a doubled $\mathbf M_s$ radiates, and the pattern is $J_1(x)/x$, the "Mexican hat," instead of a sinc. Its first null is the $1.22\lambda/D$ diffraction limit from optics.`,
+ trap:R`Forgetting the factor 2 in $\mathbf M_s$ (or keeping $\mathbf J_s$), or using the sinc null $\lambda/d$ instead of the Bessel zero $3.8317$.`,
+ orig:{f:10,a:6},
+ gen(){const fG=pick(FREQS),l=lamcm(fG);return{f:fG,a:+(pick([1,1.5,2,2.5,3,4])*l).toFixed(2)};},
+ st:p=>R`A circular aperture of radius $a=${p.a}$ cm is cut in an infinite PEC ground plane, with $\mathbf E_a=\hat a_yE_0$ over $\rho'\le a$, at ${p.f} GHz (Example 6-6). (a) What source radiates? (b) What is the pattern function? (c) Find $\beta a$ and the first null of the pattern.`,
+ first:{ok:R`Ground plane, so only $\mathbf M_s=-2\hat n\times\mathbf E_a=2\hat xE_0$ and $\mathbf N=0$. Then cylindrical $r'\cos\psi=\rho'\sin\theta\cos(\phi-\phi')$, $ds'=\rho'd\rho'd\phi'$.`,
+   bad:[R`Keep both $\mathbf J_s$ and $\mathbf M_s$ as in Example 6-4, with $x'$, $y'$ limits $\pm a$.`,R`Expect a sinc and set $\beta a\sin\theta=\pi$.`]},
+ solve(p){const l=lamcm(p.f),ba=2*PI*p.a/l,sn=J1Z/ba,t=asind(sn);
+  const st=[["(a) Source",R`\mathbf M_s=-2\hat z\times\hat yE_0=2\hat xE_0\ \ (\rho'\le a),\qquad \mathbf J_s=0\Rightarrow\mathbf N=0`,"Image theory on the ground plane.",""],
+   ["(b) Pattern",R`\int_0^{2\pi}e^{jx\cos(\phi-\phi')}d\phi'=2\pi J_0(x),\quad \int_0^a\rho'J_0(\beta\rho'\sin\theta)d\rho'=a^2\frac{J_1(\beta a\sin\theta)}{\beta a\sin\theta}`,R`So $E_\theta,E_\phi\propto\frac{J_1(\beta a\sin\theta)}{\beta a\sin\theta}$, which is $\frac12$ on axis.`,""],
+   ["(c) βa",R`\beta a=\frac{2\pi a}{\lambda}=\frac{2\pi(${p.a})}{${f(l)}}=${f(ba)}`,R`$\lambda=${f(l)}$ cm.`,""],
+   ["(c) First null",R`J_1(x)=0\ \text{at}\ x=3.8317:\quad \sin\theta=\frac{3.8317}{\beta a}=${f(sn)}\ \Rightarrow\ \theta=${f(t)}^\circ`,R`Equivalently $\sin\theta=0.61\lambda/a=1.22\lambda/D$.`,R`First zero of $J_1$ is 3.8317.`]];
+  return{steps:st,stages:[
+   {q:"(a) On the ground plane the source is:",opts:[R`$\mathbf M_s=2\hat xE_0$, $\mathbf J_s=0$`,R`$\mathbf M_s=\hat xE_0$ and $\mathbf J_s=-\hat yE_0/\eta$`,R`$\mathbf J_s=-2\hat yE_0/\eta$, $\mathbf M_s=0$`],a:0,s:0,why:"Image theory: the PEC doubles tangential M and cancels tangential J."},
+   {q:"(b) The far-field pattern function is:",opts:[R`$\frac{J_1(\beta a\sin\theta)}{\beta a\sin\theta}$`,R`$\frac{\sin(\beta a\sin\theta)}{\beta a\sin\theta}$`,R`$J_0(\beta a\sin\theta)$`],a:0,s:1,why:R`The $\phi'$ integral gives $J_0$, the $\rho'$ integral turns it into $J_1(x)/x$: the sombrero.`},
+   {k:"(c) βa",q:"(c) $\\beta a$?",u:R`\text{rad}`,v:ba,s:2},
+   {k:"(c) θ_null",q:"(c) First null of the pattern?",u:R`^\circ`,v:t,s:3}]};}});
+
+/* ---- 11.H Example 6-5 PEC plate (slides only) ---- */
+L.push({id:"11.H",like:1,min:12,tag:"PEC plate · physical optics · not lectured",
+ why:R`Example 6-5 is on the slides, never lectured. Low odds, but it reuses Example 6-4 with a doubled $\mathbf J_s$ and a tilted phase, so it's cheap to know.`,
+ pic:R`Treat the lit plate as a finite piece of an infinite mirror: tangential H doubles, $\mathbf J_s=2\hat n\times\mathbf H^i$, and the incidence phase $e^{-j\beta y'\sin\theta_i}$ steers the lobe into the specular direction.`,
+ trap:R`Dropping the factor 2 in $\mathbf J_s$, or forgetting the incidence phase that shifts the sinc to $\sin\theta_s-\sin\theta_i$.`,
+ orig:{f:10,b:15,thi:30,E0:1},
+ gen(){for(;;){const fG=pick(FREQS),l=lamcm(fG),rb=pick([4,5,6,8,10]),thi=pick([20,25,30,40,45]);if(Math.sin(thi*D2R)+1/rb<0.97)return{f:fG,b:+(rb*l).toFixed(2),thi,E0:pick([1,2,5,10])};}},
+ st:p=>R`A parallel-polarized plane wave ($E_0=${p.E0}$ V/m, ${p.f} GHz) traveling in the $yz$-plane hits an $a\times b$ PEC plate in the $xy$-plane at $\theta_i=${p.thi}^\circ$, with $b=${p.b}$ cm along $y$ (Example 6-5). Using the infinite-plate current: (a) what is $\mathbf J_s$; (b) its magnitude; (c) where the main scattered lobe points; (d) the first E-plane null on the far side of that lobe.`,
+ first:{ok:R`Physical optics: $\mathbf J_s=2\hat a_z\times\mathbf H^i\big|_{z=0}=\hat a_y\frac{2E_0}{\eta}e^{-j\beta y'\sin\theta_i}$, $\mathbf M_s=0$. Then it's Example 6-4 with only $J_y$ and a tilted phase.`,
+   bad:[R`$\mathbf J_s=\hat n\times\mathbf H^i$, the same as an aperture.`,R`$\mathbf M_s=-\hat n\times\mathbf E^i$ on the plate.`]},
+ solve(p){const l=lamcm(p.f),J=2*p.E0/ETA0*1000,si=Math.sin(p.thi*D2R),sn=si+l/p.b,t=asind(sn);
+  const st=[["(a) Induced current",R`\mathbf J_s=\hat a_z\times(\mathbf H^i+\mathbf H^r)\big|_{z=0}=2\hat a_z\times\hat a_x\frac{E_0}{\eta}e^{-j\beta y'\sin\theta_i}=\hat a_y\frac{2E_0}{\eta}e^{-j\beta y'\sin\theta_i}`,"The reflected wave doubles tangential H on the lit side. Tangential E is zero, so no $\\mathbf M_s$.",""],
+   ["(b) Magnitude",R`|\mathbf J_s|=\frac{2E_0}{\eta_0}=\frac{2(${p.E0})}{120\pi}=${f(J)}\ \text{mA/m}`,"",R`$2E_0/377$.`],
+   ["(c) Main lobe",R`Y=\frac{\beta b}{2}(\sin\theta_s\sin\phi_s-\sin\theta_i)=0\ \Rightarrow\ \theta_s=\theta_i=${p.thi}^\circ\ (\phi_s=90^\circ)`,"The specular, mirror direction.",""],
+   ["(d) First null past the lobe",R`\frac{\beta b}{2}(\sin\theta_s-\sin\theta_i)=\pi\ \Rightarrow\ \sin\theta_s=\sin\theta_i+\frac{\lambda}{b}=${f(si)}+\frac{${f(l)}}{${p.b}}=${f(sn)}\ \Rightarrow\ \theta_s=${f(t)}^\circ`,R`$\lambda=${f(l)}$ cm.`,R`Same first-null rule as 11.A, shifted by $\sin\theta_i$.`]];
+  return{steps:st,stages:[
+   {q:"(a) The induced current on the lit plate is:",opts:[R`$\mathbf J_s=2\hat n\times\mathbf H^i$, $\mathbf M_s=0$`,R`$\mathbf J_s=\hat n\times\mathbf H^i$, $\mathbf M_s=0$`,R`$\mathbf M_s=-\hat n\times\mathbf E^i$, $\mathbf J_s=0$`],a:0,s:0,why:"Incident plus reflected H doubles the tangential H on an (approximately infinite) PEC."},
+   {k:"(b) |J_s|",q:"(b) $|\\mathbf J_s|$?",u:R`\text{mA/m}`,v:J,s:1},
+   {q:"(c) The main scattered lobe (E-plane, $\\phi_s=90^\\circ$) points at:",opts:[R`$\theta_s=\theta_i$, the specular direction`,R`$\theta_s=0$, the plate normal`,R`straight back at the source`],a:0,s:2,why:R`The phase $e^{-j\beta y'\sin\theta_i}$ shifts the sinc argument to $\sin\theta_s-\sin\theta_i$.`},
+   {k:"(d) θ_null",q:"(d) First E-plane null on the far side of the main lobe?",u:R`^\circ`,v:t,s:3}]};}});
+
+G.hw.ch11=L;
+})(window.MXG);
+
+/* QUIZ ARENA coaching for HW 10 ("Chapter 11: Lecture Notes", scattering): Prather-voiced notes, a tip per stage, the
+   equation per stage (eqs[i], aligned with stages; index 0 = first-move stage), and a per-problem equation card.
+   Quotes are from L17 (transcript 8eb701a7), L15 (b140b059) and L18 (5f01e25c) as already sourced in content/ch11.js and
+   src/coach/ch11.js; everything else is his method, paraphrased. */
+(function(G){const R=String.raw;G.hwCoach=G.hwCoach||{};
+const EQV=R`\mathbf J_s=\hat n\times\mathbf H_a,\qquad \mathbf M_s=-\hat n\times\mathbf E_a`,GP=R`\mathbf M_s=-2\hat n\times\mathbf E_a,\qquad \mathbf J_s=0`;
+const NUL=R`\frac{\beta d}{2}\sin\theta=\pi\ \Rightarrow\ \sin\theta_{null}=\frac{\lambda}{d}`,LAM=R`\lambda=\frac cf,\qquad \lambda[\text{cm}]=\frac{30}{f[\text{GHz}]}`;
+const ETH=R`E_\theta\simeq-\frac{j\beta e^{-j\beta r}}{4\pi r}\left(L_\phi+\eta N_\theta\right)`,EPH=R`E_\phi\simeq+\frac{j\beta e^{-j\beta r}}{4\pi r}\left(L_\theta-\eta N_\phi\right)`;
+const PLN=R`\text{E-plane }(\phi=90^\circ)\leftrightarrow b,\qquad \text{H-plane }(\phi=0^\circ)\leftrightarrow a`;
+const INT=R`\int_{-a/2}^{a/2}e^{jcx'}dx'=a\,\frac{\sin(ca/2)}{ca/2}`,XY=R`X=\frac{\beta a}{2}\sin\theta\cos\phi,\qquad Y=\frac{\beta b}{2}\sin\theta\sin\phi`;
+const PH=R`xy:\ r'\cos\psi=x'\sin\theta\cos\phi+y'\sin\theta\sin\phi,\quad ds'=dx'dy'`;
+const P125=R`N_\theta=\iint\left[J_x\cos\theta\cos\phi+J_y\cos\theta\sin\phi-J_z\sin\theta\right]e^{j\beta r'\cos\psi}ds',\quad N_\phi=\iint\left[-J_x\sin\phi+J_y\cos\phi\right]e^{j\beta r'\cos\psi}ds'`;
+const PH3=R`yz:\ y'\sin\theta\sin\phi+z'\cos\theta;\quad xz:\ x'\sin\theta\cos\phi+z'\cos\theta;\quad xy:\ x'\sin\theta\cos\phi+y'\sin\theta\sin\phi`;
+G.hwCoach.ch11={
+"11.A":{notes:[R`His Fourier picture: a pulse in time has a sinc spectrum, and the aperture is a pulse in space, so its far field is a sinc in angle. "Spatial frequency corresponds effectively to a plane wave that's propagating relative to an off-axis angle."`,R`Fig. 6-7 is $a=3\lambda$, $b=2\lambda$: "In one case, I get a much more narrow beam. The other case, I get a much wider beam. This is because we have asymmetry in the aperture." The wider side gives the narrower beam.`],
+ tips:[R`Name the planes before any math. The E-plane holds $\mathbf E_a$ and the $z$ axis; for $\mathbf E_a=\hat yE_0$ that's $\phi=90^\circ$, and only $b$ survives.`,
+  R`At $\phi=90^\circ$ the $x$-sinc goes to 1 (L'Hôpital), so the E-plane pattern only knows about $b$. Lock in E-plane ↔ $b$, H-plane ↔ $a$.`,
+  R`Wavelength first, in the same units as the aperture. Then write each side as so many wavelengths: that number is what sets the beam.`,
+  R`The sinc's first zero is where its argument hits $\pi$. The argument is $\frac{\beta b}{2}\sin\theta=\frac{\pi b}{\lambda}\sin\theta$, so $\sin\theta=\lambda/b$. Don't drop the ½.`,
+  R`Same rule with $a$. Measure θ from broadside (the $z$ axis), not from the aperture face.`,
+  R`Compare the two angles: the smaller null is the narrower beam, and it always belongs to the bigger side.`],
+ eqs:[null,PLN,LAM,R`\sin\theta_E=\frac{\lambda}{b}`,R`\sin\theta_H=\frac{\lambda}{a}`,null],
+ card:[["Which plane",PLN],["Wavelength",LAM],["E-plane pattern",R`E_\theta=\frac C2(1+\cos\theta)\frac{\sin\left(\frac{\beta b}{2}\sin\theta\right)}{\frac{\beta b}{2}\sin\theta}`],["First null",NUL]]},
+"11.B":{notes:[R`For an opening there's no metal, but you can still associate currents with the fields: "Instead of looking at a field in an aperture, now we get approximately those current sources." Tangential H gives $\mathbf J_s$, tangential E gives $\mathbf M_s$. In Example 6-4, "E, Y, gives rise to MX."`,R`Put the same opening in an infinite PEC and image theory takes over: the electric current is shorted out by its image, the magnetic one doubles. That's Example 6-6.`],
+ tips:[R`Write both equivalence rules with $\hat n=\hat z$ before touching the vectors. Ask first: is there a ground plane?`,
+  R`$\mathbf M_s=-\hat n\times\mathbf E_a$: do the cross product, then flip the sign. Use $\hat z\times\hat x=\hat y$, $\hat z\times\hat y=-\hat x$.`,
+  R`$\mathbf J_s=\hat n\times\mathbf H_a$, then $E_0/\eta_0$ with $\eta_0=120\pi$. Keep the sign: here $\mathbf J_s$ points opposite $\mathbf E_a$.`,
+  R`Ground plane: image theory. A tangential electric current right on a PEC is cancelled by its image; a tangential magnetic current is doubled.`,
+  R`Twice the magnetic current you found in (a), same direction, and no electric current at all.`],
+ eqs:[EQV,R`\mathbf M_s=-\hat n\times\mathbf E_a`,R`\mathbf J_s=\hat n\times\mathbf H_a,\qquad \eta_0=120\pi`,null,GP],
+ card:[["No ground plane",EQV],["Infinite PEC ground plane",GP],["Unit vectors",R`\hat z\times\hat x=\hat y,\qquad \hat z\times\hat y=-\hat x`]]},
+"11.C":{notes:[R`Two sources now, so two terms: "It's just a more complicated thing because now I have two terms... because I have two sources." $E_\theta$ pairs $N_\theta$ with $L_\phi$, $E_\phi$ pairs $N_\phi$ with $L_\theta$, and $E_r$, $H_r$ vanish.`,R`Before you trust any of it, check you're in the far field: $R\ge2D^2/\lambda$, $R\gg D$, $R\gg\lambda$. "When this happens, then we are literally in the far field."`],
+ tips:[R`Start from the summary (6-122), not from the potentials. For Example 6-4 the $\mathbf J$ and $\mathbf M$ parts add into $(1+\cos\theta)$.`,
+  R`Cross-pairing: $\theta$ goes with $\phi$. $E_\phi$ takes $L_\theta$ and $N_\phi$, with a $+j$ out front (one L17 slide misprints $-j$).`,
+  R`$D$ is the largest dimension of the aperture, the diagonal $\sqrt{a^2+b^2}$. Keep cm with cm, then convert to meters.`,
+  R`On axis both sincs are 1 and $(1+\cos\theta)/2=1$, so $|\mathbf E|=|C|$. Since $\beta/2\pi=1/\lambda$, that's $abE_0/(\lambda r)$ with everything in meters.`,
+  R`E-plane, so $X=0$ and only the $b$-sinc is left. Multiply the on-axis value by the obliquity $(1+\cos\theta)/2$ and $|\sin Y/Y|$, in radians.`,
+  R`Far field is a local plane wave going out along $\hat r$, so $\mathbf H=\hat r\times\mathbf E/\eta$: $H_\phi=E_\theta/\eta$.`],
+ eqs:[ETH,EPH,R`R_{ff}=\frac{2D^2}{\lambda},\qquad D=\sqrt{a^2+b^2}`,R`|C|=\frac{\beta abE_0}{2\pi r}=\frac{abE_0}{\lambda r}`,R`|E_\theta|_{\phi=90^\circ}=|C|\,\frac{1+\cos\theta}{2}\left|\frac{\sin Y}{Y}\right|,\quad Y=\frac{\pi b}{\lambda}\sin\theta`,R`H_\phi\simeq\frac{E_\theta}{\eta},\qquad H_\theta\simeq-\frac{E_\phi}{\eta}`],
+ card:[["Summary (6-122b, c)",ETH+R`,\qquad `+EPH],["Example 6-4 result",R`E_\theta=\frac C2\sin\phi(1+\cos\theta)\frac{\sin X}{X}\frac{\sin Y}{Y},\quad C=j\frac{\beta abE_0e^{-j\beta r}}{2\pi r}`],["Far-field distance",R`R\ge\frac{2D^2}{\lambda}`],["Far-field H",R`H_\phi\simeq\frac{E_\theta}{\eta}`]]},
+"11.D":{notes:[R`"Don't let these L's and N's confuse you. They just represent integrals." Pull $e^{-j\beta r}/r$ out, and what's left is a property of the source alone.`,R`The integral he highlighted is "an exponential integrated over some limitation of an aperture." Do it once with a generic constant $c$, then plug in $a$ or $b$. The $x'$ and $y'$ integrals separate, so you get a sinc times a sinc.`],
+ tips:[R`The aperture is in the $xy$-plane, so $z'=0$ and $r'\cos\psi=\mathbf r'\cdot\hat a_r$ keeps only the $x'$ and $y'$ terms. "It really just matters on the orientation of the plate relative to the coordinates."`,
+  R`Integrate the exponential, evaluate at $\pm a/2$, and the difference of exponentials is $2j\sin$. Factor $a$ out so the argument is $ca/2$.`,
+  R`Only $J_y$ is present, so pick the $J_y$ entry of each row of (6-125). The $\phi$ row never has a $\cos\theta$.`,
+  R`$\frac{\beta a}{2}=\frac{\pi a}{\lambda}$. Get $\lambda$ in the same units as $a$, then multiply by $\sin\theta\cos\phi$.`,
+  R`Same thing with $b$ and $\sin\phi$.`,
+  R`Each sinc in radians, then multiply. A negative $S$ is fine; it just means you're in a side lobe of that sinc.`],
+ eqs:[PH,INT,P125,XY,XY,R`S=\frac{\sin X}{X}\,\frac{\sin Y}{Y}`],
+ card:[["Phase, xy-plane",PH],["The integral",INT],["Shorthand",XY],["N for Example 6-4",R`N_\theta=-\frac{abE_0}{\eta}\cos\theta\sin\phi\,S,\qquad N_\phi=-\frac{abE_0}{\eta}\cos\phi\,S`]]},
+"11.E":{notes:[R`Same Fourier picture, read as a design rule. A short pulse has a wide spectrum; a big aperture has a narrow beam. Size is measured in wavelengths, so frequency counts as much as metal.`],
+ tips:[R`Wavelength first, then one rule for every question here: $\sin\theta_{null}=\lambda/d$, with $d=a$ in the H-plane and $d=b$ in the E-plane.`,
+  R`First null from $\sin\theta=\lambda/a$ in the H-plane, then double it: the main lobe runs from null to null across broadside.`,
+  R`Same with $b$ for the E-plane. The smaller side gives the wider beam.`,
+  R`Ask how many wavelengths across the aperture is. Higher frequency, more wavelengths, narrower beam.`,
+  R`Invert the null rule. A narrow beam costs a big aperture.`],
+ eqs:[LAM,R`\text{FNBW}_H=2\arcsin\frac{\lambda}{a}`,R`\text{FNBW}_E=2\arcsin\frac{\lambda}{b}`,NUL,R`b=\frac{\lambda}{\sin\theta_0}`],
+ card:[["Wavelength",LAM],["First null",NUL],["Beamwidth",R`\text{FNBW}=2\theta_{null}`]]},
+"11.F":{notes:[R`The airplane at Philadelphia airport doesn't just bounce the radar: "that induced current then re-radiates. That's what causes a reflection." "Physics happens at the boundary." So a scattering plate is an antenna problem: find the current, then the five steps.`,R`His plate: "that $E_x$ is gonna hit that plate and generate a $J_x$." Then project the Cartesian current onto $\hat a_\theta$, $\hat a_\phi$, and pick $r'\cos\psi$ and $ds'$ for the plane the plate lies in.`],
+ tips:[R`Step 1 is always the currents. On metal, tangential E must vanish, so the current runs along $\mathbf E^i$ and there's no $\mathbf M_s$.`,
+  R`Read off the row of (6-125) for that Cartesian component: $J_x\to\cos\theta\cos\phi$, $J_y\to\cos\theta\sin\phi$, $J_z\to-\sin\theta$.`,
+  R`$r'\cos\psi=\mathbf r'\cdot\hat a_r$ with the out-of-plane coordinate set to zero. Write $\hat a_r=(\sin\theta\cos\phi,\sin\theta\sin\phi,\cos\theta)$ and keep the two terms that survive.`,
+  R`$ds'$ is the area element of the plate's own plane. It isn't a unit cell; it's the limit of a little $\Delta s$ inside the integral.`,
+  R`Coordinates in wavelengths, so $\beta r'=2\pi(r'/\lambda)$. Plug in, keep the sign.`],
+ eqs:[R`\mathbf J_s=\hat n\times\mathbf H,\qquad \mathbf M_s=0`,P125,PH3,R`ds'=dx'dy',\ dy'dz',\ dx'dz'`,R`\beta r'\cos\psi=2\pi\,\frac{r'\cos\psi}{\lambda}`],
+ card:[["Induced current",R`\mathbf J_s=\hat n\times\mathbf H\big|_{\text{surface}}`],["Projections (6-125)",P125],["Phase by plane (6-127)",PH3],["Fields, L = 0",R`E_\theta\simeq-\frac{j\beta\eta e^{-j\beta r}}{4\pi r}N_\theta,\quad E_\phi\simeq-\frac{j\beta\eta e^{-j\beta r}}{4\pi r}N_\phi`]]},
+"11.G":{notes:[R`"The only difference now is that it's going to be a circle." Same recipe in cylindrical coordinates, on a ground plane, and the sinc turns into $J_1(x)/x$, "kind of almost like a sinc function all over again, but now it's cylindrical." Plotted, it looks like a Mexican hat.`,R`He was clear: "I won't hold you accountable for a lot of this stuff on the exam, especially this [Bessel] stuff, but you should definitely know the Cartesian stuff." Know the setup and the first null.`],
+ tips:[R`Ground plane first: only $\mathbf M_s=-2\hat n\times\mathbf E_a$, so $\mathbf N=0$. Then switch to $\rho'$, $\phi'$.`,
+  R`Image theory doubles the magnetic current and kills the electric one.`,
+  R`The $\phi'$ integral gives $J_0$, and the $\rho'$ integral turns it into $J_1(x)/x$, the sombrero. It's $\frac12$ on axis.`,
+  R`$\beta a=2\pi a/\lambda$, with $a$ the <b>radius</b>.`,
+  R`First zero of $J_1$ is 3.8317, not $\pi$. That's the $0.61\lambda/a$ (1.22 λ/D) diffraction limit from optics.`],
+ eqs:[GP,GP,R`\frac{J_1(\beta a\sin\theta)}{\beta a\sin\theta}`,R`\beta a=\frac{2\pi a}{\lambda}`,R`\beta a\sin\theta=3.8317\ \Rightarrow\ \sin\theta=0.61\frac{\lambda}{a}`],
+ card:[["Source",GP],["Cylindrical phase",R`r'\cos\psi=\rho'\sin\theta\cos(\phi-\phi'),\quad ds'=\rho'd\rho'd\phi'`],["Pattern",R`\frac{J_1(\beta a\sin\theta)}{\beta a\sin\theta}`],["First null",R`\beta a\sin\theta=3.8317`]]},
+"11.H":{notes:[R`On the slides, never lectured. It's Example 6-4 in disguise: assume the plate carries what an infinite plate would, so tangential H doubles, and the tilted incident phase steers the sinc into the mirror direction.`],
+ tips:[R`Write $\mathbf H^i$ at the plate ($z=0$) first, phase and all. Then it's Example 6-4 with one current.`,
+  R`Physical optics: incident plus reflected H doubles the tangential H on the lit side, so $\mathbf J_s=2\hat n\times\mathbf H^i$. Tangential E is zero on a PEC, so no $\mathbf M_s$.`,
+  R`$2E_0/\eta_0$, with $\eta_0=120\pi$.`,
+  R`The $e^{-j\beta y'\sin\theta_i}$ phase shifts the $Y$ sinc to $\sin\theta_s-\sin\theta_i$. Its peak is where that's zero: the specular direction.`,
+  R`First null: the shifted argument hits $\pi$. Same rule as the aperture, just measured from $\sin\theta_i$.`],
+ eqs:[R`\mathbf H^i\big|_{z=0}=\hat a_x\frac{E_0}{\eta}e^{-j\beta y'\sin\theta_i}`,R`\mathbf J_s=2\hat n\times\mathbf H^i=\hat a_y\frac{2E_0}{\eta}e^{-j\beta y'\sin\theta_i}`,R`|\mathbf J_s|=\frac{2E_0}{\eta_0}`,R`Y=\frac{\beta b}{2}(\sin\theta_s\sin\phi_s-\sin\theta_i)=0`,R`\sin\theta_s=\sin\theta_i+\frac{\lambda}{b}`],
+ card:[["Physical-optics current",R`\mathbf J_s=2\hat n\times\mathbf H^i`],["Shifted sinc",R`Y=\frac{\beta b}{2}(\sin\theta_s\sin\phi_s-\sin\theta_i)`],["First null",R`\sin\theta_s=\sin\theta_i\pm\frac{\lambda}{b}`]]}
+};})(window.MXG);
+
 /* QUIZ ARENA coaching for HW 1–2 (Ch. 1): Prather-voiced notes, a tip per stage, the equation per stage (eqs[i], aligned with
    stages; index 0 = first-move stage), and a per-problem equation card (only what THIS problem uses).
    Quotes are from L2–L5 as already sourced in content/ch1.js and src/coach/ch1.js; everything else is his method, paraphrased. */

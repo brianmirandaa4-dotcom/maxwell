@@ -415,6 +415,7 @@ body{font-size:17px}
 .hweq.blur .mathbox{filter:blur(7px);opacity:.6}
 .hwsheetpop{position:sticky;top:calc(130px + var(--sat));z-index:6;max-height:62vh;overflow:auto;margin:0 0 10px;padding:12px;border-radius:18px;background:var(--surface-2);border:1px solid var(--line-2);box-shadow:0 20px 40px -10px rgba(0,0,0,.6)}
 .hwsheetpop[hidden]{display:none}
+.hwhud{background:var(--bg);gap:10px}.hwhud .hearts{font-size:20px}.hwhud .xbtn{width:44px;height:44px}
 </style>
 </head><body>
 <noscript>MAXWELL needs JavaScript.</noscript>
@@ -2307,7 +2308,7 @@ A.VIEWS.play=(v,p)=>{origPlay(v,p);const q=quizCh();if(!q.c)return;const ch=A.ch
    <span class="small mut">His quiz is one homework problem in about 10–15 minutes. These are ordered by how likely he is to pick each one. Start at the top.</span>
    <span class="hwmeta">${L.length} problems · ${done} mastered · next up: <b>HW ${esc(L.find(d=>(S[d.id]||{}).stars<3)?.id||L[0].id)}</b></span>`;
   b.onclick=()=>{sfx.tap();A.push({v:"hwlist",ch:q.c});};
-  const top=v.querySelector(".bub.prof");if(top&&top.nextSibling)v.insertBefore(b,top.nextSibling);else v.prepend(b);};
+  const top=v.querySelector(".bub.prof");const soon=q.ev&&(new Date(q.ev.t||q.ev.at)-Date.now())<7*864e5;if(top&&soon)v.insertBefore(b,top);else if(top&&top.nextSibling)v.insertBefore(b,top.nextSibling);else v.prepend(b);};
 
 /* ---------- Arena list ---------- */
 A.VIEWS.hwlist=(v,p)=>{const chId=p.ch||quizCh().c,ch=A.chOf(chId);A.setAcc(v,ch);const L=defs(chId),S=st();const q=quizCh();const u=q.ev&&q.c===chId?A.until(q.ev.t):null;
@@ -2338,9 +2339,9 @@ G.hwStart=start;G.hwCur=()=>R;
 function sceneFor(R){const sc=typeof R.d.scene==="function"?R.d.scene(R.p):R.d.scene;return sc;}
 A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch);if(R.over)return endView(v);
   const sg=R.stages[R.i],n=R.stages.length;
-  v.innerHTML=`<div class="battle"><div class="hud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<R.hearts?"on":""}">♥</i>`).join("")}</div>
-   <div class="hudmid"><div class="progress"><i style="width:${100*R.i/n}%"></i></div><small>HW ${esc(R.id)} ${R.mock?"· MOCK QUIZ":R.remix?"· Remix":"· as assigned"} · ${R.i+1}/${n}</small></div>
-   <span class="hwclock" data-clock>0:00</span><button class="xbtn" data-prob aria-label="Problem">📄</button>${!R.mock&&R.d.card?`<button class="xbtn" data-sheet aria-label="Formula sheet">📐</button>`:""}</div><div class="hwsheetpop" data-sheetpop hidden></div>
+  v.innerHTML=`<div class="battle"><div class="hud hwhud"><button class="xbtn" data-quit aria-label="Leave">×</button><div class="hearts">${[0,1,2].map(i=>`<i class="${i<R.hearts?"on":""}">♥</i>`).join("")}</div>
+   <div class="hudmid"><div class="progress"><i style="width:${100*R.i/n}%"></i></div><small>${esc(R.id)} · ${R.i+1}/${n}${R.mock?" · mock":R.remix?" · remix":""}</small></div>
+   <span class="hwclock" data-clock>0:00</span>${!R.mock&&R.d.card?`<button class="xbtn" data-sheet aria-label="Formula sheet">📐</button>`:""}</div><div class="hwsheetpop" data-sheetpop hidden></div>
   <section class="bub hwst"><div><b>Problem HW ${esc(R.id)}</b>${R.remix?` <span class="tag">new numbers</span>`:""}</div><div class="hwsttxt">${M(R.d.st(R.p))}</div>${!R.mock&&R.d.notes&&R.i===0?`<div class="hwnotes"><b>How he’d frame it</b>${R.d.notes.map(n=>`<p>${M(n)}</p>`).join("")}</div>`:""}</section>
   ${sceneFor(R)?`<div class="hwscene"><canvas class="viz game3d"></canvas><small class="mut" data-cap></small></div>`:""}
   <section class="bub hwq"><div class="eyebrow">${sg.first?"STEP 1 · FIRST MOVE":sg.opts?"CONCEPT CHECK":"COMPUTE · "+esc(sg.k)}</div>
@@ -2357,7 +2358,7 @@ A.VIEWS.hwrun=v=>{if(!R){A.back();return;}const ch=A.chOf(R.chId);A.setAcc(v,ch)
   v.querySelector("[data-quit]").onclick=()=>{R=null;A.back();};
   const eqb=v.querySelector("[data-eq]");if(eqb)eqb.onclick=()=>{eqb.classList.remove("blur");sfx.tap();};
   const shb=v.querySelector("[data-sheet]");if(shb)shb.onclick=()=>{const pop=v.querySelector("[data-sheetpop]");if(pop.hidden){pop.innerHTML=`<div class="row between"><b>📐 Equations for HW ${esc(R.id)} only</b><button class="btn" data-shx>Close</button></div>`+R.d.card.map(r=>`<div class="hwstep"><b>${M(r[0])}</b>${A.block(r[1])}${r[2]?`<p class="small mut">${M(r[2])}</p>`:""}</div>`).join("");pop.querySelector("[data-shx]").onclick=()=>{pop.hidden=true;};}pop.hidden=!pop.hidden;sfx.tap();};
-  v.querySelector("[data-prob]").onclick=()=>{const dd=v.querySelector(".hwst");dd.scrollIntoView({behavior:"smooth",block:"start"});};
+  const pb=v.querySelector("[data-prob]");if(pb)pb.onclick=()=>{const dd=v.querySelector(".hwst");dd.scrollIntoView({behavior:"smooth",block:"start"});};
   const fb=v.querySelector("[data-fb]");
   const finish=(ok,yourTxt)=>{if(R.answered)return;R.answered=true;const s=R.stages[R.i];
     if(ok){R.combo++;const pts=100+20*Math.min(R.combo,5)-(s.hinted?40:0);R.score+=pts;sfx.hit(R.combo);buzz(15);}else{R.combo=0;R.miss++;R.hearts=Math.max(0,R.hearts-1);sfx.miss();buzz([40,30,40]);v.querySelector(".hwq").classList.add("shake");}
